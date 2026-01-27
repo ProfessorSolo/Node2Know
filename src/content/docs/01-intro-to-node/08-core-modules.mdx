@@ -1,0 +1,41 @@
+---
+title: "Core Node Modules"
+description: "Built-in modules available in Node.js."
+sidebar:
+  order: 8
+  label: "Core Modules"
+draft: false
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+
+## Node comes with a set of built-in core modules.
+
+By "core", I mean that these modules are built into the node runtime.
+
+Although they are built in (we don't need to install them as packages), we still need to import them to make them available to our code.
+
+Whereas in front-end JavaScript we use `import` statements to gain functionality from other modules, in Node we generally use `require()`.
+
+For example, node has a core http library built in, so to use it in our program we need to load it with:
+
+```javascript
+const http = require("http");
+```
+
+> [!NOTE]
+> To use modules that are not part of Node core, you WILL first need to install them either globally (as we did for nodemon) or as project dependencies. We'll see lots of that shortly.
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="https://nodejs.org/api/modules.html"
+  variant="secondary"
+  icon="external"
+>
+  Node.js Modules Docs
+</LinkButton>
+
+### ⏭ Next Step
+
+[Working with HTTP](./09-http)

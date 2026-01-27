@@ -1,0 +1,66 @@
+---
+title: "Node Package Manager"
+description: "Introduction to NPM and package management."
+sidebar:
+  order: 4
+  label: "NPM"
+draft: false
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+
+## NPM, the Node Package Manager, is right at the heart of the Node.js ecosystem - and every Node driven project.
+
+It is included with the Node, free, open source, and an indispensable tool for Node development.
+
+NPM is used to install and manage packages, which for our purposes will consist of Node modules and dependencies for your projects.
+
+## Packages
+
+A package is usually a folder that contains a `package.json` which describes details of your project including any other packages that it depends upon.
+
+## Creating Packages
+
+To turn a project into a package, `cd` into the project root directory and run:
+
+```bash
+npm init
+```
+
+That will ask you a series of questions about your package and then generate a `package.json` file for you.
+
+To skip the boilerplate questions, you can provide the `-y` flag to use all of the default values.
+
+```bash
+npm init -y
+```
+
+> [!NOTE]
+> If you want to use npm to run your program, you can add an entry to the scripts property in package.json
+
+```json
+"scripts": {
+  "test": "echo \"Error: no test specified\" && exit 1",
+  "dev": "node app.js"
+},
+```
+
+Then, to run our program from the command line we can run:
+
+```bash
+npm run dev
+```
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="https://docs.npmjs.com/about-packages-and-modules#about-packages"
+  variant="secondary"
+  icon="external"
+>
+  About Packages
+</LinkButton>
+
+### ⏭ Next Step
+
+[Hello Node - First Package](./05-first-package)

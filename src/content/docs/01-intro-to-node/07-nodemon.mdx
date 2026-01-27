@@ -1,0 +1,98 @@
+---
+title: "nodemon for Hot Reloading"
+description: "Streamline your development workflow with automatic restarts."
+sidebar:
+  order: 7
+  label: "Nodemon"
+draft: false
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+
+## To streamline our development workflow we can use a CLI utility called nodemon to watch for changes to files in our project and restart the node process when a change event is detected.
+
+nodemon is a Node package, so we can install it with NPM.
+
+## Installing Packages Globally
+
+In this case we want to install nodemon as a utility for use anywhere on our machine, so we install it globally (as opposed to as a dependency of the project we're working).
+
+```bash
+npm install nodemon --global
+```
+
+![npm install nodemon global](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA24AAAAjCAIAAAAyKkbnAAAC8ElEQVR4Xu2b0W3DMAxE3R16lI7SkTrKjNIRMkozShdJh+hA3mIosBzbEi3q/KhIpfH4IYq2bQ8/CEAAAhCAAAQgAAEIQAACEIAABCAAAQhAAAL7Edj3+0JtIAABCEAAAhCAAAQgAAEIQAACEIAABCAAAQhAAAIQaETAKG4j8FSHAAQgAAEIQAACEIAABCAAAQhAAAIQgAAEIAABCOxHwChu+5lCbSAAAQhAAAIQgAAEIAABCEAAAhCAAAQgAAEIQAACjQgYxW0EnuoQgAAEIAABCEAAAhCAAAQgAAEIQAACEIAABCAAgf0IGMVtP1OoDQQgAAEIQAACEIAABCAAAQhAAAIQgAAEIAABCEAABBoRMIrbCDzVIQABCEAAAhCAAAQgAAEIQAACEIAABCAAAQhAAAL7ETCK236mUBsIQAACEIAABCAAAQhAAAIQgAAEIAABCEAAAhCAAARGI/D1/f39+fn58vLy73Ecxy3Lcl3XMAzTdL2/v/8Z+vn52U/f399j/d1+7LpuH+cYY5x3+r7f3no6nWb9/fP2W9W+77eAdB6JnyVwHMe+7/u+3/f98Xg8Ho/r9Xq5XNJ4Pp/P5/P1er1er8k+n8/L5XIPDY/H436/Xy6X5N9sHo/H/X5fr9dZf/98e6u67/vH4/F8PjOJ+75nueucpvF93xwzAt73/TRN4zj2fT+O4ziO0zSlaVb198/bb1XjOI7jOI7jOI7TNPV9n63kLmBawLScLGDzNKUFz9KmaUpVf397e/v7q/P5zCZuHH1a3LMs2wKy4G0BaZ3m+Hw+s/7++fZWVTZPC8gCpgWkxT3L8jRNacHbAtLiZVk2dT+fz1l//3x7qzqO4ziO+yb+hV7v3GY/f3/iv9Dr94n+L/T6LaL/20z/F3r9xtD/hV6/EfR/ode/+fv/Qq/f9vm/0Os3ef4v9PpNnf8LvX7zzL/Q68eOqL4AL4afw4U1y3EAAAAASUVORK5CYII=)
+
+> [!CAUTION]
+> If you run into permissions errors with the above, you'll need to run it with elevated permissions.
+>
+> - On Windows, open PowerShell, but run it as administrator by right-clicking on PowerShell in your start menu and selecting "Run as Administrator".
+> - On Mac you don't need to change terminals, you just need to prefix the command with `sudo`.
+
+_Note: When we install dependencies globally they do not make any changes to the package dependencies listed in `package.json`_
+
+## Running and Watching Hello Node for Changes
+
+In your terminal, in the root directory of your project, run:
+
+```bash
+nodemon app.js
+```
+
+![nodemon appjs running](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA4oAAAAmCAIAAAAQ+t0xAAADFElEQVR4Xu2b0W3DMAxE3R16lI7SkTrKjNIRMkozShdJh+hA0WIosBzbEi3q/KhIpfH4IYq2bQ8/CEAAAhCAAAQgAAEIQAACEIAABCAAAQhAAAIQgAAEIOBCwBSKC3VqQQACEIAABCAAAQhAAAIQgAAEIAABCEAAAhCAAAQgYCJgCsUEmpIQgAAEIAABCEAAAhCAAAQgAAEIQAACEIAABCAAAQh4EDCF4gGdKhCAAAQgAAEIQAACEIAABCAAAQhAAAIQgAAEIAABCJgImEIxgSYkBCAAAQhAAAIQgAAEIAABCEAAAhCAAAQgAAEIQAACHgRModhAp23bj4+Pl5eXf4/jOG6n02ld1zAM03S9v7//Gfr5+dlP39/fY/3dfuy67nSeY4zx3un7fnnr6XSa9ffP229V+75fAtJ5JH6WwHEc+77v+37f98fj8Xg8rtfr5XJJ4/l8Pp/P1+v1er0m+3w+L5fLPTS8v7/v9/vlckn+zebxeNzv9/V6nfX3z7e3qvu+fzwez+czk7jve5a7zmkav31vjhkB7/t+mqZxHPu+H8dxHMdpmtI0q/r75+23qnEcx3Ecx3Ecx2ma+r7PVnIXMC1gWk4WsHma0oJnadM0paq/v729/f3V+XxmEzeOPi3uWZZtAVnwtoC0TnN8Pp9Zf/98e6sqm6cFZAHTAtLinmV5mqY04W0BafGyLJu6n8/nrL9/vr1VHcdxHMd9E/9Cr3dus5+/P/Ff6PX7RP8Xev0W0f9tpv8LvX5j6P9Cr98I+r/Q69/8/X+h12/7/F/o9Zs8/xd6/abO/4Vev3nmX+j1Y0dUX80Ahx/7l7V1AAAAAElFTkSuQmCC)
+
+Nodemon ran `node app.js` and is now monitoring for changes.
+
+Leave your terminal open, edit the `console.log` statement in `app.js`, then save.
+
+![nodemon restart output](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA4oAAAAmCAIAAAAQ+t0xAAADDUlEQVR4Xu2b0W3DMAxE3R16lI7SkTrKjNIRMkozShdJh+hA0WIosBzbEi3q/KhIpfH4IYq2bQ8/CEAAAhCAAAQgAAEIQAACEIAABCAAAQhAAAIQgAAEIOBCwBSKC3VqQQACEIAABCAAAQhAAAIQgAAEIAABCEAAAhCAAAQgYCJgCsUEmpIQgAAEIAABCEAAAhCAAAQgAAEIQAACEIAABCAAAQh4EDCF4gGdKhCAAAQgAAEIQAACEIAABCAAAQhAAAIQgAAEIAABCJgImEIxgSYkBCAAAQhAAAIQgAAEIAABCEAAAhCAAAQgAAEIQAACHgRModhAp23b9/f3l5eXf4/jOG6n02ld1zAM03S9v7//Gfr5+dlP39/fY/3dfuy67nSeY4zx3un7fnnr6XSa9ffP229V+75fAtJ5JH6WwHEc+77v+37f98fj8Xg8rtfr5XJJ4/l8Pp/P1+v1er0m+3w+L5fLPTS8v7/v9/vlckn+zebxeNzv9/V6nfX3z7e3qvu+fzwez+czk7jve5a7zmkav31vjhkB7/t+mqZxHPu+H8dxHMdpmtI0q/r75+23qnEcx3Ecx3Ecx2ma+r7PVnIXMC1gWk4WsHma0oJnadM0paq/v729/f3V+XxmEzeOPi3uWZZtAVnwtoC0TnN8Pp9Zf/98e6sqm6cFZAHTAtLinmV5mqY04W0BafGyLJu6n19/zvX98+2t6jiO4zjOm/gvdHnndv39+Yn/QpfvE/1f6PItov/bdP8Xunxj6P9Cl28E/V/o8jd//l/o8m2f/wtdvsnzf6HLN3X+L3T55pl/ocuPHVF9AZgzhx+k6wQeAAAAAElFTkSuQmCC)
+
+### **Installing Packages As Dev Dependencies**
+
+For the upcoming Assignment 01 we will need to install nodemon as a dev dependency of the project anyways.
+
+To do so you will need to run:
+
+```bash
+npm install nodemon --save-dev
+```
+
+After running the above you should see nodemon listed as a dev dependency in `package.json`
+
+![package json devDependencies](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACXCAIAAAC0u+n9AAAF1UlEQVR4Xu2d0XbbMAxEx57//8uuU6dtYjtJgCAJ3J7zaW0kggcBgrjY+/v7+/v7j38gAAEQAAEQAIFTCHz476n2KBQIgAAIgAAIgMBPCChh4QsQAAEQAAEQOIyAEtbhBlEeCIAACIAACIxCWA/f399fX18P397e/v7+nuaw+Hlc7u3tbeLn8ccYrz9+nJd7KDeP78/jR12uHy+fv958+ebL+29e/vxe3vx7/Hheflz++OHL5Y8f31+ef1z++PH95fnH5Y8f31+ef1z++PH95fnH5Y8f31+ef1z++PH95fnH5Y8f31+ef1z++PH95fnH5Y8f31+ef1z++PH95fnH5Y8f31+ef1z++PH95fnH5Y8f31+ef1z++PH95fnH5Y/3e/n2R6/fX52vpzn++PF+L9/+6PX7q/P1NMcfP97v5dsfvX5/db6e5vjjx/u9fPuj1++vzlfSHFd+vFzz/ePyn+ePH99fnn9c/vjx/eX5x+WPH99fnn9c/vjx/eX5x+WPH99fnn9c/vjx/eX5x+WPH99fnn9c/vjx/eX5x+WPH99fnn9c/vjx/eX5x+WPH99fnn9c/vjx/eX5x+WPH99fnn9c/vjx/eX5x+WPH99fnn9c/vjx/eX5x+WPH99fnn9c/vjx/eX5x+WPH99fnn9c/vjx/eX5x+WPH99fnn9c/vjx/eX5x+WPH99fnn9c//7x+8/v//L99f2/vnz58fm/vnz58fm/vv/l+398+f76/l9fvvz4/F9fvvz4/F/f//L9P758f33/ry9ffnz+ry9ffnz+r+9/+f4fX76/vv/Xly8/Pv/Xly8/Pv/X9798/48v31/f/+vLlx+f/+vLlx+f/+v7X77/x5fvr+//9eXLj8//9eXLj8//9f0v3//jy/fX9//68uXH5//68uXH5//6/pfv//Hl++v7f3358uPzf3358uPzf33/y/f/+PL99f2/vnz58fm/vnz58fm/vv/l+398+f76/l9fvvz4/F9fvvn4/vP7v3x/ff+vL19+fP6vL19+fP6v73/5/h9fvr++/9eXLz8+/9eXLz8+/9f3v3z/jy/fX9//68uXH5//68uXH5//6/tfvv/Hl++v7//15cuPz//15cuPz//1/S/f/+PL99f3//ry5cfn//ry5cfn//r+l+//8eX76/t/ffny4/N/ffny4/N/ff/L9//48v31/b++fPnx+b++fPnx+b++/03fv8v/fn68uPzf3358uPzf33/y/f/+LL/178B8f3H5T/PHz++vzz/uPzx4/vL84/LHz++vzz/uPjx4/vL84/LHz++vzz/uPzx4/vL84/LHz++vzz/uPzx4/vL84/LHz++vzz/uPzx4/vL84/LHz++vzz/uPzx4/vL84/LHz++vzz/uPzx4/vL84/LHz++vzz/uPzx4/vL84/LHz++vzz/uPzx4/vL84/LHz++vzz/uPzx4/vL84/LHz++vzz/uPzx4/vL84/LHz++vzz/uPzx4/vL84/LHz++vzz/uPzx4/vL84/LHz++vzz/uPzx4/vL84/LHz++vzz/uPzx4/vL84/LHz++vzz/uPzx4/vL84/LHz++vzz/uPzx4/vL84/LHz++vzz/uPzx4/vL84/LHz++vzz/uPzx4/vL84/LHz++vzz/uPzx4/vL84/LHz++vzz/uPzx4/vL80+/P93v59kev31+dr6c5/vjxfi/f/uj1+6vz9TTHHz/e7+XbH71+f3W+kub4/v7ef+z68eP7y/OPyx8/vr88/7j88eP7y/OPyx8/vr88/7j88eP7y/OPyx8/vr88/7j88eP7y/OPyx8/vr88/7j88eP7y/OPyx8/vr88/7j88eP7y/OPyx8/vr88/7j88eP7y/OPyx8/vr88/7j88eP7y/OPyx8/vr88/7j88eP7y/OPyx8/vr88/7j88eP7y/OPyx8/vr88/7j88eP7y/MPCAz+vwIIgAAIgAAIgMAJBP4BKukZfL30114AAAAASUVORK5CYII=)
+
+You will also see a `node_modules` directory and `package-lock.json` added to your project.
+
+> [!TIP]
+> If you don't already have one, now would be the best time to add a `.gitignore` file that excludes `node_modules` from being tracked by git.
+
+### **Using nodemon via npm**
+
+If we want to run your program via nodemon using npm, edit your `package.json` as follows:
+
+```json
+"scripts": {
+  "test": "echo \"Error: no test specified\" && exit 1",
+  "dev": "nodemon app"
+},
+```
+
+With that in place, we can run the following from the command line to start our program and have it automatically restart when changes are detected:
+
+```bash
+npm run dev
+```
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="https://www.npmjs.com/package/nodemon"
+  variant="secondary"
+  icon="external"
+>
+  Nodemon Package
+</LinkButton>
+
+### ⏭ Next Step
+
+[Core Node Modules](./08-core-modules)

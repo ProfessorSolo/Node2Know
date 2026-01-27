@@ -1,0 +1,51 @@
+---
+title: "Hello Node - Our First Package"
+description: "Creating your first Node.js package step-by-step."
+sidebar:
+  order: 5
+  label: "First Package"
+draft: false
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+
+## Without further ado, let's create a node package.
+
+Open your terminal or PowerShell, navigate to your HelloNode directory, and run:
+
+```bash
+npm init
+```
+
+Accept the defaults for package name and version, enter a witty description (optional), when prompted for "entry point:" enter `app.js`, press enter several times to skip down to author and then enter your name and choose your license (or accept the default, ISC).
+
+![npm init process](data:image/png;base64,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)
+
+Hit enter one more time and you should see a `package.json` file added to the root of your project.
+
+We'll be exploring `package.json` much more as soon as we start adding dependencies. For now, let's code our app!
+
+### **App.js**
+
+Now create a file called `app.js` in the root of your project, enter the following, then save.
+
+```javascript
+"use strict";
+console.log("Hello Node");
+```
+
+Next... we run it!
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="https://nodejs.dev/en/learn/"
+  variant="secondary"
+  icon="external"
+>
+  Create Your First Node App
+</LinkButton>
+
+### ⏭ Next Step
+
+[Running a Node Program](./06-running-node)

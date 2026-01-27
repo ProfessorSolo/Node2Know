@@ -1,0 +1,79 @@
+---
+title: "Loading Modules the Common JS way"
+description: "Understanding require and module.exports."
+sidebar:
+  order: 10
+  label: "CommonJS Modules"
+draft: false
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+
+## To create a custom module and load it into another module in Node.js we call `require()`
+
+`./app.js`
+
+```javascript
+// load the http module
+const http = require("http");
+
+// load our custom copyright function from an external module
+const { generateCopyright } = require("./utils/utils");
+
+// variables that the server will need
+const hostname = "127.0.0.1";
+const port = 3000;
+
+// pass in our request handling callback to createServer
+const server = http.createServer((req, res) => {
+  // prepare and send an OK response
+  res.statusCode = 200;
+  res.setHeader("Content-Type", "text/html");
+  const copyright = generateCopyright("Josh Solomon");
+  res.end(`<h1>Hello Node Server</h1><footer>${copyright}</footer>`);
+});
+
+// register the server to listen for requests
+server.listen(port, hostname, () => {
+  console.log(`Server running at http://${hostname}:${port}/`);
+});
+```
+
+`./utils/utils.js`
+
+```javascript
+// Set strict mode
+"use strict";
+
+exports.generateCopyright = (author) => {
+  return `&copy; ${new Date().getFullYear()} ${author}`;
+};
+```
+
+### **Require Without Destructuring**
+
+Instead of using destructuring to import specific variables or functions by name, we can also not destructure and use dot syntax to access things (utility functions, in this case) relative to the global scope of the file.
+
+```javascript
+const utils = require("./utils/utils");
+```
+
+#### **Calling the Function**
+
+```javascript
+utils.generateCopyright("Josh Solomon");
+```
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="https://nodejs.org/api/modules.html#modules-commonjs-modules"
+  variant="secondary"
+  icon="external"
+>
+  CommonJS Docs
+</LinkButton>
+
+### ⏭ Next Step
+
+[Working with File System (fs)](./11-file-system)

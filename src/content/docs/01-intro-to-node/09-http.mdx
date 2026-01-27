@@ -1,0 +1,68 @@
+---
+title: "Working with HTTP"
+description: "Creating a basic HTTP server with Node.js."
+sidebar:
+  order: 9
+  label: "HTTP"
+draft: false
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+
+## The http module allows our node application to listen for HTTP requests and send responses accordingly.
+
+Fundamentally, that is what all a web server does.
+
+Though we'll very soon be using Express to manage our web server, we can create a server in "plain" Node.js by loading the http core module and then passing a callback function to its `http.createServer()` method.
+
+The callback function receives the request and response object then prepared and sends the appropriate response.
+
+Once we defined our server, we then call its `listen()` method passing in the hostname and port to listen on.
+
+### **Minimalist HTTP Server**
+
+```javascript
+"use strict";
+
+// load the http module
+const http = require("http");
+
+// variables that the server will need
+const hostname = "127.0.0.1";
+const port = 3000;
+
+// create our server by passing a callback to createServer
+const server = http.createServer((req, res) => {
+  // prepare and send an OK response
+  res.statusCode = 200;
+  res.setHeader("Content-Type", "text/plain");
+  res.end("Hello Node Server");
+});
+
+// register the server to listen for requests
+server.listen(port, hostname, () => {
+  console.log(`Server running at http://${hostname}:${port}/`);
+});
+```
+
+To test out our new-fangled server:
+
+- Start the app if it is not already running
+  - `npm run dev`
+- Open a browser and navigate to [http://127.0.0.1:3000/](http://127.0.0.1:3000/)
+
+![node server in browser](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAARoAAABWCAIAAAArb+V0AAADWUlEQVR4Xu2Z0W3DMAxE3R16lI7SkTrKjNIRMkozShdJh+hA3mIosBzbEu0K+SFQpXg8fIii7bquHwQgAIG/Eth+7Qe1gQAEIBBFNAgYCEAAohE1EIAARCNqIAABiEbUQAACEI2ogQAEIBpRAwEIQDSiBgIQgGhEDQQgANGIGghAAKIRNRCAAEQjaiAAAeyidV3Xtm2Xy+V2u93v9/v9/ng8LpfLPJ/P5/P1er1er8k+n8/L5XIPDY/H436/Xy6X5N9sHo/H/X5fr9dZf/98e6u67/vH4/F8PjOJ+75nueucpvF93xwzAt73/TRN4zj2fT+O4ziO0zSlaVb198/bb1XjOI7jOI7jOI7TNPV9n63kLmBawLScLGDzNKUFz9KmaUpVf397e/v7q/P5zCZuHH1a3LMs2wKy4G0BaZ3m+Hw+s/7++fZWVTZPC8gCpgWkxT3L8jRNacHbAtLiZVk2dT+fz1l//3x7q7rve5Z3brOfvz/xX+jyfaL/C12+RfR/m+n/Qq/fGPq/0Os3gv4v9Po3f/9f6PXbPv8Xev0mz/+FXr+p83+h12+e+Rd6/dgR1Re+2+wX4222UwAAAABJRU5ErkJggg==)
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="https://nodejs.org/api/http.html"
+  variant="secondary"
+  icon="external"
+>
+  Node.js HTTP Docs
+</LinkButton>
+
+### ⏭ Next Step
+
+[Loading Modules (CommonJS)](./10-common-js)

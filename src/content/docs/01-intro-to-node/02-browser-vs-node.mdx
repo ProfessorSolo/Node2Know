@@ -1,0 +1,54 @@
+---
+title: "Node.js vs JavaScript in the Browser"
+description: "Understanding the key differences in runtime environments."
+sidebar:
+  order: 2
+  label: "Node vs Browser"
+draft: false
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+
+## Here are some of the key differences between running JavaScript in the browser versus Node.js.
+
+### **Where it Runs**
+
+Client side (front-end) JavaScript can run in any browser that includes a JavaScript engine.
+
+Node.js, on the other hand, runs outside the browser. Node.js itself is a C++ runtime wrapped around the Chromium V8 Engine.
+
+### **What it can Access and Interact With**
+
+When JavaScript is run in the browser, we are restricted (sandboxed) to the browser environment itself and, most of the time, we are interacting with the DOM.
+
+Node.js, however, runs on whatever machine it is installed on and has access to as much of the file system as any other program.
+
+### **What is the Root Object**
+
+For JavaScript in the browser the root object is the window.
+
+Node.js, by contrast, has no window object.
+
+In Node.js the root is the global object.
+
+```javascript
+// browser
+window.setTimeout(console.log("Hello, JS."), 3000);
+
+// node
+global.setTimeout(console.log("Hello, Node."), 3000);
+```
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="https://nodejs.org/api/globals.html#global"
+  variant="secondary"
+  icon="external"
+>
+  Node.js Globals Docs
+</LinkButton>
+
+### ⏭ Next Step
+
+[The Global Object](./03-global-object)

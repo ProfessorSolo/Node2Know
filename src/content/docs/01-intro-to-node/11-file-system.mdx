@@ -1,0 +1,70 @@
+---
+title: "Working with the File System (fs)"
+description: "Reading and writing files with the fs module."
+sidebar:
+  order: 11
+  label: "File System (fs)"
+draft: false
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+
+## A key difference between JavaScript in the browser and Node.js is that in the browser our script is sand-boxed for security, but in Node.js we can directly access to files on the file system that the program is running on.
+
+### **Load promises functionality from fs Module**
+
+The fs module has a promises based API that we can use to asynchronous data stream.  
+We can use `.then()` and `.catch()` to either use the data when it finishes loading or throw an error if it failed.
+
+```javascript
+// Set strict mode
+"use strict";
+
+// Load the core HTTP module so we can set up server
+const http = require("http");
+
+// Load fs so we can interact with file system and load/serve html from files on disk
+// We want the promises version so we can use .then and .catch when loading our static profile HTML
+const fs = require("fs").promises;
+
+// hostname and port are needed in order for the http server to listen for requests
+const hostname = "127.0.0.1";
+const port = process.env.PORT || 3000;
+
+// Initialize our server
+const server = http.createServer((req, res) => {
+  fs.readFile(__dirname + "/partials/footer.html")
+    .then((contents) => {
+      console.log(contents);
+      //   prepare and send an OK response
+      res.statusCode = 200;
+      res.setHeader("Content-Type", "text/html");
+      res.end(`<h1>Hello Node Server</h1>${contents}`);
+    })
+    .catch((err) => {
+      res.writeHead(500);
+      res.end(err);
+    });
+});
+
+// Start the HTTP server
+server.listen(port, hostname, () => {
+  console.log(`Server running at http://${hostname}:${port}/`);
+});
+```
+
+_Note: I am using `__dirname` to build the path to my file. Though it looks like `__dirname` is in the global object, it's actually part of the module._
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="https://nodejs.org/api/fs.html"
+  variant="secondary"
+  icon="external"
+>
+  File System Docs
+</LinkButton>
+
+### ⏭ Next Step
+
+[Return to Index](/node2know)
