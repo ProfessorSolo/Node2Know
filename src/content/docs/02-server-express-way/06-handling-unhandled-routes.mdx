@@ -1,0 +1,51 @@
+---
+title: "Dead Ends"
+description: "Handling unhandled routes and 404s."
+sidebar:
+  order: 6
+  label: "06 - Handling Unhandled Routes"
+  draft: false
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+
+## The Catch-All
+
+By default, if a request makes it to the bottom of your file without matching any route, Express just shrugs. We need a designated "Dead End" sign for lost drivers.
+
+Express matches routes in order. We use `app.all('*')` as the final safety net.
+
+- **app.all**: Matches ALL methods (GET, POST, etc.)
+- **'\*'**: Matches ALL paths.
+
+```javascript
+// ... all other routes above ...
+
+// The "Lost Driver" Handler
+app.all("*", (req, res) => {
+  res.status(404).send("404: You seem to be off the map, friend.");
+});
+```
+
+> **Professor Solo's Directive:**
+> Place this **last**. If you put this at the top, it catches everything, and nobody gets to where they're going. It's a road block, not a checkpoint.
+
+---
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="https://expressjs.com/en/starter/faq.html#how-do-i-handle-404-responses"
+  icon="external"
+  variant="secondary"
+>
+  Express FAQ: 404s
+</LinkButton>
+
+<div class="next-step">
+  <h3>⏭ Local Roads</h3>
+  <p>
+    Our main highway is getting congested. Time to build some local roads
+    (Modules).
+  </p>
+</div>

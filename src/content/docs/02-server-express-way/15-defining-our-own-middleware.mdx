@@ -1,0 +1,60 @@
+---
+title: "Custom Checkpoints"
+description: "Writing your own middleware functions."
+sidebar:
+  order: 15
+  label: "15 - Custom Middleware"
+  draft: false
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+
+## Hiring Constraints
+
+We know that middleware sits in the middle. But how do we write our own?
+
+A middleware function is just a function with 3 arguments:
+
+```javascript
+const myMiddleware = (req, res, next) => {
+  // 1. Do something
+  console.log("A request is passing through.");
+
+  // 2. Pass control to the next handler
+  next();
+};
+
+app.use(myMiddleware);
+```
+
+### The Blockade
+
+Middleware can also deny entry. If a condition isn't met, we can send a response _instead_ of calling `next()`.
+
+```javascript
+const authCheck = (req, res, next) => {
+  if (req.query.pass === "vip") {
+    next(); // Access Granted
+  } else {
+    // Access Denied. The car stops here.
+    res.status(403).send("STOP. Toll Unpaid. Turn around.");
+  }
+};
+```
+
+---
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="https://expressjs.com/en/guide/writing-middleware.html"
+  icon="external"
+  variant="secondary"
+>
+  Express: Writing Middleware
+</LinkButton>
+
+<div class="next-step">
+  <h3>⏭ The Gauntlet</h3>
+  <p>One checkpoint is fine. But what if we need a whole security team?</p>
+</div>

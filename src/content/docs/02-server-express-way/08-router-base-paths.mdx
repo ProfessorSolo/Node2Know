@@ -1,0 +1,56 @@
+---
+title: "On-Ramps"
+description: "Mounting routers to a base path."
+sidebar:
+  order: 8
+  label: "08 - Router Base Paths"
+  draft: false
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+
+## Merging Traffic
+
+We have our `thingRouter.js`, but `app.js` needs to know about it. We connect them using `app.use()`, and we give it a **Base Path**.
+
+### `app.js`
+
+```javascript
+const thingRouter = require("./routes/thingRouter");
+
+// Mount the router
+// Any request starting with "/things" goes here
+app.use("/things", thingRouter);
+```
+
+### Context Awareness
+
+The magic here is that inside `thingRouter.js`, the router **doesn't know** about the `/things` prefix. It only cares about what comes _after_.
+
+- Request: `/things` -> Matches `router.get('/')` inside `thingRouter.js`.
+- Request: `/things/42` -> Matches `router.get('/:id')`.
+
+We've effectively removed the repetitive `/things` prefix from inside the router file.
+
+> **Solo Warning:**
+> If you accidentally include `/things` inside the router file AND in the `app.use` base path, your URL becomes `/things/things/42`. Don't double-dip.
+
+---
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="https://expressjs.com/en/guide/routing.html#express-router"
+  icon="external"
+  variant="secondary"
+>
+  Express Guide: Router
+</LinkButton>
+
+<div class="next-step">
+  <h3>⏭ Delivery</h3>
+  <p>
+    Traffic is flowing. Now let's talk about the cargo. How do we send a
+    response?
+  </p>
+</div>

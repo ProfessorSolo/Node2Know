@@ -1,0 +1,56 @@
+---
+title: "The Trunk"
+description: "Handling optional data with Query Strings."
+sidebar:
+  order: 4
+  label: "04 - The Trunk (Query Strings)"
+  draft: false
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+
+## Extra Baggage
+
+Query strings are for extra baggage. They don't change the route path itself (the destination), but they carry extra info. You know, the stuff after the `?` in a URL.
+
+`http://localhost:3000/search?keyword=turbo&sort=desc`
+
+In standard HTTP parsing, you'd have to split this string manually. Express, being the luxury vehicle it is, parses these automatically into `req.query`.
+
+```javascript
+app.get("/search", (req, res) => {
+  const { keyword, sort } = req.query;
+
+  // req.query = { keyword: 'turbo', sort: 'desc' }
+
+  if (!keyword) {
+    return res.send("Please specify a keyword.");
+  }
+
+  res.send(`Searching for ${keyword} sorted by ${sort}`);
+});
+```
+
+### The Difference
+
+- **Params (`:id`)**: Essential to the resource. The ID _defines_ what you are fetching. (The Destination).
+- **Query (`?sort=desc`)**: Optional modifiers. Filtering, sorting, pagination. (The Luggage).
+
+If you don't send a query string, `req.query` is just an empty object. No baggage, no problem.
+
+---
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="https://masteringjs.io/tutorials/express/query-parameters"
+  icon="external"
+  variant="secondary"
+>
+  Mastering JS: Query Params
+</LinkButton>
+
+<div class="next-step">
+  <h3>⏭ Traffic Types</h3>
+  <p>Are we picking up or dropping off? Time to sort traffic by HTTP Method.</p>
+</div>

@@ -1,0 +1,77 @@
+---
+title: "Ignition"
+description: "Initializing the app and listening for traffic."
+sidebar:
+  order: 1
+  label: "01 - Ignition"
+  draft: false
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+
+## Turning the Key
+
+To get this machine on the road, we need to do three things:
+
+1.  **Require** the package.
+2.  **Initialize** the app (turn the key).
+3.  **Listen** on a port (step on the gas).
+
+### app.js
+
+```javascript
+"use strict";
+
+const express = require("express");
+const app = express(); // The Ignition
+
+// define the speed limit
+const PORT = process.env.PORT || 3000;
+
+// Hit the gas
+app.listen(PORT, () => {
+  console.log(`Create Process at [ ${process.pid} ]`);
+  console.log(`Listening on highway port: ${PORT}`);
+});
+```
+
+> **Solo Warning:**
+> Note that `app.listen` is asynchronous. The callback function runs _after_ the server successfully binds to the port. Don't try to drive before the engine starts.
+
+---
+
+## Environment Variables: The Road Conditions
+
+You see that `process.env.PORT` line? That's us checking the road conditions.
+
+When we deploy this server to a cloud host (the autobahn), _they_ tell us which lane (port) to drive in. We don't get to pick. If `process.env.PORT` is defined by the environment, we use it. If not (like when we're testing in the garage), we fall back to `3000`.
+
+**process.env** is the global dashboard for your Node process. It holds all the critical stats: API keys, database URLs, and port numbers.
+
+### Checking the Dashboard
+
+You can check your current environment variables in the REPL:
+
+```bash
+$ node
+> console.log(process.env)
+```
+
+If you see a wall of text, congratulations, your dashboard is working.
+
+---
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="https://nodejs.org/en/learn/command-line/how-to-read-environment-variables-from-nodejs"
+  icon="external"
+  variant="secondary"
+>
+  Node.js Env Vars Guide
+</LinkButton>
+
+<div class="next-step">
+  <h3>⏭ Basic Directions</h3>
+  <p>Engine's running. Now we need to tell the traffic where to go.</p>
+</div>

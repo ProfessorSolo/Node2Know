@@ -1,0 +1,54 @@
+---
+title: "The Toll Booths"
+description: "Understanding the Middleware Stack."
+sidebar:
+  order: 14
+  label: "14 - Middleware Stack"
+  draft: false
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+
+## The Checkpoints
+
+You're driving down the highway. You hit a toll booth. You stop, pay the toll, the arm goes up, and you continue to the next section. **Middleware** functions in Express are exactly like these toll booths.
+
+They sit between the raw request coming in and the final route handler. They can stop the car (send a response), inspect the trunk (modify `req`), or just wave it through to the next booth (call `next()`).
+
+### The Visual Anchor (The Toll Booth)
+
+<img
+  src="/assets/lessons/02-server-express-way/04-toll-booth.png"
+  alt="A high-tech digital toll booth / security checkpoint. Scanners shooting laser grids over passing data packets."
+  width="100%"
+/>
+
+_Fig 1: Inspect, Process, Pass._
+
+---
+
+## The next() Function
+
+Middleware functions take **three** arguments: `req`, `res`, and `next`.
+
+`next` is a function that, when called, passes control to the _next_ middleware function in the stack.
+
+> **Professor Solo's Directive:**
+> If you don't call `next()` or send a response, the request hangs forever. The driver sits there honking until the connection times out. Don't be that guy.
+
+---
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="https://expressjs.com/en/guide/using-middleware.html"
+  icon="external"
+  variant="secondary"
+>
+  Express Middleware Guide
+</LinkButton>
+
+<div class="next-step">
+  <h3>⏭ Custom Checkpoints</h3>
+  <p>Let's build our own toll booth.</p>
+</div>

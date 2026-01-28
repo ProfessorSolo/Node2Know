@@ -1,0 +1,66 @@
+---
+title: "Standard Container"
+description: "Sending JSON responses for modern APIs."
+sidebar:
+  order: 13
+  label: "13 - Sending JSON"
+  draft: false
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+
+## The Industry Standard
+
+In the modern web stack, we barely send HTML files from the server anymore. We send raw data, and the client (React, Vue, mobile app) renders it. The standard container for this data is **JSON**.
+
+Express makes this exceedingly easy. Instead of `res.send()`, we use `res.json()`.
+
+### The Visual Anchor (Digital Cargo)
+
+<img
+  src="/assets/lessons/02-server-express-way/03-digital-cargo.png"
+  alt="A futuristic armored transport truck speeding down a neon highway. The back is open revealing glowing cubes of JSON data."
+  width="100%"
+/>
+
+_Fig 1: Delivering structured data._
+
+### res.json()
+
+```javascript
+app.get("/api/user", (req, res) => {
+  const user = {
+    name: "Han Solo",
+    ship: "Falcon",
+    parsecs: 12,
+  };
+
+  // The Gold Standard
+  res.json(user);
+});
+```
+
+`res.json()` does two important things:
+
+1.  Converts your JavaScript object/array into a JSON string.
+2.  Sets the `Content-Type` header to `application/json` automatically.
+
+---
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="https://expressjs.com/en/4x/api.html#res.json"
+  icon="external"
+  variant="secondary"
+>
+  Express API: res.json()
+</LinkButton>
+
+<div class="next-step">
+  <h3>⏭ The Toll Booths</h3>
+  <p>
+    We've mastered delivery. Now let's talk about security and the Middleware
+    Stack.
+  </p>
+</div>

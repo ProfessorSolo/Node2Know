@@ -1,0 +1,47 @@
+---
+title: "GPS"
+description: "Navigating the file system with the Path module."
+sidebar:
+  order: 12
+  label: "12 - Path Finding"
+  draft: false
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+
+## The Path Module
+
+We need to construct the path to our file. We _could_ try to smash strings together like `__dirname + '/pages/index.html'`, but that's reckless driving. Windows uses backslashes `\`, Mac/Linux use forward slashes `/`. String concatenation often results in broken paths.
+
+We use the core `path` module to handle this chaos.
+
+```javascript
+const path = require("path");
+
+app.get("/", (req, res) => {
+  // __dirname = The directory where THIS script lives
+  // We join it with the relative path to the file
+  const fullPath = path.join(__dirname, "pages", "index.html");
+
+  res.sendFile(fullPath);
+});
+```
+
+`path.join()` is smart. It handles the separators, and it even resolves `..` (parent directory) segments correctly if you need to back up a level.
+
+---
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="https://nodejs.org/api/path.html"
+  icon="external"
+  variant="secondary"
+>
+  Node.js Path API
+</LinkButton>
+
+<div class="next-step">
+  <h3>⏭ Standard Container</h3>
+  <p>Files are great, but modern apps speak JSON.</p>
+</div>

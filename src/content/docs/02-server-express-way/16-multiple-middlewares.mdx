@@ -1,0 +1,50 @@
+---
+title: "The Gauntlet"
+description: "Chaining multiple middleware functions."
+sidebar:
+  order: 16
+  label: "16 - Multiple Middlewares"
+  draft: false
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+
+## Chain of Command
+
+You don't just have to rely on `app.use()` (global middleware). You can line up multiple middleware functions for a specific route.
+
+```javascript
+app.get(
+  "/vip-lounge",
+  logger, // 1. Log the attempt
+  authCheck, // 2. Check the ID
+  suitCheck, // 3. Check the dress code
+  (req, res) => {
+    // 4. Finally, let them in
+    res.send("Welcome to the Platinum Club.");
+  },
+);
+```
+
+Express runs them in order/sequence. If _any_ of them fail to call `next()`, the chain breaks and the request hangs (or ends there).
+
+### Reusability
+
+This allows us to write small, focused tools (logging, auth, validation) and snap them together like Lego bricks to build complex security systems.
+
+---
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="https://expressjs.com/en/5x/api.html#app.method"
+  icon="external"
+  variant="secondary"
+>
+  Express API: App Methods
+</LinkButton>
+
+<div class="next-step">
+  <h3>⏭ Surveillance</h3>
+  <p>Writing loggers is boring. Let's install a camera.</p>
+</div>

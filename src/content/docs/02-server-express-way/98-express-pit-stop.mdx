@@ -1,0 +1,91 @@
+---
+title: "The Pit Stop"
+description: "Refuel, repair, and get back in the race. Professor Solo’s Service Station Challenge."
+sidebar:
+  order: 98
+  label: "98 - The Pit Stop"
+  draft: false
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+
+## Service Station Challenge
+
+You've been red-lining the engine for 18 lessons. Time to pull over and check the diagnostics. This lab isn't just about reading the manual; it's about getting your hands greasy.
+
+> **Professor Solo's Directive:**
+> Speed is nothing without control. Build this API like you're tuning a race car. Efficient, clean, and no loose bolts (unhandled errors).
+
+### The Visual Anchor (The Pit Crew)
+
+<img
+  src="/assets/lessons/02-server-express-way/98-pit-crew.png"
+  alt="A high-tech cyberpunk pit crew servicing a sleek code-racer. Robotic arms adjusting parameters, neon diagnostic screens showing 'API STATUS: OPTIMAL'. The vibe is urgent but precise."
+  width="100%"
+/>
+
+_Fig 1: Solo's Garage. Where rubber meets the code._
+
+---
+
+## Lab Specifications: The "Holo-Garage" API
+
+Your client, a futuristic vehicle modification shop, needs an API to manage their inventory of aftermarket parts.
+
+### Phase 1: The Foundation (Chassis)
+
+1.  **Initialize** a new project called `bolo-garage-api`.
+2.  **Install** `express` and `morgan`.
+3.  **Create** an `app.js` entry point.
+4.  **Listen** on `process.env.PORT` (or 4000).
+
+### Phase 2: Traffic Control (Routing)
+
+Create a `partsRouter.js` and mount it at `/parts`. It needs to handle:
+
+- `GET /` -> Return a list of all parts (JSON).
+- `GET /:id` -> Return a specific part by ID.
+  - _Bonus:_ If ID doesn't exist, send a 404 with a witty error message.
+- `POST /` -> "Create" a new part (just log the body and send back a 201 status with the mock data).
+
+### Phase 3: Security Check (Middleware)
+
+Write a custom middleware called `mechanicCheck`.
+
+- It should look for a query param `?role=mechanic`.
+- If present, let them through.
+- If missing, send a 403: "Unauthorized. Step away from the vehicle."
+- Apply this middleware ONLY to the `POST` route.
+
+### Phase 4: Storage (Static)
+
+Create a `public` folder. Add a text file named `manifest.txt` with a list of "Authorized Mods". serve this folder using `express.static`.
+
+---
+
+## Acceptance Criteria
+
+- [ ] Server starts without crashing.
+- [ ] `GET /parts` returns JSON.
+- [ ] `POST /parts` is blocked without the mechanic role.
+- [ ] Visiting `/manifest.txt` in the browser downloads/views the file.
+- [ ] Global logging is active via Morgan.
+
+---
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="https://expressjs.com/en/starter/generator.html"
+  icon="external"
+  variant="secondary"
+>
+  Express Generator (For Future Reference)
+</LinkButton>
+
+<div class="next-step">
+  <h3>⏭ The Map</h3>
+  <p>
+    You survived the garage. Take this map with you. It's dangerous to go alone.
+  </p>
+</div>

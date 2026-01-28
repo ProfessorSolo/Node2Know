@@ -1,0 +1,69 @@
+---
+title: "Local Roads"
+description: "Breaking up the monolith with Express Router."
+sidebar:
+  order: 7
+  label: "07 - Modular Routers"
+  draft: false
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+
+## The Traffic Jam
+
+If you keep piling every single route into your main `app.js` file, you're going to create a massive traffic jam. Navigating a 500-line file to find one route is like trying to drive through downtown during rush hour—inefficient and infuriating.
+
+We use **Express Router** to build modular, "local" road networks.
+
+### The Visual Anchor (Express Lanes)
+
+<img
+  src="/assets/lessons/02-server-express-way/02-express-lanes.png"
+  alt="A sleek, multi-level highway system where specific types of futuristic vehicles are segregated into their own dedicated, glowing lanes."
+  width="100%"
+/>
+
+_Fig 1: Segregated Traffic. Clean lines, high speed._
+
+---
+
+## The Router Module
+
+1.  **Create a Router File** (e.g., `routes/thingRouter.js`).
+2.  **Define Routes** on that router, not the main app.
+3.  **Export** the router.
+
+### `routes/thingRouter.js`
+
+```javascript
+const express = require("express");
+const router = express.Router(); // A mini-app instance
+
+// We define routes on 'router' just like 'app'
+router.get("/", (req, res) => res.send("List of Things"));
+router.get("/:id", (req, res) => res.send("Details of Thing"));
+
+module.exports = router;
+```
+
+Now we have a self-contained module. But it's not connected to the highway yet.
+
+---
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="https://expressjs.com/en/4x/api.html#router"
+  icon="external"
+  variant="secondary"
+>
+  Express Router API
+</LinkButton>
+
+<div class="next-step">
+  <h3>⏭ On-Ramps</h3>
+  <p>
+    The local road is built. Now we need to connect it to the main highway using
+    a Base Path.
+  </p>
+</div>

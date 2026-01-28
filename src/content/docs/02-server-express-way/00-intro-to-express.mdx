@@ -1,0 +1,58 @@
+---
+title: "The On-Ramp"
+description: "Firing up the Express engine and merging onto the Data Superhighway."
+sidebar:
+  order: 0
+  label: "00 - The On-Ramp"
+  draft: false
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+
+## Why are we even doing this?
+
+Listen up. Node.js is the engine block—powerful, raw, and capable of serious torque. But you don't drive an engine block down the highway; you drive a car. **Express.js** is that car. It's the chassis, the steering wheel, and the dashboard that turns raw JavaScript power into a street-legal web server.
+
+Without Express, handling HTTP requests in Node is like building your own off-ramp every time you want to exit the highway. It’s manual, slow, and frankly, a hazard to other drivers. Express gives us a pre-built infrastructure: on-ramps, routing signs, and toll booths (middleware) so we can focus on the destination, not the asphalt.
+
+> **Professor Solo's Directive:**
+> We care about **throughput** and **clean lines**. If I see you manually parsing URL strings with regex when Express can do it for you, you're walking home.
+
+### The Blueprint (Visual Anchor)
+
+<img
+  src="/assets/lessons/02-server-express-way/00-express-on-ramp.png"
+  alt="A neon-lit futuristic highway on-ramp with signs pointing to ExpressJS and Node Lanes. Long exposure light trails symbolize data speed."
+  width="100%"
+/>
+
+_Fig 1: Merging onto the Express-way. Speed limit: `process.env.PORT`._
+
+---
+
+## Installing the Upgrade
+
+Express is unopinionated, which is a nice way of saying it doesn't care how you organize your glovebox, as long as the car runs. It's a minimal framework, meaning it doesn't come with a heavy navigation system pre-installed. You add what you need.
+
+First, pull into the garage and install the package.
+
+```bash
+npm install express
+```
+
+This adds `express` to your `package.json` dependencies. If you don't see it there, you didn't install it. Check your blind spots.
+
+---
+
+## Extra Bits & Bytes
+
+<LinkButton href="https://expressjs.com/" icon="external" variant="secondary">
+  Express Official Docs (The Manual)
+</LinkButton>
+
+<div class="next-step">
+  <h3>⏭ Ignition</h3>
+  <p>
+    The parts are installed. Let's turn the key and see if this thing purrs.
+  </p>
+</div>

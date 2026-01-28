@@ -1,0 +1,92 @@
+---
+title: "The Map"
+description: "High-speed references for the Express Highway."
+sidebar:
+  order: 99
+  label: "99 - Pocket Express Map"
+  draft: false
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+
+## The Glovebox Reference
+
+Driving at 100mph doesn't leave much time to read documentation. Keep this map in your glovebox.
+
+### The Visual Anchor (Pocket Map)
+
+<img
+  src="/assets/lessons/02-server-express-way/99-pocket-map.png"
+  alt="A glowing, holographic roadmap floating above a dashboard. Neons lines trace the routes of Express. Key landmarks like 'Router', 'Middleware', and 'Static' are marked as transit stops."
+  width="100%"
+/>
+
+_Fig 1: Your Guide to the Galaxy (and Express)._
+
+---
+
+## Quick-Start Ignition
+
+```javascript
+const express = require("express");
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => console.log(`Driving on ${PORT}`));
+```
+
+## Routing & Traffic
+
+| Method        | Syntax                         | Use Case         |
+| :------------ | :----------------------------- | :--------------- |
+| **GET**       | `app.get('/path', handler)`    | Read/Retrieve    |
+| **POST**      | `app.post('/path', handler)`   | Create/Send      |
+| **PUT**       | `app.put('/path', handler)`    | Update (Replace) |
+| **DELETE**    | `app.delete('/path', handler)` | Destroy          |
+| **Catch-All** | `app.all('*', handler)`        | 404/Dead Ends    |
+
+## Accessing Data
+
+- **Route Params**: `/users/:id` -> `req.params.id`
+- **Query Strings**: `/search?q=foo` -> `req.query.q`
+- **Headers**: `req.get('Content-Type')`
+
+## Responses (The Cargo)
+
+- `res.send("Text")`: Quick text/HTML.
+- `res.json({ id: 1 })`: API Data (Standard).
+- `res.sendFile("/abs/path/file.html")`: Serve file.
+- `res.status(404)`: Set status code.
+
+## Middleware (The Tolls)
+
+```javascript
+// 1. Write it
+const check = (req, res, next) => {
+  if (ok) next();
+  else res.status(403).send("No");
+};
+
+// 2. Use it (Global)
+app.use(check);
+
+// 3. Use it (Route)
+app.get("/safe", check, handler);
+```
+
+---
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="https://github.com/expressjs/express"
+  icon="external"
+  variant="secondary"
+>
+  Express Github Repo
+</LinkButton>
+
+<div class="next-step">
+  <h3>⏭ Next Chapter</h3>
+  <p>The highway is endless. Keep driving.</p>
+</div>

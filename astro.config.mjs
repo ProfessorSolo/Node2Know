@@ -15,11 +15,11 @@ const COURSE_MODULES = [
     directory: '01-intro-to-node',
     released: true,
   },
-  //   {
-  //     label: 'CSS Dynamite: Styling That Pops',
-  //     directory: '01-css-dynamite',
-  //     released: true,
-  //   },
+    {
+      label: 'Server Express Way',
+      directory: '02-server-express-way',
+      released: true,
+    },
   //   {
   //     label: 'Form Factor: Portal to Data',
   //     directory: '02-form-factor',

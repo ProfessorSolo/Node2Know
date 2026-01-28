@@ -1,0 +1,56 @@
+---
+title: "Surveillance"
+description: "Automated logging with Morgan."
+sidebar:
+  order: 17
+  label: "17 - Logging with Morgan"
+  draft: false
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+
+## Professional Monitoring
+
+Why write your own traffic logger when you can hire a professional? **Morgan** is a standard middleware that logs requests automatically.
+
+```bash
+npm install morgan
+```
+
+```javascript
+const express = require("express");
+const morgan = require("morgan");
+const app = express();
+
+// 'dev' is the log format (concise and colored)
+app.use(morgan("dev"));
+```
+
+Now your terminal looks like a real hacker dashboard. It tells you the Method, the URL, the Status Code, and how long the request took (in ms).
+
+```
+GET /things 200 4.205 ms - 23
+GET /missing 404 1.102 ms - 139
+```
+
+> **Professor Solo's Directive:**
+> Install this first. Always. Driving blind is for stuntmen, not engineers.
+
+---
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="https://www.npmjs.com/package/morgan"
+  icon="external"
+  variant="secondary"
+>
+  NPM: Morgan
+</LinkButton>
+
+<div class="next-step">
+  <h3>⏭ Rest Stop</h3>
+  <p>
+    Sometimes users just need to grab a map or a pic without a security check.
+  </p>
+</div>

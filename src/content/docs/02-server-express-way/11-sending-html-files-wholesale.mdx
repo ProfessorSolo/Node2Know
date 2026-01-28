@@ -1,0 +1,49 @@
+---
+title: "Heavy Freight"
+description: "Sending whole files with res.sendFile."
+sidebar:
+  order: 11
+  label: "11 - Sending HTML Files"
+  draft: false
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+
+## Bulk Delivery
+
+If we want to send an entire file that already exists on disk as our response, instead of `res.send()` we use `res.sendFile()`.
+
+For example, supposing we have a `pages` directory and within that we have `index.html`.
+
+```javascript
+app.get("/", (req, res) => {
+  // Wait... we need an absolute path
+  res.sendFile("/absolute/path/to/pages/index.html");
+});
+```
+
+### The Catch
+
+The path that we pass to `sendFile()` **must be absolute**. You can't just say `./pages/index.html`. Node doesn't know where the truck is currently parked relative to the file on disk.
+
+To find our current GPS coordinates, we use `__dirname`.
+
+---
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="https://expressjs.com/en/4x/api.html#res.sendFile"
+  icon="external"
+  variant="secondary"
+>
+  Express API: res.sendFile
+</LinkButton>
+
+<div class="next-step">
+  <h3>⏭ GPS</h3>
+  <p>
+    We need a safer way to calculate file paths than just adding strings
+    together.
+  </p>
+</div>

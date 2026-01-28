@@ -1,0 +1,144 @@
+---
+title: "Show what you Node?"
+description: "Verify your Node installation, master the REPL, and deploy your first script."
+sidebar:
+  order: 12
+  label: "What do you Node?"
+draft: false
+---
+
+import { Steps } from "@astrojs/starlight/components";
+
+# The Blueprint Audit
+
+<div class="flex gap-4 items-center mb-8 bg-indigo-900/20 p-4 rounded-xl border border-indigo-500/30">
+  <div>
+    <h3 class="!mt-0 text-lg font-bold text-indigo-300">
+      Professor Solo says:
+    </h3>
+    <p class="!mb-0 text-sm text-indigo-100/80">
+      "Alright, coders. You've got your hard hat (Node.js) and your tool belt
+      (NPM). But before we construct the scaffolding, we need to verify your
+      gear. This is the **Blueprint Audit**."
+    </p>
+  </div>
+</div>
+
+![Blueprint Audit](/assets/lessons/01-intro-to-node/98-lab-blueprint.png)
+
+## Phase 1: Environment Check
+
+First things first. Let's make sure your tools aren't made of plastic. Open your terminal (that's your job site from now on).
+
+<Steps>
+
+1.  **Check your Node engine.**
+
+    ```bash
+    node -v
+    ```
+
+    _You should see a version number like `v22.x.x` or higher._
+
+2.  **Check your Package Manager.**
+
+    ```bash
+    npm -v
+    ```
+
+    _If this errors out, you didn't install the tool belt properly._
+
+</Steps>
+
+## Phase 2: The REPL Playground
+
+Before we write permanent blueprints (files), we test in the sandbox. Enter the **Read-Eval-Print Loop**.
+
+```bash
+node
+```
+
+> You should see the welcome caret: `>`
+
+Complete these challenges strictly inside the REPL:
+
+1.  **Calculate the materials:** Multiply `124` by `8`.
+2.  **String construction:** Create a constant `const name = "Rookie"`.
+3.  **Yelling match:** Convert that name to uppercase using `.toUpperCase()`.
+4.  **Exit strategy:** How do you get out? (Hint: `.exit` or `Ctrl+C` twice).
+
+## Phase 3: The First Script
+
+The REPL is for scribbles. Scripts are for blueprints. Let's create your first official "Site Manifest".
+
+<Steps>
+
+1.  Create a file named `manifest.js`.
+2.  Add this code to handle command line arguments:
+
+    ```javascript
+    // manifest.js
+    const args = process.argv.slice(2);
+    const username = args[0] || "Stranger";
+
+    console.log(`👷 Site Foreman: Welcome to the job site, ${username}.`);
+    console.log("   Get your hard hat on. We have work to do.");
+    ```
+
+3.  Run it with your name:
+
+    ```bash
+    node manifest.js YourName
+    ```
+
+</Steps>
+
+:::note[T.A. Watts: Safety Tip ⚡]
+**What is `process.argv`?**
+Think of `process` as the current job site manager. `argv` (Argument Vector) is a list of words you typed to start the job.
+
+- `process.argv[0]`: The tool (`node`)
+- `process.argv[1]`: The blueprint (`manifest.js`)
+- `process.argv[2]`: Your custom input (`YourName`)
+
+We `.slice(2)` to cut off the boring stuff and get straight to your input!
+:::
+
+## Phase 4: Module Mystery (Light)
+
+Every good site needs a status report. Node comes with built-in tools (Modules) so you don't have to build a hammer from scratch.
+
+<Steps>
+
+1.  Modify your `manifest.js` to include the **OS Module**:
+
+    ```javascript
+    const os = require("os");
+
+    // ... previous code ...
+
+    console.log("-----------------------------------------");
+    console.log(`🖥️  System Uptime: ${os.uptime()} seconds`);
+    console.log(`🏠  Home Directory: ${os.homedir()}`);
+    console.log("-----------------------------------------");
+    ```
+
+2.  Run it again. Watch the data pour in.
+
+</Steps>
+
+:::tip[T.A. Watts: The Supply Closet]
+`require('os')` is like walking into the supply closet and grabbing the "Operating System" toolkit. You didn't write it, you just asked for it. This is the power of Node—modules do the heavy lifting.
+:::
+
+## Submission Checklist
+
+Before you clock out, verify you have:
+
+- [ ] Passed the `node -v` check.
+- [ ] Played in the REPL (and escaped it!).
+- [ ] Created `manifest.js`.
+- [ ] Successfully ran `node manifest.js [YourName]`.
+- [ ] Saw your System Uptime logged to the console.
+
+**"Good work, engineers. Take a lunch break. Next, we hit the expressway."** — _Professor Solo_

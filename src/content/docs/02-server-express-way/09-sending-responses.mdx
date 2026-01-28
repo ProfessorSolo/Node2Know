@@ -1,0 +1,50 @@
+---
+title: "Delivery"
+description: "The art of sending a response."
+sidebar:
+  order: 9
+  label: "09 - Sending Responses"
+  draft: false
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+
+## The Truck
+
+You've built the highway (Server) and organized the lanes (Router). Now, what are you actually transporting? A highway without cargo is just a slab of concrete.
+
+In Express, the **Response Object (`res`)** is your delivery truck. It's responsible for packaging the data and ensuring it arrives at the client's docking bay.
+
+### `res.send()`
+
+The simplest way to send a response is `res.send()`. It's smart enough to figure out the `Content-Type` based on what you give it.
+
+```javascript
+// Sends text/html
+res.send("<h1>Hello World</h1>");
+
+// Sends application/json (automatically stringifies objects)
+res.send({ user: "Han" });
+```
+
+> **Professor Solo's Directive:**
+> Don't send empty trucks. If you don't call a send method, the request hangs forever. The client sits there loading until it times out.
+
+---
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="https://expressjs.com/en/4x/api.html#res.send"
+  icon="external"
+  variant="secondary"
+>
+  Express API: res.send()
+</LinkButton>
+
+<div class="next-step">
+  <h3>⏭ The Manifest</h3>
+  <p>
+    Before we leave the dock, we need to stamp the package with a Status Code.
+  </p>
+</div>

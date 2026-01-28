@@ -1,0 +1,54 @@
+---
+title: "Rest Stop"
+description: "Serving static assets with express.static."
+sidebar:
+  order: 18
+  label: "18 - Serving Static Files"
+  draft: false
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+
+## The Gift Shop
+
+Sometimes you just want to let people grab a soda (HTML), a map (CSS), or a postcard (Image) without a customized route handler for every single file. Express has a built-in middleware for this: `express.static`.
+
+It opens a directory to the public. Warning: It opens the _whole_ directory.
+
+```javascript
+// Open the 'public' folder to the world
+app.use(express.static("public"));
+```
+
+Now, if a file exists at `public/images/logo.png`, the user can access it at `http://localhost:3000/images/logo.png`.
+
+### The Invisible Root
+
+Notice the URL doesn't include `/public`. Express looks _inside_ that folder. The folder itself is the root of the static server.
+
+If you _want_ the prefix, you can mount it like any other middleware:
+
+```javascript
+app.use("/static", express.static("public"));
+// Now: http://localhost:3000/static/images/logo.png
+```
+
+---
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="https://expressjs.com/en/starter/static-files.html"
+  icon="external"
+  variant="secondary"
+>
+  Express: Serving Static Files
+</LinkButton>
+
+<div class="next-step">
+  <h3>⏭ The Pit Stop</h3>
+  <p>
+    You've learned the rules of the road. Now pull over. It's time to test your
+    skills in the Lab.
+  </p>
+</div>

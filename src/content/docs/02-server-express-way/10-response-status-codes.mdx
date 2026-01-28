@@ -1,0 +1,46 @@
+---
+title: "The Manifest"
+description: "Marking the cargo with HTTP Status Codes."
+sidebar:
+  order: 10
+  label: "10 - Response Status Codes"
+  draft: false
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+
+## Cargo Condition
+
+Before you hand over the package, you need to declare its condition. This is the **HTTP Status Code**.
+
+- **200**: Package Delivered perfectly. (OK)
+- **201**: New Package Created. (Created)
+- **404**: Address doesn't exist. (Not Found)
+- **500**: The truck exploded on the way. (Internal Server Error)
+
+Express defaults to `200` if you don't say anything. But if something goes wrong, you _must_ be explicit.
+
+```javascript
+// Manually setting the status
+res.status(404).send("File Not Found. Checked behind the couch. Nothing.");
+```
+
+> **Professor Solo's Directive:**
+> Don't be that driver who crashes into a wall and then smiles like everything is fine. If the request fails, send a 400 or 500 series code.
+
+---
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Status"
+  icon="external"
+  variant="secondary"
+>
+  MDN Status Codes
+</LinkButton>
+
+<div class="next-step">
+  <h3>⏭ Heavy Freight</h3>
+  <p>Sending text is easy. What about sending entire files?</p>
+</div>

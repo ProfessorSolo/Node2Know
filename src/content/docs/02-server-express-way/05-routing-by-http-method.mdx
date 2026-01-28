@@ -1,0 +1,65 @@
+---
+title: "Traffic Types"
+description: "Sorting traffic by HTTP Method (GET, POST, PUT, DELETE)."
+sidebar:
+  order: 5
+  label: "05 - Traffic Types (Methods)"
+  draft: false
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+
+## Sorting by Intent
+
+So far we've mostly looked at `GET` requests (sightseeing). But traffic on the Data Superhighway comes in many flavors. Express segregates traffic not just by _where_ it's going (path), but by _what_ it wants to do (method).
+
+Here is the standard CRUD breakdown for our interchange:
+
+| Method     | Action           | Driving Analogy                              |
+| :--------- | :--------------- | :------------------------------------------- |
+| **GET**    | Read             | Sightseeing. Just looking.                   |
+| **POST**   | Create           | Delivery Truck. Dropping off new cargo.      |
+| **PUT**    | Update (Replace) | Road Construction. Replacing the whole lane. |
+| **PATCH**  | Update (Partial) | Pothole repair. Fixing just one part.        |
+| **DELETE** | Delete           | Demolition Crew. Removing the road entirely. |
+
+### Strict Lane Enforcement
+
+Express is strict. `app.get('/things')` and `app.post('/things')` are two completely different roads, even if they share the same asphalt (URL).
+
+```javascript
+// GET /things -> "Show me the things"
+app.get("/things", (req, res) => {
+  res.send("Here is the list.");
+});
+
+// POST /things -> "Take this new thing"
+app.post("/things", (req, res) => {
+  res.send("New thing received.");
+});
+
+// DELETE /things -> "Destroy the things"
+app.delete("/things", (req, res) => {
+  res.send("Things destroyed.");
+});
+```
+
+> **Solo Warning:**
+> If you try to `POST` to a route that only has a `GET` handler, Express will give you a `404 Not Found` (or `405 Method Not Allowed`, if configured). The road exists, but your vehicle type isn't allowed.
+
+---
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods"
+  icon="external"
+  variant="secondary"
+>
+  MDN HTTP Methods
+</LinkButton>
+
+<div class="next-step">
+  <h3>⏭ Dead Ends</h3>
+  <p>What happens when a driver takes a wrong turn and ends up off the map?</p>
+</div>
