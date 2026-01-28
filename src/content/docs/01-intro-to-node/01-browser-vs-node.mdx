@@ -1,0 +1,76 @@
+---
+title: "Node.js vs JavaScript in the Browser"
+description: "Understanding the key differences in runtime environments."
+sidebar:
+  order: 2
+  label: "Node vs Browser"
+draft: false
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+
+## Why are we even doing this?
+
+I want you to think of the **Browser** like a high-security hotel room. It's nice, it's comfortable, and it has a minibar (the DOM). But you can't just drill a hole in the wall or rewire the electricity. You are a guest. You are sandboxed for your own safety—and for the safety of the guests next door (other tabs).
+
+**Node.js**? Node.js is a private construction site where you own the keys. You want to rip up the floorboards and access the file system? Go ahead. You want to open a network port and shout at the internet? Be my guest. But with great power comes... well, you know the rest. (If you break it, you have to fix it).
+
+## The Shared Engine
+
+Both environments run on the same engine: the **V8 Engine** (the same one Google Chrome uses). This means the JavaScript syntax you know—variables, functions, objects—is exactly the same. But the _environment_—the stuff you can touch and break—is different.
+
+import diagram from "../../../assets/lessons/01/browser-vs-node-diagram.png";
+
+<img
+  src={diagram.src}
+  alt="Infographic comparing Browser vs Node.js environments. Center: V8 Engine. Left: Browser connecting to DOM and Window. Right: Node connecting to File System and Network."
+/>
+
+_Fig 1. The Tale of Two Runtimes. Same heart (V8), different limbs._
+
+### **Where it Runs**
+
+**Client-side (front-end)** JavaScript runs in the browser. It's delivered to the user's computer and executed there.
+
+**Node.js** runs on a server (or your laptop). It's a C++ runtime wrapped around V8 that lets you run JavaScript outside of the browser context.
+
+### **What it can Access**
+
+In the browser, you interact with the **DOM** (Document Object Model). You click buttons, change colors, and annoy users with popups. But you generally cannot read files from the user's hard drive (thank goodness).
+
+In Node.js, you have no DOM. Zero. Zip. If you try to `document.getElementById` something, Node will just stare at you. Instead, you have the **File System** (`fs`) and the ability to listen for network requests.
+
+### **The Root Object**
+
+In the browser, the king of the castle is the `window` object. It holds all your global variables.
+
+In Node.js? **There is no window.** (Stop looking for it, it's not there).
+
+In Node.js, the root is the **Global Object**.
+
+```javascript
+// Browser (Hotel Room)
+window.setTimeout(() => console.log("Room Service!"), 1000);
+
+// Node.js (Construction Site)
+// window.setTimeout(...) // ReferenceError: window is not defined
+global.setTimeout(() => console.log("Work order complete."), 1000);
+```
+
+> [!NOTE]
+> Actually, in modern Node.js allowed us to use `setTimeout` directly without `global.` prefix, just like in the browser. But technically, it lives on `global`.
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="https://nodejs.org/api/globals.html#global"
+  variant="secondary"
+  icon="external"
+  target="_blank"
+>
+  Node.js Globals Docs
+</LinkButton>
+
+### ⏭ Next Step
+
+⏭ Don't get stuck waiting for the bathroom; we're diving into the non-blocking magic of the Global Object next (wait, that metaphor fell apart). Let's just talk about **The Global Object**.

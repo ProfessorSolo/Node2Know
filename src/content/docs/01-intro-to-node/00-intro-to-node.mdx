@@ -1,0 +1,71 @@
+---
+title: "Intro to Node.js"
+description: "Discover the power of JavaScript beyond the browser."
+sidebar:
+  order: 1
+  label: "Intro to Node.js"
+draft: false
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+
+## The "Over-Caffeinated Short-Order Cook" Analogy
+
+Think of a traditional server (like generic Apache or PHP setups) as a **Formal Dining Room**.  
+You (the client) order a steak. A waiter (a **Thread**) takes your order to the kitchen, waits for the chef to cook it, and brings it back to you. While that waiter is waiting by the pass, they can't help anyone else. If you have 1,000 customers, you need 1,000 waiters. That’s expensive, memory-heavy, and frankly, a logistical nightmare.
+
+**Node.js**? Node is an **Over-Caffeinated Short-Order Cook** running a solo shift at a diner.  
+There is only _one_ employee (the **Single-Threaded** Event Loop). He takes your order, slaps it on a ticket wheel, and immediately pivots to the next customer. "Next!" He avoids the grill entirely. He doesn't wait for your burger to cook (**Non-blocking** I/O).  
+When your burger is ready, the kitchen bell rings (a **Callback**), and the waiter slides it to you in the split second between taking two other orders.
+
+One cook. Thousands of hungry customers. Zero wasted time staring at a grill. That is the power of Node.
+
+<img
+  src="/assets/lessons/00/intro-diagram.png"
+  alt="A neon-retro diagram comparing a traffic jam (Blocking) to a high-speed conveyor belt (Non-Blocking)"
+/>
+*Fig 1. Visual proof that one fast process beats a room full of idle ones.*
+
+---
+
+## What Actually _Is_ It? (The Techy Bit)
+
+Node.js is a free, open-source, cross-platform **Runtime Environment** that lets you run JavaScript _outside_ the browser. (Yes, the same language you used to make buttons wiggle can now run servers. Wild, right?)
+
+It’s built on Google Chrome’s **V8 Engine**—the high-performance engine that translates your JS into machine code faster than you can say `undefined is not a function`.  
+Ryan Dahl wrote it back in 2009 (using C, C++, and JS), and it changed the game by forcing us to think **Asynchronously**.
+
+### Why Should You Care?
+
+Node is everywhere. It’s not just for back-end APIs.
+
+- **Electron** apps (Discord, VS Code) are desktop apps built with Node.
+- **IoT** devices run Node.
+- Your build tools (Vite, Webpack) run on Node.
+
+It’s "JavaScript Everywhere." (Original tagline, do not steal).
+
+### The Secret Sauce: Non-Blocking I/O
+
+A Node.js app runs in a single process. It doesn't create a new thread for every request.
+When Node needs to do something slow—like reading a file from the disk or querying a database—it doesn't sit there twiddling its thumbs (blocking). It sends the task away and keeps working.
+
+- **Blocking**: Waiting in line at the DMV. (Painful. Red lights. Screaming inside.)
+- **Non-blocking**: Ordering a coffee via app, sitting down, and checking your phone until they call your name. (Efficient. Cyan neon glow. Zen.)
+
+(A Solo Warning: This architecture makes Node perfect for **I/O-heavy** tasks like chat apps or APIs, but if you ask it to calculate Pi to the billionth digit, that single cook will freeze up. Don't do that.)
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="https://nodejs.dev/en/learn/"
+  target="_blank"
+  variant="secondary"
+  icon="external"
+>
+  Learn More at Nodejs.dev
+</LinkButton>
+
+### ⏭ Next Step
+
+We know what Node _is_, but how does it stack up against your browser console? Next: Let's see why going `window` shopping in Node will always return `undefined`.

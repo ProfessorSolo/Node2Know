@@ -11,9 +11,9 @@ const googleAnalyticsId = 'G-D2FGLZE0C8'; // your GA4 Measurement ID
 // Define all course modules here:
 const COURSE_MODULES = [
   {
-    label: 'Course Information',
-    directory: '00-introduction',
-    released: false,
+    label: 'Intro to Node.js',
+    directory: '01-intro-to-node',
+    released: true,
   },
   //   {
   //     label: 'CSS Dynamite: Styling That Pops',
