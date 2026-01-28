@@ -1,30 +1,89 @@
 ---
-title: "Core Node Modules"
-description: "Built-in modules available in Node.js."
+title: "Core Modules"
+description: "The built-in tools of the Node.js runtime."
 sidebar:
-  order: 8
+  order: 7
   label: "Core Modules"
 draft: false
 ---
 
 import { LinkButton } from "@astrojs/starlight/components";
 
-## Node comes with a set of built-in core modules.
+## The Standard Issue Utility Belt
 
-By "core", I mean that these modules are built into the node runtime.
+Imagine you just bought a high-end smartphone. Out of the box, even before you visit the App Store, it can already do _a lot_. It has a camera, a calculator, a file manager, and a web browser. You didn't have to install them; they are effectively "baked in" to the factory settings.
 
-Although they are built in (we don't need to install them as packages), we still need to import them to make them available to our code.
+**Node.js Core Modules** are exactly like that.
 
-Whereas in front-end JavaScript we use `import` statements to gain functionality from other modules, in Node we generally use `require()`.
+These are the "Factory Settings" of the Node runtime. They are essential tools that the Node team decided were so critical for server-side development that they shouldn't require a download. They are part of the binary executable itself.
 
-For example, node has a core http library built in, so to use it in our program we need to load it with:
+If Node.js is Batman, these modules are the utility belt he _always_ wears.
 
-```javascript
-const http = require("http");
+<img
+  src="/assets/lessons/01-intro-to-node/core-modules-belt.png"
+  alt="A Neo-Retro illustration of a utility belt with glowing modules attached"
+  class="w-full rounded-xl shadow-lg my-8"
+/>
+<div class="text-center text-sm text-gray-400 mt-2">
+  <em>Fig 1. Even without NPM, you are far from empty-handed.</em>
+</div>
+
+## The Distinction: Built-in vs. Installed
+
+In the next few lessons, we're going to use a tool called **NPM** (Node Package Manager) to download millions of community-created tools. But right now? We don't need it.
+
+We have access to powerful system-level operations immediately, but there is one catch: **We still have to ask for them.**
+
+Even though they are built-in, Node doesn't load them into global memory by default (to save resources). You must explicitly `require()` them.
+
+```javascript title="app.js"
+// CORRECT: No path needed for core modules
+const fs = require("fs");
+
+// INCORRECT: Node thinks this is a local file you made
+const fs = require("./fs");
 ```
 
 > [!NOTE]
-> To use modules that are not part of Node core, you WILL first need to install them either globally (as we did for nodemon) or as project dependencies. We'll see lots of that shortly.
+> Notice how we just type the name `"fs"`? Node.js has a lookup priority. It checks for a **Core Module** with that name _first_. If it finds one, it loads it. If not, it looks for a `node_modules` folder.
+
+## The "Big Five"
+
+There are many core modules, but as a backend developer, these are the ones you will reach for constantly:
+
+1.  **fs (File System):** Read, write, and manipulate files on the hard drive. (Browser JavaScript _wishes_ it could do this).
+2.  **path:** A utility for normalizing file paths so your code doesn't break between Windows (`\`) and Mac/Linux (`/`).
+3.  **http:** The heavy lifter that allows us to create web servers and handle network requests.
+4.  **os:** Provides information about the operating system (CPU info, memory usage, uptime).
+5.  **events:** The backbone of Node's asynchronous architecture (we'll dive deep into this later).
+
+### Seeing them in action
+
+Here is a quick script that uses three different core modules to spy on your own computer.
+
+```javascript title="spy-on-me.js"
+const os = require("os");
+const path = require("path");
+const fs = require("fs");
+
+// 1. Where are we?
+const currentFile = path.basename(__filename);
+
+// 2. Who is the host?
+const user = os.userInfo().username;
+const memory = (os.totalmem() / 1024 / 1024 / 1024).toFixed(2);
+
+// 3. Write a report
+const report = `
+  SECURITY LOG:
+  User: ${user}
+  System Memory: ${memory} GB
+  File Accessed: ${currentFile}
+`;
+
+fs.writeFileSync("security.log", report);
+console.log("Report generated.");
+```
 
 ## Extra Bits & Bytes
 
@@ -33,9 +92,7 @@ const http = require("http");
   variant="secondary"
   icon="external"
 >
-  Node.js Modules Docs
+  Node.js Modules Documentation
 </LinkButton>
 
-### ⏭ Next Step
-
-[Working with HTTP](./09-http)
+### ⏭ The Server (Finally)

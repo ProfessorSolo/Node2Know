@@ -9,21 +9,64 @@ draft: false
 
 import { LinkButton } from "@astrojs/starlight/components";
 
-## In your terminal, verify that you are currently in the root directory of your project
+## The Two Modes of Execution
 
-```bash
-pwd
-```
+You wouldn't try to drive a car by turning the key and then pushing it down the street, right? (Don't answer that). In Node.js, we have two distinct ways to get our code running. Understanding the difference is the first step in not looking like a total rookie.
 
-![pwd output](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASoAAAAjCAIAAAA+4Y+sAAACUUlEQVR4Xu2Y0W3DMAxE3R16lI7SkTrKjNIRMkozShdJh+hA3mI4sBzbEm3q/CBI5fHwIYq2bQ8/CEAAAr8lcP+tL9QGAhCAwEGBKgQQgMA/BCBVI4QABCBVI4QABCBVI4QABCBVI4QABCBVI4QABCBVI4QABCBVI4QABCBVI4QABCBVI4QABCBVI4QABCBVI4QABCBVI4QABCBVI4QABCBVI4QABCBVI4QABCBVI4QABCBVI4QABCBVI4QABCBVI4QABCBVI4QABCBVI4QABCBVI4QABCBVI4QABCBVI4QABCBVI4QABCBVI4QABCBVI4QABCBVI4QABO5N1W3bfv78iT9fX1/39/dhvL+/t23rMszx5+l06qfv7+9aG7dZltXnNMcY542u6/JbT6fTrJt/u72o2nWdFpC2E/E5gW3b+v/3fb/v++VyeTwe1+v1crmk8Xw+H4/H6/V6vV6TfT6fl8vlfr+n8fl83u/3y+WS/JvN4/F4v9/X63XWzZ9vL6qu6/q+fzwe2cR937O8tE7T+L5vjhkB7/t+mqZxHPu+H8dxHMdpmtI06+bftxdV4ziO4ziO4ziO0zT1fZ+tJAuYFjAtJwvYNE1ZwbO0aZqybr69ffv7q/P5nE3cOI5p8bIs0wKy4GkBaZ3m+Hw+s27+fHtRlc3TArKAaQFp8bIs0zRlwdMC0uJlWVL38/mcdfPn24uqcRzHcdw28V/o+c5t9vP3J/4Xev4+0f+Fnr9F9H+b6f9Cz98Y+r/Q8zeC/i/0/M2f/ws9f9vn/0LP3+b5v9Dzt3P+L/T8bZp/oecfO6L6Aj4b/44AAAAASUVORK5CYII=)
+### 1. The REPL (Read-Eval-Print Loop)
 
-Now, let's run our program:
+This is the "Sandbox" mode. It's great for quick tests, doing math, or checking if a function does what you think it does. You type `node` in your terminal, hit enter, and you're in an interactive shell.
 
-```bash
+> [!NOTE]
+> Think of the REPL as a **scratchpad**. It doesn't save your work. Once you exit, it's gone forever, like a Snapchat message or my patience for unformatted code.
+
+### 2. Script Execution (The "Real" Way)
+
+This is how we build actual applications. We write our code in a file (like `app.js`), save it, and then tell Node's V8 engine to "ingest" that file and execute every line inside it one by one.
+
+This is the **Ignition Sequence**:
+
+<img
+  src="/assets/lessons/01-intro-to-node/node-ignition.png"
+  alt="A Neo-Retro diagram showing a command prompt sparking a V8 engine which intakes code and exhausts machine action."
+  class="w-full rounded-lg shadow-lg"
+/>
+<p class="text-center text-sm text-gray-400 mt-2">
+  <em>Fig 1. The Node.js Process Lifecycle (Artist's Dramatization)</em>
+</p>
+
+## The `node [filename]` Command
+
+To run a script, you need to use the `node` command followed by the **relative path** to your file.
+
+If your file is named `app.js`, you simply run:
+
+```bash title="Terminal"
 node app.js
 ```
 
-![node appjs output](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAARoAAAAoCAIAAAA1/z2KAAACiElEQVR4Xu2Y0W3DMAxE3R16lI7SkTrKjNIRMkozShdJh+hA0WIosBzbEm0K+SGB6vHwIYq2XQ8/CEAAAn8lYP61L9QGAhCAQESjCiAAgX8IRKOqIQQgEI2qgQAEIBqVAwEIQDSqBgIQgGhUDgQgANGOGgJ/J9B13efnZ5i8v7+3besyzPHn6XTqp+/v71obtwmCo5vj8djam3e3I1Vd143juG3b9/v9er2Ox+N2u12v1zSem81mPB6v1+v1ek322Wy22+1+v6fxfr/f7/fb7Tb5N5vxeLzf7+v1+u7avLsdqZqmqWma4zhO05Smad/32UqyhGkJ03qyiE3TlBU8y5um6e7avLsdqRrHMdvEfd+zzLRO0/i+b44ZAe/7fpqmcRz7vh/HcRzHaZru7ofm3e1I1TiObRPf9322kiXf9z0tYFrCtJ4sYl3X0wLSCrKCaRnT3V2bd7cjVdk8LSArSBawruvTNGUFzwpIi5dlSd3P5/PdtXl3+5OqLMuYFpAVJAtIy5dlmaYpK3hWQFq8LEvqfj6f767Nu9uRqnEcx3HcdeK/0POdW+zn+xP/hZ6/T/R/oedvEf3fZvq/0PM3hv4v9PyNoP8LPX/z5/9Cz9/2+b/Q87d5/i/0/O2c/ws9f5vmX+j5x45UBRCAwD8EolE1EIAARKNqIAABiEblQAACEI2qgQAEIBqVAwEIQDSqBgIQgGhUDgQgANGOGgIQgGhUDQQgANGOGgIQgGhUDQQgANGOGgIQgGhUDQQgANGOGgIQgGhUDQQgANGOGgIQgGhUDQQgANGOGgIQgGhUDQQgANGOGgIQgGhUDQQgANGOGgIQ+A/R6QffjX8J6gAAAABJRU5ErkJggg==)
+When you hit enter, Node:
+
+1.  **Reads** the file from your hard drive.
+2.  **Parses** the JavaScript.
+3.  **Executes** it.
+4.  **Exits** immediately when there is no more work to do (unless an Event Loop keeps it alive—more on that later).
+
+### The "Hello Node" Moment
+
+If you've done everything right, your terminal should look something like this. Bask in the glory of your first server-side output.
+
+<img
+  src="/assets/lessons/01-intro-to-node/hello-node-terminal.png"
+  alt="A close-up of a terminal screen displaying 'Hello, Node!' output."
+  class="w-full rounded-lg shadow-lg"
+/>
+
+## Common Pitfalls (Read This or Weep)
+
+- **Wrong Directory:** If you see `Error: Cannot find module...`, you are in the wrong folder. Use `ls` (lines) or `dir` (windows) to check if your file actually exists where you are standing.
+- **Missing Extension:** You _can_ technically run `node app`, but please don't. Be explicit. Use `node app.js`.
+- **The Hanging Process:** If your terminal doesn't give you the prompt back, your code is still running (probably an infinite loop or an open server). `Ctrl + C` is your escape hatch.
 
 ## Extra Bits & Bytes
 
@@ -32,9 +75,9 @@ node app.js
   variant="secondary"
   icon="external"
 >
-  Run Node.js Scripts
+  Official Docs: Run Node.js Scripts
 </LinkButton>
 
-### ⏭ Next Step
+### ⏭ nodemon: The Watcher in the Code
 
-[nodemon for Hot Reloading](./07-nodemon)
+Save your fingers from typing `node app.js` 500 times a day

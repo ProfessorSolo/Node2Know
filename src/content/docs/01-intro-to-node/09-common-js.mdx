@@ -1,79 +1,131 @@
 ---
-title: "Loading Modules the Common JS way"
-description: "Understanding require and module.exports."
+title: "Module Systems (CJS & ESM)"
+description: "Understanding CommonJS vs. ES Modules in Node.js."
 sidebar:
-  order: 10
-  label: "CommonJS Modules"
+  order: 9
+  label: "Module Systems"
 draft: false
 ---
 
-import { LinkButton } from "@astrojs/starlight/components";
+import { LinkButton, Steps, Aside } from "@astrojs/starlight/components";
 
-## To create a custom module and load it into another module in Node.js we call `require()`
+## The Tale of Two Systems
 
-`./app.js`
+In the beginning, JavaScript had no official way to share code between files. It was the Wild West. When Node.js was built, it needed a way to manage dependencies, so it adopted **CommonJS (CJS)**. This became the standard for years.
+
+Then came **ES Modules (ESM)**—the official, standardized module system for JavaScript, aimed at unifying the browser and the server. Now, Node.js speaks both languages, but they work quite differently.
+
+Think of it like two different logistics companies operating on the same construction site.
+
+### CommonJS (The Legacy Standard)
+
+CommonJS is the "Industrial Supply Chain." It's practical, synchronous, and built for the server.
+
+When you use `require()`, you are filling out a **Requisition Form** and handing it to a clerk who _immediately_ runs to the warehouse, grabs the item, and puts it in your hand before you can do anything else.
+
+- **`require()`**: The order form. It loads the file synchronously.
+- **`module.exports`**: The shipping container. Whatever you put in here is what gets shipped.
+
+#### The Requisition (`require`)
+
+<Aside type="caution" title="Blocking Operation">
+  `require` is **synchronous**. The script halts until the required file is
+  found, read, and executed. This is fine on a server (files are local), but
+  terrible in a browser (files are over a network).
+</Aside>
 
 ```javascript
-// load the http module
+// ./app.js
+// "Go get the http module right now."
 const http = require("http");
 
-// load our custom copyright function from an external module
-const { generateCopyright } = require("./utils/utils");
-
-// variables that the server will need
-const hostname = "127.0.0.1";
-const port = 3000;
-
-// pass in our request handling callback to createServer
-const server = http.createServer((req, res) => {
-  // prepare and send an OK response
-  res.statusCode = 200;
-  res.setHeader("Content-Type", "text/html");
-  const copyright = generateCopyright("Josh Solomon");
-  res.end(`<h1>Hello Node Server</h1><footer>${copyright}</footer>`);
-});
-
-// register the server to listen for requests
-server.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
-});
+// "Go get our tools."
+const tools = require("./utils");
 ```
 
-`./utils/utils.js`
+#### The Shipment (`module.exports`)
 
 ```javascript
-// Set strict mode
-"use strict";
-
-exports.generateCopyright = (author) => {
-  return `&copy; ${new Date().getFullYear()} ${author}`;
+// ./utils.js
+const tools = {
+  hammer: "🔨",
+  drill: "🔫",
 };
+
+// Pack the container
+module.exports = tools;
 ```
 
-### **Require Without Destructuring**
+---
 
-Instead of using destructuring to import specific variables or functions by name, we can also not destructure and use dot syntax to access things (utility functions, in this case) relative to the global scope of the file.
+### ES Modules (The Modern Standard)
+
+ESM is the "Architectural Blueprint." It's static, asynchronous-friendly, and standardized across the entire JS ecosystem (browsers included).
+
+When you use `import`, you are drawing a dependency line on a blueprint. The engine scans all these lines _before_ running the code to build a complete dependency graph.
+
+- **`import`**: The dependency declaration.
+- **`export`**: The public interface.
+
+#### The Blueprint (`import`)
+
+To use ESM in Node, you either need to use the `.mjs` extension or add `"type": "module"` to your `package.json`.
 
 ```javascript
-const utils = require("./utils/utils");
+// ./app.js
+// "I will need these items to function."
+import http from "node:http";
+import { hammer } from "./utils.js"; // Note the extension!
 ```
 
-#### **Calling the Function**
+#### The Offerings (`export`)
 
 ```javascript
-utils.generateCopyright("Josh Solomon");
+// ./utils.js
+export const hammer = "🔨";
+export const drill = "🔫";
+
+// Or a default export
+export default { hammer, drill };
 ```
 
-## Extra Bits & Bytes
+---
 
-<LinkButton
-  href="https://nodejs.org/api/modules.html#modules-commonjs-modules"
-  variant="secondary"
-  icon="external"
->
-  CommonJS Docs
-</LinkButton>
+### The Showdown: CJS vs. ESM
 
-### ⏭ Next Step
+Which one should you use? Here is the breakdown.
 
-[Working with File System (fs)](./11-file-system)
+| Feature             | CommonJS (CJS)               | ES Modules (ESM)               |
+| :------------------ | :--------------------------- | :----------------------------- |
+| **Syntax**          | `require` / `module.exports` | `import` / `export`            |
+| **Loading**         | Synchronous (Dynamic)        | Asynchronous (Static Analysis) |
+| **Top-Level Await** | No (requires async wrapper)  | **Yes** (very distinctive)     |
+| **Browser Native?** | No                           | Yes                            |
+| **`__dirname`**     | Available                    | Not available (needs polyfill) |
+| **Magic**           | `require` can be dynamic     | `import` paths are static      |
+
+<Aside type="tip" title="Pro-Tip">
+  Starting a **New Project**? Go **ESM**. It's the future. - working on an
+  **Existing Backend**? **CJS** is likely what you'll see. It's not going
+  anywhere soon.
+</Aside>
+
+<Aside type="danger" title="The Compatibility Trap">
+**Warning:**
+
+You can import CJS into ESM, but you **cannot** `require()` an
+ESM file in CJS.
+
+✅ `import module from './commonjs-file.js'` - Works!
+
+❌ `require('./esm-file.mjs')` - Crashes! Use `await import()` instead
+
+</Aside>
+
+![CommonJS vs ESM Handshake](/assets/lessons/01-intro-to-node/cjs-vs-esm.png)
+
+---
+
+### ⏭ File this with FS
+
+We're free from the sandbox of the browser. We can do just about anything with files.
