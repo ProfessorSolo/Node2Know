@@ -1,9 +1,9 @@
 ---
-title: "Ignition"
+title: "Start the Express Engine"
 description: "Initializing the app and listening for traffic."
 sidebar:
   order: 1
-  label: "01 - Ignition"
+  label: "Start the Express Engine"
   draft: false
 ---
 
@@ -37,6 +37,12 @@ app.listen(PORT, () => {
 
 > **Solo Warning:**
 > Note that `app.listen` is asynchronous. The callback function runs _after_ the server successfully binds to the port. Don't try to drive before the engine starts.
+
+:::note[Professor Solo's Side Note (CommonJS vs ESM)]
+"Wait, didn't you say `import` was the future?"
+
+Yes. And for frontend code, it is. But in the Node.js **backend** ecosystem, `require()` (CommonJS) is still the dominant standard. It requires zero configuration and works seamlessly with 100% of the npm ecosystem. To save you from debugging config files instead of writing code, we'll stick to the industry standard for now.
+:::
 
 ---
 

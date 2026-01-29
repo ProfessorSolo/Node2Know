@@ -1,19 +1,28 @@
 ---
-title: "Rest Stop"
+title: "Serving Static Files"
 description: "Serving static assets with express.static."
 sidebar:
   order: 18
-  label: "18 - Serving Static Files"
+  label: "Serving Static Files"
   draft: false
 ---
 
-import { LinkButton } from "@astrojs/starlight/components";
+import { LinkButton, Aside } from "@astrojs/starlight/components";
+import CautionBox from "../../../components/CautionBox.astro";
 
 ## The Gift Shop
 
 Sometimes you just want to let people grab a soda (HTML), a map (CSS), or a postcard (Image) without a customized route handler for every single file. Express has a built-in middleware for this: `express.static`.
 
-It opens a directory to the public. Warning: It opens the _whole_ directory.
+<img
+  src="/assets/lessons/02-server-express-way/18-gift-shop.png"
+  alt="A cyberpunk roadside kiosk/gift shop with neon signs 'OPEN 24/7' and 'FREE DOWNLOADS'. Glass displays show icons for images, css, and scripts."
+  width="100%"
+/>
+
+_Fig 1: Self-service downloads._
+
+### Opening the Doors
 
 ```javascript
 // Open the 'public' folder to the world
@@ -22,16 +31,54 @@ app.use(express.static("public"));
 
 Now, if a file exists at `public/images/logo.png`, the user can access it at `http://localhost:3000/images/logo.png`.
 
+<CautionBox>
+  <strong>Professor Solo's Warning:</strong>
+  <br />
+  `express.static` opens the <strong>whole</strong> directory. If you put your
+  `server.js` or `.env` file in there, anyone can download it and steal your
+  secrets. Only put safe, public assets in this folder.
+</CautionBox>
+
 ### The Invisible Root
 
 Notice the URL doesn't include `/public`. Express looks _inside_ that folder. The folder itself is the root of the static server.
 
-If you _want_ the prefix, you can mount it like any other middleware:
+### Folder Organization
+
+**How should you organize this?**
+
+It is standard practice to map a **single** directory (usually `public`) and then branch _inside_ it. This keeps your middleware stack clean (one check per request) and your project root tidy.
+
+```text
+/public
+  /css
+    - style.css
+  /js
+    - app.js
+  /img
+    - logo.png
+```
+
+<Aside type="tip" title="Advanced: Using a Prefix">
+  If you want to avoid file names clashing with your route names (e.g. `GET /about` vs `public/about.html`), you can mount static files under a "virtual" prefix:
 
 ```javascript
 app.use("/static", express.static("public"));
 // Now: http://localhost:3000/static/images/logo.png
 ```
+
+</Aside>
+
+**Can I map multiple folders?**
+
+Yes. You can call `express.static` multiple times. Express will look in the first folder, then the second, and so on.
+
+```javascript
+app.use(express.static("public")); // Look here first (Site assets)
+app.use(express.static("uploads")); // Then look here (User profile pics)
+```
+
+This is useful for separating "app code" (which is committed to Git) from "user uploads" (which are ignored by Git).
 
 ---
 

@@ -1,9 +1,9 @@
 ---
-title: "Traffic Types"
+title: "Traffic Types - HTTP Methods"
 description: "Sorting traffic by HTTP Method (GET, POST, PUT, DELETE)."
 sidebar:
   order: 5
-  label: "05 - Traffic Types (Methods)"
+  label: "Traffic Types (HTTP Methods)"
   draft: false
 ---
 
@@ -12,6 +12,14 @@ import { LinkButton } from "@astrojs/starlight/components";
 ## Sorting by Intent
 
 So far we've mostly looked at `GET` requests (sightseeing). But traffic on the Data Superhighway comes in many flavors. Express segregates traffic not just by _where_ it's going (path), but by _what_ it wants to do (method).
+
+<img
+  src="/assets/lessons/02-server-express-way/05-http-methods.png"
+  alt="Futuristic highway sorting station with lanes for GET (blue cars), POST (green trucks), PUT (yellow construction vehicles), and DELETE (red demolition dozers)."
+  width="100%"
+/>
+
+_Fig 1: Traffic Sorting Logic._
 
 Here is the standard CRUD breakdown for our interchange:
 
@@ -44,8 +52,22 @@ app.delete("/things", (req, res) => {
 });
 ```
 
-> **Solo Warning:**
-> If you try to `POST` to a route that only has a `GET` handler, Express will give you a `404 Not Found` (or `405 Method Not Allowed`, if configured). The road exists, but your vehicle type isn't allowed.
+:::caution[Solo Warning]
+If you try to `POST` to a route that only has a `GET` handler, Express will give you a `404 Not Found` (or `405 Method Not Allowed`, if configured). The road exists, but your vehicle type isn't allowed.
+:::
+
+## The HTML Form Limitation
+
+Here is a pothole you will hit immediately: **Native HTML Forms only support `GET` and `POST`.**
+
+If you try to set `<form method="DELETE">`, the browser will ignore you and send a `GET` request instead (because it defaults to GET if it doesn't understand the method).
+
+### How do we fix this?
+
+1.  **AJAX / Fetch:** JavaScript (on the client) has no such limitation. `fetch('/things', { method: 'DELETE' })` works perfectly.
+2.  **Method Override:** A middleware technique (often used in classic SSR apps) where we trick the server. We send a `POST` request but add a query string like `?_method=DELETE`. The server sees the note and "pretends" it received a DELETE.
+
+For now, just know that if you are building a pure HTML/Simple Express app without client-side JS, you are mostly stuck in the `GET` and `POST` lanes.
 
 ---
 

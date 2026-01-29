@@ -1,17 +1,17 @@
 ---
-title: "Basic Directions"
+title: "Basic Routing"
 description: "The fundamentals of Express routing."
 sidebar:
   order: 2
-  label: "02 - Basic Directions"
+  label: "Basic Routing"
   draft: false
 ---
 
 import { LinkButton } from "@astrojs/starlight/components";
 
-## The GPS
+## Where to, Scotty?
 
-In Express, **Routing** is your GPS. It determines how an application responds to a client request to a particular endpoint.
+In Express, **Routing** is our GPS. It determines how our application responds to a client request for a particular endpoint.
 
 The structure is simple: `app.METHOD(PATH, HANDLER)`.
 
@@ -20,7 +20,7 @@ The structure is simple: `app.METHOD(PATH, HANDLER)`.
 - **PATH**: A path on the server.
 - **HANDLER**: The function executed when the route is matched.
 
-### The Visual Anchor (The Interchange)
+### The Interchange
 
 <img
   src="/assets/lessons/02-server-express-way/01-express-interchange.png"
@@ -32,7 +32,7 @@ _Fig 1: The Routing Logic. Follow the colors or get lost in traffic._
 
 ---
 
-## Your First Route
+## Our First Route
 
 ```javascript
 // The "GET" Lane -> Retrieve Info
@@ -66,6 +66,6 @@ app.get("/things", (req, res) => {
   <h3>⏭ Designated Lanes</h3>
   <p>
     We can handle generic traffic. Now let's talk about specific targets using
-    parameters.
+    named route parameters.
   </p>
 </div>

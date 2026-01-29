@@ -1,22 +1,20 @@
 ---
-title: "The Pit Stop"
+title: "Take the Wheel"
 description: "Refuel, repair, and get back in the race. Professor Solo’s Service Station Challenge."
 sidebar:
   order: 98
-  label: "98 - The Pit Stop"
+  label: "Take the Wheel"
   draft: false
 ---
 
 import { LinkButton } from "@astrojs/starlight/components";
 
-## Service Station Challenge
+## Service Station Challenge (Optional Practice)
 
-You've been red-lining the engine for 18 lessons. Time to pull over and check the diagnostics. This lab isn't just about reading the manual; it's about getting your hands greasy.
+You've been red-lining the engine for 18 lessons. Time to pull over and check the diagnostics. This lab isn't just about reading the manual; it's about getting your hands greasy. **This is ungraded practice to tune your skills.**
 
 > **Professor Solo's Directive:**
 > Speed is nothing without control. Build this API like you're tuning a race car. Efficient, clean, and no loose bolts (unhandled errors).
-
-### The Visual Anchor (The Pit Crew)
 
 <img
   src="/assets/lessons/02-server-express-way/98-pit-crew.png"
@@ -28,13 +26,13 @@ _Fig 1: Solo's Garage. Where rubber meets the code._
 
 ---
 
-## Lab Specifications: The "Holo-Garage" API
+## Lab Specs: The "Holo-Garage" API
 
 Your client, a futuristic vehicle modification shop, needs an API to manage their inventory of aftermarket parts.
 
 ### Phase 1: The Foundation (Chassis)
 
-1.  **Initialize** a new project called `bolo-garage-api`.
+1.  **Initialize** a new project called `holo-garage-api`.
 2.  **Install** `express` and `morgan`.
 3.  **Create** an `app.js` entry point.
 4.  **Listen** on `process.env.PORT` (or 4000).
@@ -70,6 +68,39 @@ Create a `public` folder. Add a text file named `manifest.txt` with a list of "A
 - [ ] `POST /parts` is blocked without the mechanic role.
 - [ ] Visiting `/manifest.txt` in the browser downloads/views the file.
 - [ ] Global logging is active via Morgan.
+
+---
+
+## 🤖 AI Co-Pilot Challenges
+
+Want to see how an AI would build it? Or check your own work? Try these prompts.
+
+### 1. The Comparison
+
+After you build it yourself, ask an AI to generate the same API. Compare your code structure to theirs. What did they do differently?
+
+**Copy/Paste Prompt:**
+
+> "Act as a Senior Node.js developer. Generate a simple Express API for a 'Holo-Garage' inventory. It needs:
+>
+> 1. A 'partsRouter' mounted at /parts with GET / and POST /.
+> 2. A custom middleware 'mechanicCheck' that blocks POST requests unless '?role=mechanic' is present.
+> 3. Standard logging with 'morgan'.
+> 4. Static file serving from a 'public' folder.
+>    Provide the code in a single file for easy reading, but explain how you would split it up."
+
+### 2. The Auto-Mechanic (Self-Correction)
+
+Paste your code into an AI and ask it to find bugs or "security leaks".
+
+**Copy/Paste Prompt:**
+
+> "Here is my Express API code. Act as a Security Auditor. Review my code for:
+>
+> 1. Unhandled errors (hanging requests).
+> 2. Missing status codes.
+> 3. Any best practices I missed.
+>    Be harsh but fair."
 
 ---
 

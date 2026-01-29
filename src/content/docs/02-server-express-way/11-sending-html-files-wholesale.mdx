@@ -1,9 +1,9 @@
 ---
-title: "Heavy Freight"
+title: "Sending HTML Files"
 description: "Sending whole files with res.sendFile."
 sidebar:
   order: 11
-  label: "11 - Sending HTML Files"
+  label: "Sending HTML Files"
   draft: false
 ---
 
@@ -12,6 +12,14 @@ import { LinkButton } from "@astrojs/starlight/components";
 ## Bulk Delivery
 
 If we want to send an entire file that already exists on disk as our response, instead of `res.send()` we use `res.sendFile()`.
+
+<img
+  src="/assets/lessons/02-server-express-way/11-send-file.png"
+  alt="Shipyard crane lifting a shipping container labeled index.html onto a truck."
+  width="100%"
+/>
+
+_Fig 1: Bulk Freight. Moving the entire container._
 
 For example, supposing we have a `pages` directory and within that we have `index.html`.
 
@@ -24,9 +32,11 @@ app.get("/", (req, res) => {
 
 ### The Catch
 
-The path that we pass to `sendFile()` **must be absolute**. You can't just say `./pages/index.html`. Node doesn't know where the truck is currently parked relative to the file on disk.
+The path that we pass to `sendFile()` **must be absolute**. You can't just say `./pages/index.html`.
 
-To find our current GPS coordinates, we use `__dirname`.
+Why? Because Node needs to find the file on the **Server's Hard Drive**. It doesn't know where the "truck" (the running process) is parked relative to where the file is stored.
+
+To find our current GPS coordinates on the server's file system, we use `__dirname`. (More on how to calculate this safely in the next lesson).
 
 ---
 
@@ -41,7 +51,7 @@ To find our current GPS coordinates, we use `__dirname`.
 </LinkButton>
 
 <div class="next-step">
-  <h3>⏭ GPS</h3>
+  <h3>⏭ Following the Path</h3>
   <p>
     We need a safer way to calculate file paths than just adding strings
     together.

@@ -1,9 +1,9 @@
 ---
-title: "The Manifest"
+title: "Response Status Codes"
 description: "Marking the cargo with HTTP Status Codes."
 sidebar:
   order: 10
-  label: "10 - Response Status Codes"
+  label: "Response Status Codes"
   draft: false
 ---
 
@@ -11,22 +11,52 @@ import { LinkButton } from "@astrojs/starlight/components";
 
 ## Cargo Condition
 
-Before you hand over the package, you need to declare its condition. This is the **HTTP Status Code**.
+Before you hand over the package, you need to declare its condition. This is the **HTTP Status Code**. It's not just for errors—it's the driver's log of exactly what happened.
 
-- **200**: Package Delivered perfectly. (OK)
-- **201**: New Package Created. (Created)
-- **404**: Address doesn't exist. (Not Found)
-- **500**: The truck exploded on the way. (Internal Server Error)
+<img
+  src="/assets/lessons/02-server-express-way/10-status-codes.png"
+  alt="Holographic shipping manifest checklist showing 200 OK (Loaded), 300 Redirect (Rerouting), 404 Not Found, and 500 System Error."
+  width="100%"
+/>
 
-Express defaults to `200` if you don't say anything. But if something goes wrong, you _must_ be explicit.
+_Fig 1: The Manifest. Everything accounted for._
+
+### The Ranges
+
+- **2xx (Success):** Everything is smooth sailing.
+  - `200 OK`: Standard success.
+  - `201 Created`: New resource made (like after a database insert).
+- **3xx (Redirects):** The resource moved. Rerouting.
+  - `301 Moved Permanently`: It's gone forever, update your bookmarks.
+  - `302 Found`: Temporary detour.
+- **4xx (Client Error):** You messed up.
+  - `400 Bad Request`: You sent bad data.
+  - `401 Unauthorized`: Who are you? (Login needed)
+  - `403 Forbidden`: I know who you are, but you can't come in.
+  - `404 Not Found`: Lost map.
+- **5xx (Server Error):** We messed up.
+  - `500 Internal Server Error`: The truck exploded on the way.
+
+### Express Defaults vs Manual Override
+
+Express defaults to `200` if you don't say anything. But if something goes wrong, or if you need to redirect traffic, you _must_ be explicit.
 
 ```javascript
-// Manually setting the status
-res.status(404).send("File Not Found. Checked behind the couch. Nothing.");
+// 301 Redirect (Moved permanently to the /things lane)
+// Useful for SEO when you change URL structures
+app.get("/old-things", (req, res) => {
+  res.redirect(301, "/things");
+});
+
+// 404 Not Found (Manual)
+app.get("/hidden-bunker", (req, res) => {
+  res.status(404).send("File Not Found. Checked behind the couch. Nothing.");
+});
 ```
 
-> **Professor Solo's Directive:**
-> Don't be that driver who crashes into a wall and then smiles like everything is fine. If the request fails, send a 400 or 500 series code.
+:::caution[Professor Solo's Directive]
+Don't be that driver who crashes into a wall and then smiles like everything is fine. If the request fails, send a 400 or 500 series code.
+:::
 
 ---
 

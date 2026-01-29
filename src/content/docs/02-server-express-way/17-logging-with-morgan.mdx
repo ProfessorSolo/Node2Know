@@ -1,17 +1,32 @@
 ---
-title: "Surveillance"
+title: "Don't reinvent, Install"
 description: "Automated logging with Morgan."
 sidebar:
   order: 17
-  label: "17 - Logging with Morgan"
+  label: "Don't reinvent, install"
   draft: false
 ---
 
 import { LinkButton } from "@astrojs/starlight/components";
+import CautionBox from "../../../components/CautionBox.astro";
 
 ## Professional Monitoring
 
-Why write your own traffic logger when you can hire a professional? **Morgan** is a standard middleware that logs requests automatically.
+Why write your own traffic logger when you can hire a professional? **Morgan** is standard off-the-shelf middleware that logs requests automatically.
+
+<img
+  src="/assets/lessons/02-server-express-way/17-morgan-logger.png"
+  alt="A high-tech surveillance drone camera with 'MORGAN' stenciled on the side, projecting a holographic log of HTTP requests."
+  width="100%"
+/>
+
+_Fig 1: Automated Surveillance._
+
+### Why "Morgan"?
+
+> **Trivia:** The package is named after **Dexter Morgan**, the famous blood-spatter analyst (and serial killer) from the TV show _Dexter_. It analyzes the "splatter" of your HTTP requests.
+
+### Installation
 
 ```bash
 npm install morgan
@@ -33,8 +48,11 @@ GET /things 200 4.205 ms - 23
 GET /missing 404 1.102 ms - 139
 ```
 
-> **Professor Solo's Directive:**
-> Install this first. Always. Driving blind is for stuntmen, not engineers.
+<CautionBox>
+  <strong>Professor Solo's Directive:</strong>
+  <br />
+  Install this first. Always. Driving blind is for stuntmen, not engineers.
+</CautionBox>
 
 ---
 
@@ -49,7 +67,7 @@ GET /missing 404 1.102 ms - 139
 </LinkButton>
 
 <div class="next-step">
-  <h3>⏭ Rest Stop</h3>
+  <h3>⏭ Static Assets</h3>
   <p>
     Sometimes users just need to grab a map or a pic without a security check.
   </p>

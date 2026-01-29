@@ -1,17 +1,25 @@
 ---
-title: "Designated Lanes"
+title: "Named Route Parameters"
 description: "Using named route parameters to capture dynamic values."
 sidebar:
   order: 3
-  label: "03 - Designated Lanes"
+  label: "Named Route Parameters"
   draft: false
 ---
 
 import { LinkButton } from "@astrojs/starlight/components";
 
-## The HOV Lane
+## The :thingId Lane
 
-Sometimes you don't just want _any_ thing, you want a _specific_ thing. Route parameters are named URL segments that are used to capture the values specified at their position in the URL. We flag them with a colon (`:`).
+Sometimes we don't just want _any_ thing, we want a _specific_ thing. Route parameters are named URL segments that are used to capture the values specified at their position in the URL. We flag them with a colon (`:`).
+
+<img
+  src="/assets/lessons/02-server-express-way/03-param-lane.png"
+  alt="A futuristic neo-retro highway gantry with a neon sign reading /things/:thingId. Floating ID numbers hover over cars passing through the lane."
+  width="100%"
+/>
+
+_Fig 1: The Designated Lane._
 
 This allows us to create **dynamic routes**. Instead of hardcoding `/users/1`, `/users/2`, `/users/3`, we create one lane that handles them all.
 
@@ -26,11 +34,11 @@ app.get("/things/:thingId", (req, res) => {
 });
 ```
 
-The captured values are populated in the `req.params` object. It's like an HOV lane pass—it lets specific traffic through based on ID.
+The captured values are populated in the `req.params` object. It's like an designated lane pass — it lets specific traffic through based on ID.
 
 ### Multiple Parameters
 
-You can have multiple segments in a single route.
+We can have multiple segments in a single route.
 
 ```javascript
 // Route path: /flights/:from/:to
@@ -42,7 +50,7 @@ app.get("/flights/:from/:to", (req, res) => {
 ```
 
 > **Professor Solo's Directive:**
-> Parameter names are case-sensitive and must be made up of word characters ([A-Za-z0-9_]). Don't get cute with emojis in your variable names.
+> Parameter names are case-sensitive and must be made up of word characters ([A-Za-z0-9_]). Don't get cute with emojis in variable names.
 
 ---
 

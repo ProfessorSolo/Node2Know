@@ -1,9 +1,9 @@
 ---
-title: "Standard Container"
+title: "Sending JSON"
 description: "Sending JSON responses for modern APIs."
 sidebar:
   order: 13
-  label: "13 - Sending JSON"
+  label: "Sending JSON"
   draft: false
 ---
 
@@ -15,7 +15,7 @@ In the modern web stack, we barely send HTML files from the server anymore. We s
 
 Express makes this exceedingly easy. Instead of `res.send()`, we use `res.json()`.
 
-### The Visual Anchor (Digital Cargo)
+### Modern Digital Cargo
 
 <img
   src="/assets/lessons/02-server-express-way/03-digital-cargo.png"
@@ -42,8 +42,36 @@ app.get("/api/user", (req, res) => {
 
 `res.json()` does two important things:
 
-1.  Converts your JavaScript object/array into a JSON string.
+1.  Converts our JavaScript object/array into a JSON string.
 2.  Sets the `Content-Type` header to `application/json` automatically.
+
+### Simulating a Database (Loading from Disk)
+
+Real apps use databases, but for learning, a JSON file is a great substitute. We can use what we learned in the previous lessons (`path` and file reading) to serve "dynamic" data.
+
+```javascript
+const fs = require("fs");
+const path = require("path");
+
+app.get("/api/inventory", (req, res) => {
+  // 1. Find the file
+  const filePath = path.join(__dirname, "data", "inventory.json");
+
+  // 2. Read the file
+  fs.readFile(filePath, "utf8", (err, data) => {
+    if (err) {
+      // Always handle your errors!
+      return res.status(500).send("Database System Failure");
+    }
+
+    // 3. Parse and Send
+    const inventory = JSON.parse(data);
+    res.json(inventory);
+  });
+});
+```
+
+This pattern—**Read, Parse, Send**—is the grandfather of all API logic.
 
 ---
 
@@ -58,7 +86,7 @@ app.get("/api/user", (req, res) => {
 </LinkButton>
 
 <div class="next-step">
-  <h3>⏭ The Toll Booths</h3>
+  <h3>⏭ The Checkpoints</h3>
   <p>
     We've mastered delivery. Now let's talk about security and the Middleware
     Stack.

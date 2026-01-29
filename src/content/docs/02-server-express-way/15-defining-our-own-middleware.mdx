@@ -1,45 +1,61 @@
 ---
-title: "Custom Checkpoints"
+title: "Custom Middleware"
 description: "Writing your own middleware functions."
 sidebar:
   order: 15
-  label: "15 - Custom Middleware"
+  label: "Custom Middleware"
   draft: false
 ---
 
 import { LinkButton } from "@astrojs/starlight/components";
 
-## Hiring Constraints
+## The Border Crossing
 
 We know that middleware sits in the middle. But how do we write our own?
 
-A middleware function is just a function with 3 arguments:
+Think of your custom middleware as a **Border Control Station**. Every request must pass through it to enter the country (your route handlers).
+
+<img
+  src="/assets/lessons/02-server-express-way/15-customs-border.png"
+  alt="Cyberpunk international border crossing with a holographic customs officer. One lane green for ENTER, one lane red for DENIED."
+  width="100%"
+/>
+
+_Fig 1: Papers, please._
+
+### The Three Outcomes
+
+When a vehicle (request) pulls up to the booth, the officer (middleware) has three choices:
+
+1.  **Welcome (Success):** "You've arrived." Middleware _can_ send a response immediately if it wants to (e.g., a cache hit or health check).
+    - `res.status(200).send("Welcome")`
+2.  **Access Denied (Failure):** "Your passport is expired. Turn around."
+    - `res.status(403).send("Access Denied")`
+3.  **Inspect & Pass (Next):** "Open your trunk. Okay, looks good." The officer attaches a "Checked" sticker and waves you through.
+    - `req.checked = true; next()`
+
+### Code: The Officer
 
 ```javascript
-const myMiddleware = (req, res, next) => {
-  // 1. Do something
-  console.log("A request is passing through.");
-
-  // 2. Pass control to the next handler
-  next();
-};
-
-app.use(myMiddleware);
-```
-
-### The Blockade
-
-Middleware can also deny entry. If a condition isn't met, we can send a response _instead_ of calling `next()`.
-
-```javascript
-const authCheck = (req, res, next) => {
-  if (req.query.pass === "vip") {
-    next(); // Access Granted
-  } else {
-    // Access Denied. The car stops here.
-    res.status(403).send("STOP. Toll Unpaid. Turn around.");
+const authOfficer = (req, res, next) => {
+  // 1. Immediate Success (The Fifth Element)
+  // Using query params for easy browser testing: ?passport=multi-pass
+  if (req.query.passport === "multi-pass") {
+    return res.status(200).send("Welcome, Leeloo Dallas.");
   }
+
+  // 2. Access Denied
+  if (req.query.passport === "banned") {
+    return res.status(403).send("Access Denied. Turn around.");
+  }
+
+  // 3. Inspect (Look in the trunk)
+  console.log("Looking in the trunk...");
+  req.customsCheckRequired = true; // Attach the sticker
+  next(); // wave them to inspections
 };
+
+app.use(authOfficer);
 ```
 
 ---

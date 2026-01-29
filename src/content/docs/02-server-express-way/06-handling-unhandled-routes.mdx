@@ -3,7 +3,7 @@ title: "Dead Ends"
 description: "Handling unhandled routes and 404s."
 sidebar:
   order: 6
-  label: "06 - Handling Unhandled Routes"
+  label: "Handling Unhandled Routes"
   draft: false
 ---
 
@@ -12,6 +12,14 @@ import { LinkButton } from "@astrojs/starlight/components";
 ## The Catch-All
 
 By default, if a request makes it to the bottom of your file without matching any route, Express just shrugs. We need a designated "Dead End" sign for lost drivers.
+
+<img
+  src="/assets/lessons/02-server-express-way/06-404-fail-whale.png"
+  alt="Neon retro style fail whale being lifted by drones. Text says 404."
+  width="100%"
+/>
+
+_Fig 1: 404 - Nothing to see here, except a fail whale._
 
 Express matches routes in order. We use `app.all('*')` as the final safety net.
 
@@ -27,8 +35,17 @@ app.all("*", (req, res) => {
 });
 ```
 
-> **Professor Solo's Directive:**
-> Place this **last**. If you put this at the top, it catches everything, and nobody gets to where they're going. It's a road block, not a checkpoint.
+### Why the Status Code Matters
+
+You might ask: "Why not just send the message?"
+
+If you just do `res.send('Not Found')`, Express defaults to a **200 OK** status. To the browser (or a search engine bot), that looks like a successful page load. The user sees an error message, but the machine thinks everything is fine.
+
+By explicitly chaining `.status(404)`, we tell the client: "This resource does not exist." This is critical for SEO and for API clients to know they hit a dead end.
+
+:::caution[Professor Solo's Directive]
+Place this **last**. If you put this at the top, it catches everything, and nobody gets to where they're going. It's a road block, not a checkpoint.
+:::
 
 ---
 

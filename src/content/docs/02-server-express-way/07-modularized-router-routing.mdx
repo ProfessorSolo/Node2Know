@@ -1,9 +1,9 @@
 ---
-title: "Local Roads"
+title: "Modular Route Routers"
 description: "Breaking up the monolith with Express Router."
 sidebar:
   order: 7
-  label: "07 - Modular Routers"
+  label: "Modular Route Routers"
   draft: false
 ---
 
@@ -11,11 +11,11 @@ import { LinkButton } from "@astrojs/starlight/components";
 
 ## The Traffic Jam
 
-If you keep piling every single route into your main `app.js` file, you're going to create a massive traffic jam. Navigating a 500-line file to find one route is like trying to drive through downtown during rush hour—inefficient and infuriating.
+If we keep piling every single route into our main `app.js` file, we're going to create a massive traffic jam. Navigating a 500-line file to find one route is like trying to drive through downtown during rush hour—inefficient and infuriating.
 
 We use **Express Router** to build modular, "local" road networks.
 
-### The Visual Anchor (Express Lanes)
+### Modular Express Lanes
 
 <img
   src="/assets/lessons/02-server-express-way/02-express-lanes.png"
@@ -24,6 +24,13 @@ We use **Express Router** to build modular, "local" road networks.
 />
 
 _Fig 1: Segregated Traffic. Clean lines, high speed._
+
+> **Professor Solo's Directive (Speed vs Sanity):**
+> When we talk about "speed" here, we are talking about **development speed**.
+> Splitting your code into multiple files does not make the Node server run faster. In fact, it's technically a microsecond slower due to the extra file lookups.
+>
+> **But we don't care.**
+> We do this because working on a 10,000 line `app.js` file is a nightmare. Modular code enables **teams** to move fast without crashing into each other.
 
 ---
 
@@ -39,9 +46,15 @@ _Fig 1: Segregated Traffic. Clean lines, high speed._
 const express = require("express");
 const router = express.Router(); // A mini-app instance
 
-// We define routes on 'router' just like 'app'
-router.get("/", (req, res) => res.send("List of Things"));
-router.get("/:id", (req, res) => res.send("Details of Thing"));
+// We define our routes here
+// Note: We are using the FULL path for now.
+router.get("/things", (req, res) => {
+  res.send("List of Things");
+});
+
+router.get("/things/:id", (req, res) => {
+  res.send("Details of Thing");
+});
 
 module.exports = router;
 ```

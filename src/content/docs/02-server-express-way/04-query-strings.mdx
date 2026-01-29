@@ -1,9 +1,9 @@
 ---
-title: "The Trunk"
+title: "Query Strings"
 description: "Handling optional data with Query Strings."
 sidebar:
   order: 4
-  label: "04 - The Trunk (Query Strings)"
+  label: "Query Strings"
   draft: false
 ---
 
@@ -11,11 +11,19 @@ import { LinkButton } from "@astrojs/starlight/components";
 
 ## Extra Baggage
 
-Query strings are for extra baggage. They don't change the route path itself (the destination), but they carry extra info. You know, the stuff after the `?` in a URL.
+Query strings are for extra baggage. They don't change the route path itself (the destination), but they carry extra info. We know, the stuff after the `?` in a URL.
+
+<img
+  src="/assets/lessons/02-server-express-way/04-query-luggage.png"
+  alt="A futuristic open trunk of a cyberpunk sports car containing glowing holographic luggage with digital tags reading ?sort=desc and ?keyword=turbo."
+  width="100%"
+/>
+
+_Fig 1: The Luggage._
 
 `http://localhost:3000/search?keyword=turbo&sort=desc`
 
-In standard HTTP parsing, you'd have to split this string manually. Express, being the luxury vehicle it is, parses these automatically into `req.query`.
+In standard HTTP parsing, we'd have to split this string manually. Express, being the luxury vehicle it is, parses these automatically into `req.query`.
 
 ```javascript
 app.get("/search", (req, res) => {
@@ -33,10 +41,30 @@ app.get("/search", (req, res) => {
 
 ### The Difference
 
-- **Params (`:id`)**: Essential to the resource. The ID _defines_ what you are fetching. (The Destination).
+- **Params (`:id`)**: Essential to the resource. The ID _defines_ what we are fetching. (The Destination).
 - **Query (`?sort=desc`)**: Optional modifiers. Filtering, sorting, pagination. (The Luggage).
 
-If you don't send a query string, `req.query` is just an empty object. No baggage, no problem.
+If we don't send a query string, `req.query` is just an empty object. No baggage, no problem.
+
+### Rules of the Road
+
+**1. Route Matching:**
+Query strings are **not** part of the route path matching.
+
+- Request: `/search?q=pizza`
+- Route: `app.get('/search', ...)`
+- **Result:** Match. Express ignores the query string when finding the right handler.
+
+**2. Common Use Cases:**
+
+- **Filtering:** `?category=shoes&color=red`
+- **Sorting:** `?sort=price_asc`
+- **Pagination:** `?page=2&limit=20`
+- **Search:** `?q=cyberpunk`
+
+:::caution[Professor Solo's Directive (Security)]
+**Never** put sensitive data in query strings. No passwords, no API tokens, no credit card numbers. Start logic: URLs are logged in browser history, server logs, and proxy servers. If you put a password in a query string, you just broadcast it to the world. ASCII-clear luggage only.
+:::
 
 ---
 

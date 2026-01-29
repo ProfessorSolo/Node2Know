@@ -1,34 +1,55 @@
 ---
-title: "Delivery"
+title: "Sending Responses"
 description: "The art of sending a response."
 sidebar:
   order: 9
-  label: "09 - Sending Responses"
+  label: "Sending Responses"
   draft: false
 ---
 
 import { LinkButton } from "@astrojs/starlight/components";
 
-## The Truck
+## The Return Trip
 
-You've built the highway (Server) and organized the lanes (Router). Now, what are you actually transporting? A highway without cargo is just a slab of concrete.
+Every request is a journey. The client (browser/phone) drove all the way to your server to get something. If you don't give them a return trip, they just sit there... waiting... forever.
 
-In Express, the **Response Object (`res`)** is your delivery truck. It's responsible for packaging the data and ensuring it arrives at the client's docking bay.
+In Express, the **Response Object (`res`)** is how we load the cargo and send the vehicle back home.
 
-### `res.send()`
+<img
+  src="/assets/lessons/02-server-express-way/09-loading-dock.png"
+  alt="Sci-fi loading dock loading a glowing blue data container onto awaiting transport vehicle."
+  width="100%"
+/>
 
-The simplest way to send a response is `res.send()`. It's smart enough to figure out the `Content-Type` based on what you give it.
+_Fig 1: The Loading Dock. Preparing the Payload._
+
+### The Payload
+
+We typically send data back in one of two ways:
+
+1.  **`res.send(body)`**: The general purpose tool. It automatically detects the content type.
+    - Pass it a string? Sends `text/html`.
+    - Pass it an object/array? Sends `application/json`.
+2.  **`res.json(body)`**: The specialist. It **forces** the response to be JSON. It is safer ensuring that `null` or `undefined` are treated as valid JSON values, not errors.
 
 ```javascript
-// Sends text/html
-res.send("<h1>Hello World</h1>");
+// The Generalist (res.send)
+app.get("/", (req, res) => {
+  res.send("<h1>Welcome to the Dock</h1>"); // Content-Type: text/html
+});
 
-// Sends application/json (automatically stringifies objects)
-res.send({ user: "Han" });
+// The Specialist (res.json) - PREFERRED for APIs
+app.get("/data", (req, res) => {
+  // Automatically stringifies the object
+  res.json({ status: "loaded", cargo: ["box1", "box2"] });
+});
 ```
 
-> **Professor Solo's Directive:**
-> Don't send empty trucks. If you don't call a send method, the request hangs forever. The client sits there loading until it times out.
+:::caution[The Infinite Loop]
+**Professor Solo's Directive:** NEVER leave a request hanging.
+
+If your route handler finishes without calling `res.send()`, `res.json()`, or `res.end()`, the client will keep spinning until it times out (usually 2 minutes!). Always close the loop.
+:::
 
 ---
 

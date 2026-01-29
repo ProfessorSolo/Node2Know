@@ -1,9 +1,9 @@
 ---
-title: "GPS"
+title: "From Here to Where?"
 description: "Navigating the file system with the Path module."
 sidebar:
   order: 12
-  label: "12 - Path Finding"
+  label: "From Here to Where?"
   draft: false
 ---
 
@@ -14,6 +14,21 @@ import { LinkButton } from "@astrojs/starlight/components";
 We need to construct the path to our file. We _could_ try to smash strings together like `__dirname + '/pages/index.html'`, but that's reckless driving. Windows uses backslashes `\`, Mac/Linux use forward slashes `/`. String concatenation often results in broken paths.
 
 We use the core `path` module to handle this chaos.
+
+<img
+  src="/assets/lessons/02-server-express-way/12-path-gps.png"
+  alt="Holographic GPS navigation interface showing a neon green path through a complex directory structure."
+  width="100%"
+/>
+
+_Fig 1: GPS Navigation. Calculating the optimal route._
+
+### The Navigator vs The Driver
+
+Important distinction:
+
+- **`path` module (The Navigator):** It purely calculates strings. It doesn't know if the file actually exists. It just tells you "The address _would_ be here."
+- **`fs` module (The Driver):** Actually goes to the disk to read/write files. Use `path` to tell `fs` where to go.
 
 ```javascript
 const path = require("path");
@@ -27,7 +42,23 @@ app.get("/", (req, res) => {
 });
 ```
 
-`path.join()` is smart. It handles the separators, and it even resolves `..` (parent directory) segments correctly if you need to back up a level.
+### U-Turns and Detours (`..`)
+
+`path.join()` is smarter than simple string concatenation. It understands that `..` means "Go up one level".
+
+This is crucial because typically your `server.js` is in the root, but your source code might be in `src`.
+
+```javascript
+// Current: /Users/solo/project/src/routes/
+// Visualizing: path.join(__dirname, "..", "views", "home.html")
+
+// 1. Start: /Users/solo/project/src/routes/
+// 2. "..":  /Users/solo/project/src/
+// 3. "views": /Users/solo/project/src/views/
+// 4. "home.html": /Users/solo/project/src/views/home.html
+```
+
+It resolves the logic before handing the final string to the driver. Safe and OS-independent.
 
 ---
 

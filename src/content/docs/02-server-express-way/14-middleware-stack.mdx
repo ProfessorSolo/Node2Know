@@ -1,21 +1,22 @@
 ---
-title: "The Toll Booths"
+title: "Middleware Stack"
 description: "Understanding the Middleware Stack."
 sidebar:
   order: 14
-  label: "14 - Middleware Stack"
+  label: "Middleware Stack"
   draft: false
 ---
 
 import { LinkButton } from "@astrojs/starlight/components";
+import CautionBox from "../../../components/CautionBox.astro";
 
 ## The Checkpoints
 
-You're driving down the highway. You hit a toll booth. You stop, pay the toll, the arm goes up, and you continue to the next section. **Middleware** functions in Express are exactly like these toll booths.
+You're driving down the highway. You hit a Security Checkpoint. You stop, they check your ID, scan your cargo, and if everything looks good, they wave you through to the next section. **Middleware** functions in Express are exactly like these checkpoints.
 
-They sit between the raw request coming in and the final route handler. They can stop the car (send a response), inspect the trunk (modify `req`), or just wave it through to the next booth (call `next()`).
+They sit between the raw request coming in and the final route handler. They can **turn back the car** (send a response immediately), inspect the trunk (modify `req`), or just wave it through to the next booth (call `next()`).
 
-### The Visual Anchor (The Toll Booth)
+### Checkpoints on the Express Highway
 
 <img
   src="/assets/lessons/02-server-express-way/04-toll-booth.png"
@@ -33,8 +34,13 @@ Middleware functions take **three** arguments: `req`, `res`, and `next`.
 
 `next` is a function that, when called, passes control to the _next_ middleware function in the stack.
 
-> **Professor Solo's Directive:**
-> If you don't call `next()` or send a response, the request hangs forever. The driver sits there honking until the connection times out. Don't be that guy.
+<CautionBox>
+  <strong>Professor Solo's Directive:</strong>
+  <br />
+  If you don't call <strong>next()</strong> or send a response, the request
+  hangs forever. The driver sits there honking until the connection times out.
+  Don't be that guy.
+</CautionBox>
 
 ---
 

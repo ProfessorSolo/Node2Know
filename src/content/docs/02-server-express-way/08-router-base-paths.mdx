@@ -1,17 +1,25 @@
 ---
-title: "On-Ramps"
+title: "Router Base Paths"
 description: "Mounting routers to a base path."
 sidebar:
   order: 8
-  label: "08 - Router Base Paths"
+  label: "Router Base Paths"
   draft: false
 ---
 
 import { LinkButton } from "@astrojs/starlight/components";
 
-## Merging Traffic
+## Merging Traffic Routers
 
 We have our `thingRouter.js`, but `app.js` needs to know about it. We connect them using `app.use()`, and we give it a **Base Path**.
+
+<img
+  src="/assets/lessons/02-server-express-way/08-base-path-ramp.png"
+  alt="Futuristic highway output sign reading EXIT: /things. Perspective from inside a cyberpunk car."
+  width="100%"
+/>
+
+_Fig 1: Taking the Exit._
 
 ### `app.js`
 
@@ -27,13 +35,35 @@ app.use("/things", thingRouter);
 
 The magic here is that inside `thingRouter.js`, the router **doesn't know** about the `/things` prefix. It only cares about what comes _after_.
 
-- Request: `/things` -> Matches `router.get('/')` inside `thingRouter.js`.
-- Request: `/things/42` -> Matches `router.get('/:id')`.
+**Once you take the exit, you are no longer on the highway.**
+
+When we mount a router on `/things`, Express strips that part of the URL off before handing the request to the router.
+
+- **Request URL:** `/things/42`
+- **Main App sees:** `/things` -> passes control to `thingRouter`
+- **Router sees:** `/42`
+
+So inside `thingRouter.js`, we must REMOVE the prefix we added in the previous lesson:
+
+```javascript
+// routes/thingRouter.js
+
+// OLD (Wrong inside a mounted router)
+// router.get('/things', ...)
+
+// NEW (Correct)
+// Matches /things/
+router.get("/", (req, res) => res.send("List of Things"));
+
+// Matches /things/:id
+router.get("/:id", (req, res) => res.send("Details of Thing"));
+```
 
 We've effectively removed the repetitive `/things` prefix from inside the router file.
 
-> **Solo Warning:**
-> If you accidentally include `/things` inside the router file AND in the `app.use` base path, your URL becomes `/things/things/42`. Don't double-dip.
+:::caution[Solo Warning]
+If you accidentally include `/things` inside the router file AND in the `app.use` base path, your URL becomes `/things/things/42`. Don't double-dip.
+:::
 
 ---
 
