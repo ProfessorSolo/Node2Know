@@ -8,6 +8,7 @@ draft: false
 ---
 
 import { LinkButton, Steps, Aside } from "@astrojs/starlight/components";
+import CautionBox from "../../../components/CautionBox.astro";
 
 ## The Tale of Two Systems
 
@@ -110,7 +111,7 @@ Which one should you use? Here is the breakdown.
   anywhere soon.
 </Aside>
 
-<Aside type="danger" title="The Compatibility Trap">
+<CautionBox>
 **Warning:**
 
 You can import CJS into ESM, but you **cannot** `require()` an
@@ -120,12 +121,12 @@ ESM file in CJS.
 
 ❌ `require('./esm-file.mjs')` - Crashes! Use `await import()` instead
 
-</Aside>
+</CautionBox>
 
 ![CommonJS vs ESM Handshake](/assets/lessons/01-intro-to-node/cjs-vs-esm.png)
 
 ---
 
-### ⏭ File this with FS
+### ⏭ File System Freedom with FS
 
-We're free from the sandbox of the browser. We can do just about anything with files.
+In Node.js, we're free from the sandbox of the browser. We can do (almost) anything we want with folders and files on the server.

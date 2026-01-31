@@ -108,8 +108,6 @@ We `.slice(2)` to cut off the boring stuff and get straight to your input!
 
 Every good site needs a status report. Node comes with built-in tools (Modules) so you don't have to build a hammer from scratch.
 
-<Steps>
-
 1.  Modify your `manifest.js` to include the **OS Module**:
 
     ```javascript
@@ -125,13 +123,13 @@ Every good site needs a status report. Node comes with built-in tools (Modules) 
 
 2.  Run it again. Watch the data pour in.
 
-</Steps>
-
 :::tip[T.A. Watts: The Supply Closet]
 `require('os')` is like walking into the supply closet and grabbing the "Operating System" toolkit. You didn't write it, you just asked for it. This is the power of Node—modules do the heavy lifting.
 :::
 
-## Submission Checklist
+---
+
+## How'd You Do?
 
 Before you clock out, verify you have:
 
@@ -141,4 +139,35 @@ Before you clock out, verify you have:
 - [ ] Successfully ran `node manifest.js [YourName]`.
 - [ ] Saw your System Uptime logged to the console.
 
-**"Good work, engineers. Take a lunch break. Next, we hit the expressway."** — _Professor Solo_
+---
+
+## 🤖 AI Co-Pilot Challenges
+
+Want to dig deeper? Try these experiments with your AI assistant.
+
+### 1. Explain the Magic
+
+Paste your `manifest.js` code into an AI and ask:
+
+> "Explain how `process.argv` works in this code like I'm 10 years old. Draw a diagram of the array indices."
+
+### 2. Expand the Toolkit
+
+We used `os.uptime()`. Ask an AI:
+
+> "What are 3 other cool methods in the Node.js `os` module that I can use to get info about my computer? Give me code examples."
+
+### 3. Debug the Site (Broken Code)
+
+Copy this broken code into a new file called `broken.js`. It will crash. **Try to fix it yourself first** by reading the error message. If you get stuck, paste the error into an AI.
+
+```javascript
+// broken.js
+console.log("Checking system memory...");
+console.log(`Total Memory: ${os.totalmem()}`); // Error!
+console.log("System check complete.");
+```
+
+_Hint: Did we forget to visit the supply closet?_
+
+**"Great work, engineers. Take a break. Next, we hit the Node.js expressway."** — _Professor Solo_

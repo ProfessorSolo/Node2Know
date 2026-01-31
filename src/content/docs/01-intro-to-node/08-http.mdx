@@ -3,66 +3,62 @@ title: "Working with HTTP"
 description: "Creating a basic HTTP server with Node.js."
 sidebar:
   order: 9
-  label: "HTTP"
+  label: "The HTTP Module"
 draft: false
 ---
 
 import { LinkButton } from "@astrojs/starlight/components";
 
-## The Hotel Front Desk (The http Module)
+## The http Module
 
-If Node.js is our **Hotel Construction Site**, the **`http` module** is like the **Front Desk**. Usually, you don't build a front desk from scratch—you just hire a concierge. But in Node, we have the power to build the desk and train the concierge ourselves.
+The `http` module allows our application to listen for incoming **requests** and send back **responses**.
 
-The `http` module allows our application to listen for incoming **requests** (Guests) and send back **responses** (Room Keys, Directions, or "Sorry, we're full").
-
-Fundamentally, this is all a web server does: **Listen for a Guest → Do something for them → Send them on their way.**
+Fundamentally, this is all a web server does: **Listen for a request → Do something → Send a response.**
 
 ---
 
-### **1. Hiring the Concierge (`createServer`)**
+### `http.createServer()`
 
-We create a server by calling `http.createServer()`. This method takes a **callback function**—think of this as the **Standard Operating Procedure (SOP)** manual for your concierge. Every time a guest (Request) arrives, the concierge follows these exact steps.
+We create a server by calling `http.createServer()`. This method takes a **callback function** that runs every time a request hits the server.
 
-### **2. The Interaction**
+### **2. The Request and Response Cycle**
 
-- **`req` (Request)**: The Guest. Contains details like what they want (URL), who they are (Headers), and any luggage they brought (Data).
-- **`res` (Response)**: The Service. This is what we give back to the guest. It could be a webpage, some JSON data, or a 404 error.
+- **`req` (Request)**: Contains details about the incoming request (URL, Headers, Data).
+- **`res` (Response)**: Used to send data back to the client (Status, Headers, Body).
 
 ---
 
-### **The Code: Building the Desk**
+### **The Code: A Basic Server**
 
-Let's build a minimalist server. Notice how we "train" the server to say "Hello" to everyone who visits.
+Let's build a minimalist server that replies with plain text.
 
 ```javascript
 "use strict";
 
-// 1. Bring in the 'http' blueprint (Load the core module)
+// 1. Load the core 'http' module
 const http = require("http");
 
-// 2. Define where our hotel is located
-const hostname = "127.0.0.1"; // The 'localhost' address
-const port = 3000; // The specific door number
+// 2. Define the hostname and port
+const hostname = "127.0.0.1"; // Localhost
+const port = 3000;
 
-// 3. Create the Server (Hire the Concierge)
+// 3. Create the Server
 // The callback runs EVERY time a request hits the server
 const server = http.createServer((req, res) => {
-  // --- The Concierge's SOP ---
-
-  // A. Set the status (200 OK = "Welcome, everything is fine!")
+  // A. Set the status (200 OK)
   res.statusCode = 200;
 
-  // B. Tell the browser what kind of package we are giving them
-  // "Content-Type: text/plain" means "Here is simple text, not a flashy HTML page."
+  // B. Set the Content-Type header
+  // "text/plain" means we are sending simple text, not HTML
   res.setHeader("Content-Type", "text/plain");
 
-  // C. Hand over the package and close the transaction
-  res.end("Hello Node Server! I am your concierge.");
+  // C. Send the body and close the connection
+  res.end("Hello Node Server!");
 });
 
-// 4. Open for Business (Listen on the port)
+// 4. Start listening
 server.listen(port, hostname, () => {
-  console.log(`🏨 Server running at http://${hostname}:${port}/`);
+  console.log(`Server running at http://${hostname}:${port}/`);
 });
 ```
 
@@ -87,14 +83,15 @@ server.listen(port, hostname, () => {
   href="https://nodejs.org/api/http.html"
   variant="secondary"
   icon="external"
+  target="_blank"
 >
   Node.js HTTP Docs
 </LinkButton>
 
 ### ⏭ Next Step
 
-Our server file works, but it's getting a bit crowded. In a real hotel, the Concierge doesn't also cook the food, clean the rooms, and park the cars. They call strictly specialized staff for that.
+Our server file works, but it's getting a bit crowded. As our application grows, we can't keep everything in one file.
 
-It's time to **organize our code** by hiring some specialists.
+It's time to **organize our code** by modularizing it.
 
 [Loading Modules (CommonJS)](./09-common-js)

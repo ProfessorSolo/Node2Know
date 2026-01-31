@@ -1,13 +1,14 @@
 ---
-title: "nodemon for Hot Reloading"
+title: "node --watch & nodemon"
 description: "Streamline your development workflow with automatic restarts."
 sidebar:
   order: 7
-  label: "Nodemon"
+  label: "node --watch & nodemon"
 draft: false
 ---
 
 import { LinkButton } from "@astrojs/starlight/components";
+import CautionBox from "../../../components/CautionBox.astro";
 
 ## The Perfectionist Director
 
@@ -71,8 +72,10 @@ npm install --save-dev nodemon
 
 You'll see it appear in your `package.json` under `"devDependencies"`.
 
-> [!NOTE]
-> Since it's installed locally, you can't just type `nodemon` in your terminal. You usually run it via an NPM script (which we'll cover later!).
+<CautionBox>
+  Since it's installed locally, you can't just type `nodemon` in your terminal.
+  You usually run it via an NPM script (which we'll cover later!).
+</CautionBox>
 
 ## Extra Bits & Bytes
 
@@ -80,11 +83,17 @@ You'll see it appear in your `package.json` under `"devDependencies"`.
   href="https://nodejs.org/docs/latest/api/cli.html#--watch"
   variant="secondary"
   icon="external"
+  target="_blank"
 >
   Node --watch Docs
 </LinkButton>
 
-<LinkButton href="https://nodemon.io/" variant="secondary" icon="external">
+<LinkButton
+  href="https://nodemon.io/"
+  variant="secondary"
+  icon="external"
+  target="_blank"
+>
   Nodemon.io
 </LinkButton>
 

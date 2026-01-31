@@ -1,9 +1,9 @@
 ---
-title: "The Map"
+title: "Node/Express Pocket Map"
 description: "High-speed references for the Express Highway."
 sidebar:
   order: 99
-  label: "99 - Pocket Express Map"
+  label: "Node/Express Pocket Map"
   draft: false
 ---
 
@@ -13,15 +13,13 @@ import { LinkButton } from "@astrojs/starlight/components";
 
 Driving at 100mph doesn't leave much time to read documentation. Keep this map in your glovebox.
 
-### The Visual Anchor (Pocket Map)
-
 <img
   src="/assets/lessons/02-server-express-way/99-pocket-map.png"
   alt="A glowing, holographic roadmap floating above a dashboard. Neons lines trace the routes of Express. Key landmarks like 'Router', 'Middleware', and 'Static' are marked as transit stops."
   width="100%"
 />
 
-_Fig 1: Your Guide to the Galaxy (and Express)._
+_Fig 1: Your Guide to the Node.js Galaxy (and Express)._
 
 ---
 
@@ -58,7 +56,7 @@ app.listen(PORT, () => console.log(`Driving on ${PORT}`));
 - `res.sendFile("/abs/path/file.html")`: Serve file.
 - `res.status(404)`: Set status code.
 
-## Middleware (The Tolls)
+## Middleware
 
 ```javascript
 // 1. Write it
@@ -82,11 +80,12 @@ app.get("/safe", check, handler);
   href="https://github.com/expressjs/express"
   icon="external"
   variant="secondary"
+  target="_blank"
 >
   Express Github Repo
 </LinkButton>
 
 <div class="next-step">
-  <h3>⏭ Next Chapter</h3>
-  <p>The highway is endless. Keep driving.</p>
+  <h3>⏭ Next Up</h3>
+  <p>Rev up your templating engines.</p>
 </div>
