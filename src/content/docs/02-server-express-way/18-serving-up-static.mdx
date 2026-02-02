@@ -1,14 +1,14 @@
 ---
-title: "Serving Static Files"
-description: "Serving static assets with express.static."
+title: 'Serving Static Files'
+description: 'Serving static assets with express.static.'
 sidebar:
   order: 18
-  label: "Serving Static Files"
+  label: 'Serving Static Files'
   draft: false
 ---
 
-import { LinkButton, Aside } from "@astrojs/starlight/components";
-import CautionBox from "../../../components/CautionBox.astro";
+import { LinkButton, Aside } from '@astrojs/starlight/components';
+import CautionBox from '../../../components/CautionBox.astro';
 
 ## The Gift Shop
 
@@ -26,7 +26,7 @@ _Fig 1: Self-service downloads._
 
 ```javascript
 // Open the 'public' folder to the world
-app.use(express.static("public"));
+app.use(express.static('public'));
 ```
 
 Now, if a file exists at `public/images/logo.png`, the user can access it at `http://localhost:3000/images/logo.png`.
@@ -63,7 +63,7 @@ It is standard practice to map a **single** directory (usually `public`) and the
   If you want to avoid file names clashing with your route names (e.g. `GET /about` vs `public/about.html`), you can mount static files under a "virtual" prefix:
 
 ```javascript
-app.use("/static", express.static("public"));
+app.use('/static', express.static('public'));
 // Now: http://localhost:3000/static/images/logo.png
 ```
 
@@ -74,8 +74,8 @@ app.use("/static", express.static("public"));
 Yes. You can call `express.static` multiple times. Express will look in the first folder, then the second, and so on.
 
 ```javascript
-app.use(express.static("public")); // Look here first (Site assets)
-app.use(express.static("uploads")); // Then look here (User profile pics)
+app.use(express.static('public')); // Look here first (Site assets)
+app.use(express.static('uploads')); // Then look here (User profile pics)
 ```
 
 This is useful for separating "app code" (which is committed to Git) from "user uploads" (which are ignored by Git).
@@ -83,6 +83,15 @@ This is useful for separating "app code" (which is committed to Git) from "user 
 ---
 
 ## Extra Bits & Bytes
+
+<LinkButton
+  href="https://github.com/ProfessorSolo/Node2Know-ExpressStatic"
+  variant="primary"
+  icon="external"
+  target="_blank"
+>
+  Express Static Resources - Demo Repo
+</LinkButton>
 
 <LinkButton
   href="https://expressjs.com/en/starter/static-files.html"

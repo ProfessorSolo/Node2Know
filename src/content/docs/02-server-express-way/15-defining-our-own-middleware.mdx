@@ -1,13 +1,13 @@
 ---
-title: "Custom Middleware"
-description: "Writing your own middleware functions."
+title: 'Custom Middleware'
+description: 'Writing your own middleware functions.'
 sidebar:
   order: 15
-  label: "Custom Middleware"
+  label: 'Custom Middleware'
   draft: false
 ---
 
-import { LinkButton } from "@astrojs/starlight/components";
+import { LinkButton } from '@astrojs/starlight/components';
 
 ## The Border Crossing
 
@@ -40,17 +40,17 @@ When a vehicle (request) pulls up to the booth, the officer (middleware) has thr
 const authOfficer = (req, res, next) => {
   // 1. Immediate Success (The Fifth Element)
   // Using query params for easy browser testing: ?passport=multi-pass
-  if (req.query.passport === "multi-pass") {
-    return res.status(200).send("Welcome, Leeloo Dallas.");
+  if (req.query.passport === 'multi-pass') {
+    return res.status(200).send('Welcome, Leeloo Dallas.');
   }
 
   // 2. Access Denied
-  if (req.query.passport === "banned") {
-    return res.status(403).send("Access Denied. Turn around.");
+  if (req.query.passport === 'banned') {
+    return res.status(403).send('Access Denied. Turn around.');
   }
 
   // 3. Inspect (Look in the trunk)
-  console.log("Looking in the trunk...");
+  console.log('Looking in the trunk...');
   req.customsCheckRequired = true; // Attach the sticker
   next(); // wave them to inspections
 };
@@ -61,6 +61,15 @@ app.use(authOfficer);
 ---
 
 ## Extra Bits & Bytes
+
+<LinkButton
+  href="https://github.com/ProfessorSolo/Node2Know-ExpressMiddleware"
+  variant="primary"
+  icon="external"
+  target="_blank"
+>
+  Express Middleware - Demo Repo
+</LinkButton>
 
 <LinkButton
   href="https://expressjs.com/en/guide/writing-middleware.html"

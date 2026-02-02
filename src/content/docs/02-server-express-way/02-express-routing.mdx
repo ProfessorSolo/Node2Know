@@ -1,13 +1,13 @@
 ---
-title: "Basic Routing"
-description: "The fundamentals of Express routing."
+title: 'Basic Routing'
+description: 'The fundamentals of Express routing.'
 sidebar:
   order: 2
-  label: "Basic Routing"
+  label: 'Basic Routing'
   draft: false
 ---
 
-import { LinkButton } from "@astrojs/starlight/components";
+import { LinkButton } from '@astrojs/starlight/components';
 
 ## Where to, Scotty?
 
@@ -37,13 +37,13 @@ _Fig 1: The Routing Logic. Follow the colors or get lost in traffic._
 ```javascript
 // The "GET" Lane -> Retrieve Info
 // Path: Root ("/")
-app.get("/", (req, res) => {
-  res.send("Engine Online. Hello Express!");
+app.get('/', (req, res) => {
+  res.send('Engine Online. Hello Express!');
 });
 
 // Path: /things
-app.get("/things", (req, res) => {
-  res.send("Here is the list of things you asked for.");
+app.get('/things', (req, res) => {
+  res.send('Here is the list of things you asked for.');
 });
 ```
 
@@ -55,12 +55,12 @@ app.get("/things", (req, res) => {
 ## Extra Bits & Bytes
 
 <LinkButton
-  href="https://expressjs.com/en/starter/basic-routing.html"
+  href="https://github.com/ProfessorSolo/Node2Know-BasicExpressRouting"
+  variant="primary"
   icon="external"
-  variant="secondary"
   target="_blank"
 >
-  Express Basic Routing
+  Basic Express Routing - Demo Repo
 </LinkButton>
 
 <div class="next-step">

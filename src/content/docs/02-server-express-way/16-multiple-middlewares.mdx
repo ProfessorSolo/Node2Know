@@ -1,13 +1,13 @@
 ---
-title: "Chaining Middleware"
-description: "Chaining multiple middleware functions."
+title: 'Chaining Middleware'
+description: 'Chaining multiple middleware functions.'
 sidebar:
   order: 16
-  label: "Chaining Middleware"
+  label: 'Chaining Middleware'
   draft: false
 ---
 
-import { LinkButton } from "@astrojs/starlight/components";
+import { LinkButton } from '@astrojs/starlight/components';
 
 ## The Security Gauntlet
 
@@ -25,14 +25,14 @@ _Fig 1: Sequential Processing. One path, multiple rings._
 
 ```javascript
 app.get(
-  "/vip-lounge",
+  '/vip-lounge',
   logger, // 1. Ring 1: Log the attempt
   authCheck, // 2. Ring 2: Check the ID
   suitCheck, // 3. Ring 3: Check the dress code
   (req, res) => {
     // 4. Destination Reached
-    res.send("Welcome to the Platinum Club.");
-  },
+    res.send('Welcome to the Platinum Club.');
+  }
 );
 ```
 
@@ -56,6 +56,15 @@ You don't build a custom metal detector for every door. You just move the equipm
 ---
 
 ## Extra Bits & Bytes
+
+<LinkButton
+  href="https://github.com/ProfessorSolo/Node2Know-ExpressMiddlewareChaining"
+  variant="primary"
+  icon="external"
+  target="_blank"
+>
+  Express Middleware Chaining - Demo Repo
+</LinkButton>
 
 <LinkButton
   href="https://expressjs.com/en/5x/api.html#app.method"

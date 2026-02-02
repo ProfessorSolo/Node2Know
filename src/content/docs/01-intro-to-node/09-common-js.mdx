@@ -1,14 +1,14 @@
 ---
-title: "Module Systems (CJS & ESM)"
-description: "Understanding CommonJS vs. ES Modules in Node.js."
+title: 'Module Systems (CJS & ESM)'
+description: 'Understanding CommonJS vs. ES Modules in Node.js.'
 sidebar:
   order: 9
-  label: "Module Systems"
+  label: 'Module Systems'
 draft: false
 ---
 
-import { LinkButton, Steps, Aside } from "@astrojs/starlight/components";
-import CautionBox from "../../../components/CautionBox.astro";
+import { LinkButton, Steps, Aside } from '@astrojs/starlight/components';
+import CautionBox from '../../../components/CautionBox.astro';
 
 ## The Tale of Two Systems
 
@@ -38,10 +38,10 @@ When you use `require()`, you are filling out a **Requisition Form** and handing
 ```javascript
 // ./app.js
 // "Go get the http module right now."
-const http = require("http");
+const http = require('http');
 
 // "Go get our tools."
-const tools = require("./utils");
+const tools = require('./utils');
 ```
 
 #### The Shipment (`module.exports`)
@@ -49,8 +49,8 @@ const tools = require("./utils");
 ```javascript
 // ./utils.js
 const tools = {
-  hammer: "🔨",
-  drill: "🔫",
+  hammer: '🔨',
+  drill: '🔫',
 };
 
 // Pack the container
@@ -75,16 +75,16 @@ To use ESM in Node, you either need to use the `.mjs` extension or add `"type": 
 ```javascript
 // ./app.js
 // "I will need these items to function."
-import http from "node:http";
-import { hammer } from "./utils.js"; // Note the extension!
+import http from 'node:http';
+import { hammer } from './utils.js'; // Note the extension!
 ```
 
 #### The Offerings (`export`)
 
 ```javascript
 // ./utils.js
-export const hammer = "🔨";
-export const drill = "🔫";
+export const hammer = '🔨';
+export const drill = '🔫';
 
 // Or a default export
 export default { hammer, drill };
@@ -124,6 +124,19 @@ ESM file in CJS.
 </CautionBox>
 
 ![CommonJS vs ESM Handshake](/assets/lessons/01-intro-to-node/cjs-vs-esm.png)
+
+---
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="https://github.com/ProfessorSolo/Node2Know-ModuleSystems"
+  variant="primary"
+  icon="external"
+  target="_blank"
+>
+  CommonJS vs ES Modules Demo Repo
+</LinkButton>
 
 ---
 

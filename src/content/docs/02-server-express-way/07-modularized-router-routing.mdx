@@ -1,13 +1,13 @@
 ---
-title: "Modular Route Routers"
-description: "Breaking up the monolith with Express Router."
+title: 'Modular Route Routers'
+description: 'Breaking up the monolith with Express Router.'
 sidebar:
   order: 7
-  label: "Modular Route Routers"
+  label: 'Modular Route Routers'
   draft: false
 ---
 
-import { LinkButton } from "@astrojs/starlight/components";
+import { LinkButton } from '@astrojs/starlight/components';
 
 ## The Traffic Jam
 
@@ -43,17 +43,17 @@ _Fig 1: Segregated Traffic. Clean lines, high speed._
 ### `routes/thingRouter.js`
 
 ```javascript
-const express = require("express");
+const express = require('express');
 const router = express.Router(); // A mini-app instance
 
 // We define our routes here
 // Note: We are using the FULL path for now.
-router.get("/things", (req, res) => {
-  res.send("List of Things");
+router.get('/things', (req, res) => {
+  res.send('List of Things');
 });
 
-router.get("/things/:id", (req, res) => {
-  res.send("Details of Thing");
+router.get('/things/:id', (req, res) => {
+  res.send('Details of Thing');
 });
 
 module.exports = router;
@@ -64,6 +64,15 @@ Now we have a self-contained module. But it's not connected to the highway yet.
 ---
 
 ## Extra Bits & Bytes
+
+<LinkButton
+  href="https://github.com/ProfessorSolo/Node2Know-ExpressRoutersNoBase"
+  variant="primary"
+  icon="external"
+  target="_blank"
+>
+  Express Router (No Base Path) - Demo Repo
+</LinkButton>
 
 <LinkButton
   href="https://expressjs.com/en/4x/api.html#router"

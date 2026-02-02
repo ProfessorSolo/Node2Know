@@ -3,7 +3,7 @@ title: Pocket Node-o-Dex
 description: The ultimate emergency manual for Lesson 01.
 ---
 
-import { Steps } from "@astrojs/starlight/components";
+import { Steps } from '@astrojs/starlight/components';
 
 <div class="flex justify-center my-8">
   <img
@@ -79,8 +79,8 @@ module.exports = log; // Handing off the tool
 
 ```javascript
 // app.js
-const logger = require("./logger"); // Grabbing the tool
-logger("System Online");
+const logger = require('./logger'); // Grabbing the tool
+logger('System Online');
 ```
 
 ### 6. Async by Design
@@ -115,12 +115,12 @@ Reading the blueprints.
 **Reading a File (Async/Promises):**
 
 ```javascript
-const fs = require("fs").promises; // Modern, Async
+const fs = require('fs').promises; // Modern, Async
 
 // Reading 'manifest.txt'
-fs.readFile("./manifest.txt", "utf-8")
-  .then((data) => console.log("Manifest:", data))
-  .catch((err) => console.error("Lost the paperwork:", err));
+fs.readFile('./manifest.txt', 'utf-8')
+  .then((data) => console.log('Manifest:', data))
+  .catch((err) => console.error('Lost the paperwork:', err));
 ```
 
 ### 10. Simple HTTP Server
@@ -128,19 +128,19 @@ fs.readFile("./manifest.txt", "utf-8")
 Spinning up a basic web server without any framework scaffolding.
 
 ```javascript
-const http = require("http");
+const http = require('http');
 
 // Blueprint for the server
 const server = http.createServer((req, res) => {
-  if (req.url === "/") {
-    res.write("<h1>Job Site Open</h1>");
+  if (req.url === '/') {
+    res.write('<h1>Job Site Open</h1>');
     res.end();
   }
 });
 
 // Open for business on port 3000
 server.listen(3000);
-console.log("Server running on port 3000...");
+console.log('Server running on port 3000...');
 ```
 
 ---
@@ -149,3 +149,15 @@ console.log("Server running on port 3000...");
 > **Solo's Pro-Tip:** "Put that 'Live Server' EXTENSION away for now and for node.
 > We use <code>node --watch app.js</code> on this site. It restarts the _server_ for us when we save files, but...
 > we will still have to **manually refresh the browser** for front-end changes.
+
+---
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="/assets/resources/slide-decks/IntroToNode/NODE_JS_CORE_PROTOCOL.pdf"
+  target="_blank"
+  variant="secondary"
+>
+  📘 Intro to Node.js Study Guide (PDF)
+</LinkButton>

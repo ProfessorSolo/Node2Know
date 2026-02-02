@@ -1,13 +1,13 @@
 ---
-title: "Router Base Paths"
-description: "Mounting routers to a base path."
+title: 'Router Base Paths'
+description: 'Mounting routers to a base path.'
 sidebar:
   order: 8
-  label: "Router Base Paths"
+  label: 'Router Base Paths'
   draft: false
 ---
 
-import { LinkButton } from "@astrojs/starlight/components";
+import { LinkButton } from '@astrojs/starlight/components';
 
 ## Merging Traffic Routers
 
@@ -24,11 +24,11 @@ _Fig 1: Taking the Exit._
 ### `app.js`
 
 ```javascript
-const thingRouter = require("./routes/thingRouter");
+const thingRouter = require('./routes/thingRouter');
 
 // Mount the router
 // Any request starting with "/things" goes here
-app.use("/things", thingRouter);
+app.use('/things', thingRouter);
 ```
 
 ### Context Awareness
@@ -53,10 +53,10 @@ So inside `thingRouter.js`, we must REMOVE the prefix we added in the previous l
 
 // NEW (Correct)
 // Matches /things/
-router.get("/", (req, res) => res.send("List of Things"));
+router.get('/', (req, res) => res.send('List of Things'));
 
 // Matches /things/:id
-router.get("/:id", (req, res) => res.send("Details of Thing"));
+router.get('/:id', (req, res) => res.send('Details of Thing'));
 ```
 
 We've effectively removed the repetitive `/things` prefix from inside the router file.
@@ -68,6 +68,15 @@ If you accidentally include `/things` inside the router file AND in the `app.use
 ---
 
 ## Extra Bits & Bytes
+
+<LinkButton
+  href="https://github.com/ProfessorSolo/Node2Know-ExpressRouterBasePaths"
+  variant="primary"
+  icon="external"
+  target="_blank"
+>
+  Express Router with Base Paths - Demo Repo
+</LinkButton>
 
 <LinkButton
   href="https://expressjs.com/en/guide/routing.html#express-router"

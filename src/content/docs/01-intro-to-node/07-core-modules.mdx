@@ -1,13 +1,13 @@
 ---
-title: "Core Modules"
-description: "The built-in tools of the Node.js runtime."
+title: 'Core Modules'
+description: 'The built-in tools of the Node.js runtime.'
 sidebar:
   order: 7
-  label: "Core Modules"
+  label: 'Core Modules'
 draft: false
 ---
 
-import { LinkButton } from "@astrojs/starlight/components";
+import { LinkButton } from '@astrojs/starlight/components';
 
 ## The Standard Issue Utility Belt
 
@@ -38,10 +38,10 @@ Even though they are built-in, Node doesn't load them into global memory by defa
 
 ```javascript title="app.js"
 // CORRECT: No path needed for core modules
-const fs = require("fs");
+const fs = require('fs');
 
 // INCORRECT: Node thinks this is a local file you made
-const fs = require("./fs");
+const fs = require('./fs');
 ```
 
 > [!NOTE]
@@ -62,9 +62,9 @@ There are many core modules, but as a backend developer, these are the ones you 
 Here is a quick script that uses three different core modules to spy on your own computer.
 
 ```javascript title="spy-on-me.js"
-const os = require("os");
-const path = require("path");
-const fs = require("fs");
+const os = require('os');
+const path = require('path');
+const fs = require('fs');
 
 // 1. Where are we?
 const currentFile = path.basename(__filename);
@@ -81,11 +81,20 @@ const report = `
   File Accessed: ${currentFile}
 `;
 
-fs.writeFileSync("security.log", report);
-console.log("Report generated.");
+fs.writeFileSync('security.log', report);
+console.log('Report generated.');
 ```
 
 ## Extra Bits & Bytes
+
+<LinkButton
+  href="https://github.com/ProfessorSolo/Node2Know-CoreModules"
+  variant="secondary"
+  icon="external"
+  target="_blank"
+>
+  Core Modules Demo Repo
+</LinkButton>
 
 <LinkButton
   href="https://nodejs.org/api/modules.html"

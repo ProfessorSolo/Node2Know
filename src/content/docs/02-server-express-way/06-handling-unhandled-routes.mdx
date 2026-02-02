@@ -1,13 +1,13 @@
 ---
-title: "Dead Ends"
-description: "Handling unhandled routes and 404s."
+title: 'Dead Ends'
+description: 'Handling unhandled routes and 404s.'
 sidebar:
   order: 6
-  label: "Handling Unhandled Routes"
+  label: 'Handling Unhandled Routes'
   draft: false
 ---
 
-import { LinkButton } from "@astrojs/starlight/components";
+import { LinkButton } from '@astrojs/starlight/components';
 
 ## The Catch-All
 
@@ -30,8 +30,8 @@ Express matches routes in order. We use `app.all('*')` as the final safety net.
 // ... all other routes above ...
 
 // The "Lost Driver" Handler
-app.all("*", (req, res) => {
-  res.status(404).send("404: You seem to be off the map, friend.");
+app.all('*', (req, res) => {
+  res.status(404).send('404: You seem to be off the map, friend.');
 });
 ```
 
@@ -50,6 +50,15 @@ Place this **last**. If you put this at the top, it catches everything, and nobo
 ---
 
 ## Extra Bits & Bytes
+
+<LinkButton
+  href="https://github.com/ProfessorSolo/Node2Know-ExpressUnhandledRoutes"
+  variant="primary"
+  icon="external"
+  target="_blank"
+>
+  Express Unhandled Routes (404s) - Demo Repo
+</LinkButton>
 
 <LinkButton
   href="https://expressjs.com/en/starter/faq.html#how-do-i-handle-404-responses"

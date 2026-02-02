@@ -1,13 +1,13 @@
 ---
-title: "Working with the File System (fs)"
-description: "Reading and writing files with the fs module."
+title: 'Working with the File System (fs)'
+description: 'Reading and writing files with the fs module.'
 sidebar:
   order: 11
-  label: "File System (fs)"
+  label: 'File System (fs)'
 draft: false
 ---
 
-import { LinkButton, Aside, Steps } from "@astrojs/starlight/components";
+import { LinkButton, Aside, Steps } from '@astrojs/starlight/components';
 
 ## The Site Inventory & Records
 
@@ -45,33 +45,33 @@ The `fs` module is a **Core Module**, meaning it's built right into Node. You do
 Let's say we want to read a file called `footer.html` to serve it on our website.
 
 ```javascript
-"use strict";
+'use strict';
 
-const http = require("http");
+const http = require('http');
 
 // 1. Requisition the 'fs' module
 // We specifically ask for '.promises' to avoid the messy paperwork of callbacks
-const fs = require("fs").promises;
+const fs = require('fs').promises;
 
-const hostname = "127.0.0.1";
+const hostname = '127.0.0.1';
 const port = 3000;
 
 const server = http.createServer((req, res) => {
   // 2. Open the file cabinet and read the file
   // __dirname ensures we are looking in the same folder as this script
-  fs.readFile(__dirname + "/partials/footer.html")
+  fs.readFile(__dirname + '/partials/footer.html')
     .then((contents) => {
       // Success! We got the file.
-      console.log("File loaded successfully.");
+      console.log('File loaded successfully.');
       res.statusCode = 200;
-      res.setHeader("Content-Type", "text/html");
+      res.setHeader('Content-Type', 'text/html');
       res.end(`<h1>Hello Node Server</h1>${contents}`);
     })
     .catch((err) => {
       // Error! Maybe the file is missing or locked.
-      console.error("Could not read file:", err);
+      console.error('Could not read file:', err);
       res.writeHead(500);
-      res.end("Server Error: Could not load footer.");
+      res.end('Server Error: Could not load footer.');
     });
 });
 
@@ -88,6 +88,15 @@ server.listen(port, hostname, () => {
 ---
 
 ## Extra Bits & Bytes
+
+<LinkButton
+  href="https://github.com/ProfessorSolo/Node2Know-FileSystemFS"
+  variant="primary"
+  icon="external"
+  target="_blank"
+>
+  File System (fs) Demo Repo
+</LinkButton>
 
 <LinkButton
   href="https://nodejs.org/api/fs.html"

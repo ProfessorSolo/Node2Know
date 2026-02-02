@@ -1,13 +1,13 @@
 ---
-title: "Traffic Types - HTTP Methods"
-description: "Sorting traffic by HTTP Method (GET, POST, PUT, DELETE)."
+title: 'Traffic Types - HTTP Methods'
+description: 'Sorting traffic by HTTP Method (GET, POST, PUT, DELETE).'
 sidebar:
   order: 5
-  label: "Traffic Types (HTTP Methods)"
+  label: 'Traffic Types (HTTP Methods)'
   draft: false
 ---
 
-import { LinkButton } from "@astrojs/starlight/components";
+import { LinkButton } from '@astrojs/starlight/components';
 
 ## Sorting by Intent
 
@@ -37,18 +37,18 @@ Express is strict. `app.get('/things')` and `app.post('/things')` are two comple
 
 ```javascript
 // GET /things -> "Show me the things"
-app.get("/things", (req, res) => {
-  res.send("Here is the list.");
+app.get('/things', (req, res) => {
+  res.send('Here is the list.');
 });
 
 // POST /things -> "Take this new thing"
-app.post("/things", (req, res) => {
-  res.send("New thing received.");
+app.post('/things', (req, res) => {
+  res.send('New thing received.');
 });
 
 // DELETE /things -> "Destroy the things"
-app.delete("/things", (req, res) => {
-  res.send("Things destroyed.");
+app.delete('/things', (req, res) => {
+  res.send('Things destroyed.');
 });
 ```
 
@@ -72,6 +72,15 @@ For now, just know that if you are building a pure HTML/Simple Express app witho
 ---
 
 ## Extra Bits & Bytes
+
+<LinkButton
+  href="https://github.com/ProfessorSolo/Node2Know-ExpressHTTPMethods"
+  variant="primary"
+  icon="external"
+  target="_blank"
+>
+  Express HTTP Method Routing - Demo Repo
+</LinkButton>
 
 <LinkButton
   href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods"

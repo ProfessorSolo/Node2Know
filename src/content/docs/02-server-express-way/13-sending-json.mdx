@@ -1,13 +1,13 @@
 ---
-title: "Sending JSON"
-description: "Sending JSON responses for modern APIs."
+title: 'Sending JSON'
+description: 'Sending JSON responses for modern APIs.'
 sidebar:
   order: 13
-  label: "Sending JSON"
+  label: 'Sending JSON'
   draft: false
 ---
 
-import { LinkButton } from "@astrojs/starlight/components";
+import { LinkButton } from '@astrojs/starlight/components';
 
 ## The Industry Standard
 
@@ -28,10 +28,10 @@ _Fig 1: Delivering structured data._
 ### res.json()
 
 ```javascript
-app.get("/api/user", (req, res) => {
+app.get('/api/user', (req, res) => {
   const user = {
-    name: "Han Solo",
-    ship: "Falcon",
+    name: 'Han Solo',
+    ship: 'Falcon',
     parsecs: 12,
   };
 
@@ -50,18 +50,18 @@ app.get("/api/user", (req, res) => {
 Real apps use databases, but for learning, a JSON file is a great substitute. We can use what we learned in the previous lessons (`path` and file reading) to serve "dynamic" data.
 
 ```javascript
-const fs = require("fs");
-const path = require("path");
+const fs = require('fs');
+const path = require('path');
 
-app.get("/api/inventory", (req, res) => {
+app.get('/api/inventory', (req, res) => {
   // 1. Find the file
-  const filePath = path.join(__dirname, "data", "inventory.json");
+  const filePath = path.join(__dirname, 'data', 'inventory.json');
 
   // 2. Read the file
-  fs.readFile(filePath, "utf8", (err, data) => {
+  fs.readFile(filePath, 'utf8', (err, data) => {
     if (err) {
       // Always handle your errors!
-      return res.status(500).send("Database System Failure");
+      return res.status(500).send('Database System Failure');
     }
 
     // 3. Parse and Send
@@ -76,6 +76,15 @@ This pattern—**Read, Parse, Send**—is the grandfather of all API logic.
 ---
 
 ## Extra Bits & Bytes
+
+<LinkButton
+  href="https://github.com/ProfessorSolo/Node2Know-ExpressLoadAndSendJSON"
+  variant="primary"
+  icon="external"
+  target="_blank"
+>
+  Express Load, Parse, Send JSON - Demo Repo
+</LinkButton>
 
 <LinkButton
   href="https://expressjs.com/en/4x/api.html#res.json"

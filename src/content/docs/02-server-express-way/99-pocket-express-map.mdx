@@ -1,13 +1,13 @@
 ---
-title: "Node/Express Pocket Map"
-description: "High-speed references for the Express Highway."
+title: 'Node/Express Pocket Map'
+description: 'High-speed references for the Express Highway.'
 sidebar:
   order: 99
-  label: "Node/Express Pocket Map"
+  label: 'Node/Express Pocket Map'
   draft: false
 ---
 
-import { LinkButton } from "@astrojs/starlight/components";
+import { LinkButton } from '@astrojs/starlight/components';
 
 ## The Glovebox Reference
 
@@ -26,7 +26,7 @@ _Fig 1: Your Guide to the Node.js Galaxy (and Express)._
 ## Quick-Start Ignition
 
 ```javascript
-const express = require("express");
+const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -62,14 +62,14 @@ app.listen(PORT, () => console.log(`Driving on ${PORT}`));
 // 1. Write it
 const check = (req, res, next) => {
   if (ok) next();
-  else res.status(403).send("No");
+  else res.status(403).send('No');
 };
 
 // 2. Use it (Global)
 app.use(check);
 
 // 3. Use it (Route)
-app.get("/safe", check, handler);
+app.get('/safe', check, handler);
 ```
 
 ---
@@ -77,15 +77,32 @@ app.get("/safe", check, handler);
 ## Extra Bits & Bytes
 
 <LinkButton
+  href="/assets/resources/slide-decks/IntroToExpress/Express_The_High-Performance_Engine.pdf"
+  target="_blank"
+  variant="secondary"
+>
+  📘 Intro to Express.js Study Guide (PDF)
+</LinkButton>
+
+<LinkButton
   href="https://github.com/expressjs/express"
   icon="external"
   variant="secondary"
   target="_blank"
 >
-  Express Github Repo
+  Express.js Github Repo
+</LinkButton>
+
+<LinkButton
+  href="https://github.com/ProfessorSolo/Node2Know-ExpressAllInOne"
+  variant="primary"
+  icon="external"
+  target="_blank"
+>
+  Express All In One Lifeline App - Demo Repo
 </LinkButton>
 
 <div class="next-step">
-  <h3>⏭ Next Up</h3>
+  <h3>⏭ Next Stop:</h3>
   <p>Rev up your templating engines.</p>
 </div>

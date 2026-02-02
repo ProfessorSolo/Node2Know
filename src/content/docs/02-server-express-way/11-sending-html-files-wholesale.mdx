@@ -1,13 +1,13 @@
 ---
-title: "Sending HTML Files"
-description: "Sending whole files with res.sendFile."
+title: 'Sending HTML Files'
+description: 'Sending whole files with res.sendFile.'
 sidebar:
   order: 11
-  label: "Sending HTML Files"
+  label: 'Sending HTML Files'
   draft: false
 ---
 
-import { LinkButton } from "@astrojs/starlight/components";
+import { LinkButton } from '@astrojs/starlight/components';
 
 ## Bulk Delivery
 
@@ -24,9 +24,9 @@ _Fig 1: Bulk Freight. Moving the entire container._
 For example, supposing we have a `pages` directory and within that we have `index.html`.
 
 ```javascript
-app.get("/", (req, res) => {
+app.get('/', (req, res) => {
   // Wait... we need an absolute path
-  res.sendFile("/absolute/path/to/pages/index.html");
+  res.sendFile('/absolute/path/to/pages/index.html');
 });
 ```
 
@@ -41,6 +41,15 @@ To find our current GPS coordinates on the server's file system, we use `__dirna
 ---
 
 ## Extra Bits & Bytes
+
+<LinkButton
+  href="https://github.com/ProfessorSolo/Node2Know-ExpressSendFile"
+  variant="primary"
+  icon="external"
+  target="_blank"
+>
+  Express res.sendFile() - Demo Repo
+</LinkButton>
 
 <LinkButton
   href="https://expressjs.com/en/4x/api.html#res.sendFile"

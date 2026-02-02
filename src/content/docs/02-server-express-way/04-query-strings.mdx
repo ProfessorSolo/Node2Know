@@ -1,13 +1,13 @@
 ---
-title: "Query Strings"
-description: "Handling optional data with Query Strings."
+title: 'Query Strings'
+description: 'Handling optional data with Query Strings.'
 sidebar:
   order: 4
-  label: "Query Strings"
+  label: 'Query Strings'
   draft: false
 ---
 
-import { LinkButton } from "@astrojs/starlight/components";
+import { LinkButton } from '@astrojs/starlight/components';
 
 ## Extra Baggage
 
@@ -26,13 +26,13 @@ _Fig 1: The Luggage._
 In standard HTTP parsing, we'd have to split this string manually. Express, being the luxury vehicle it is, parses these automatically into `req.query`.
 
 ```javascript
-app.get("/search", (req, res) => {
+app.get('/search', (req, res) => {
   const { keyword, sort } = req.query;
 
   // req.query = { keyword: 'turbo', sort: 'desc' }
 
   if (!keyword) {
-    return res.send("Please specify a keyword.");
+    return res.send('Please specify a keyword.');
   }
 
   res.send(`Searching for ${keyword} sorted by ${sort}`);
@@ -69,6 +69,15 @@ Query strings are **not** part of the route path matching.
 ---
 
 ## Extra Bits & Bytes
+
+<LinkButton
+  href="https://github.com/ProfessorSolo/Node2Know-ExpressQueryStrings"
+  variant="primary"
+  icon="external"
+  target="_blank"
+>
+  Express Query Strings - Demo Repo
+</LinkButton>
 
 <LinkButton
   href="https://masteringjs.io/tutorials/express/query-parameters"

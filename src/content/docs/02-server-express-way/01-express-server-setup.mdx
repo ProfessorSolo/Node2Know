@@ -1,13 +1,13 @@
 ---
-title: "Start the Express Engine"
-description: "Initializing the app and listening for traffic."
+title: 'Start the Express Engine'
+description: 'Initializing the app and listening for traffic.'
 sidebar:
   order: 1
-  label: "Start the Express Engine"
+  label: 'Start the Express Engine'
   draft: false
 ---
 
-import { LinkButton } from "@astrojs/starlight/components";
+import { LinkButton } from '@astrojs/starlight/components';
 
 ## Turning the Key
 
@@ -20,7 +20,7 @@ To get this machine on the road, we need to do three things:
 ### app.js
 
 ```javascript
-"use strict";
+'use strict';
 
 /**
  * Node2Know — Basic Express Server
@@ -31,7 +31,7 @@ To get this machine on the road, we need to do three things:
  * - you start listening on a port
  */
 
-const express = require("express");
+const express = require('express');
 
 // The ignition: this creates the Express application instance.
 // Think of `app` as your server control panel (routes, middleware, config).
@@ -84,6 +84,15 @@ If you see a wall of text, congratulations, your dashboard is working.
 ---
 
 ## Extra Bits & Bytes
+
+<LinkButton
+  href="https://github.com/ProfessorSolo/Node2Know-BasicExpressServer"
+  variant="primary"
+  icon="external"
+  target="_blank"
+>
+  Basic Express Server - Demo Repo
+</LinkButton>
 
 <LinkButton
   href="https://nodejs.org/en/learn/command-line/how-to-read-environment-variables-from-nodejs"

@@ -1,14 +1,14 @@
 ---
 title: "Don't reinvent, Install"
-description: "Automated logging with Morgan."
+description: 'Automated logging with Morgan.'
 sidebar:
   order: 17
   label: "Don't reinvent, install"
   draft: false
 ---
 
-import { LinkButton } from "@astrojs/starlight/components";
-import CautionBox from "../../../components/CautionBox.astro";
+import { LinkButton } from '@astrojs/starlight/components';
+import CautionBox from '../../../components/CautionBox.astro';
 
 ## Professional Monitoring
 
@@ -33,12 +33,12 @@ npm install morgan
 ```
 
 ```javascript
-const express = require("express");
-const morgan = require("morgan");
+const express = require('express');
+const morgan = require('morgan');
 const app = express();
 
 // 'dev' is the log format (concise and colored)
-app.use(morgan("dev"));
+app.use(morgan('dev'));
 ```
 
 Now your terminal looks like a real hacker dashboard. It tells you the Method, the URL, the Status Code, and how long the request took (in ms).
@@ -57,6 +57,15 @@ GET /missing 404 1.102 ms - 139
 ---
 
 ## Extra Bits & Bytes
+
+<LinkButton
+  href="https://github.com/ProfessorSolo/Node2Know-ExpressLoggingWithMorgan"
+  variant="primary"
+  icon="external"
+  target="_blank"
+>
+  Express Logging with Morgan - Demo Repo
+</LinkButton>
 
 <LinkButton
   href="https://www.npmjs.com/package/morgan"

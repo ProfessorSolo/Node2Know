@@ -1,13 +1,13 @@
 ---
-title: "Response Status Codes"
-description: "Marking the cargo with HTTP Status Codes."
+title: 'Response Status Codes'
+description: 'Marking the cargo with HTTP Status Codes.'
 sidebar:
   order: 10
-  label: "Response Status Codes"
+  label: 'Response Status Codes'
   draft: false
 ---
 
-import { LinkButton } from "@astrojs/starlight/components";
+import { LinkButton } from '@astrojs/starlight/components';
 
 ## Cargo Condition
 
@@ -44,13 +44,13 @@ Express defaults to `200` if you don't say anything. But if something goes wrong
 ```javascript
 // 301 Redirect (Moved permanently to the /things lane)
 // Useful for SEO when you change URL structures
-app.get("/old-things", (req, res) => {
-  res.redirect(301, "/things");
+app.get('/old-things', (req, res) => {
+  res.redirect(301, '/things');
 });
 
 // 404 Not Found (Manual)
-app.get("/hidden-bunker", (req, res) => {
-  res.status(404).send("File Not Found. Checked behind the couch. Nothing.");
+app.get('/hidden-bunker', (req, res) => {
+  res.status(404).send('File Not Found. Checked behind the couch. Nothing.');
 });
 ```
 
@@ -61,6 +61,15 @@ Don't be that driver who crashes into a wall and then smiles like everything is 
 ---
 
 ## Extra Bits & Bytes
+
+<LinkButton
+  href="https://github.com/ProfessorSolo/Node2Know-ExpressStatusCodes"
+  variant="primary"
+  icon="external"
+  target="_blank"
+>
+  Express Status Codes - Demo Repo
+</LinkButton>
 
 <LinkButton
   href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Status"

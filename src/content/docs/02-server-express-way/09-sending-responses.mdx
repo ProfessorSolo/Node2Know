@@ -1,13 +1,13 @@
 ---
-title: "Sending Responses"
-description: "The art of sending a response."
+title: 'Sending Responses'
+description: 'The art of sending a response.'
 sidebar:
   order: 9
-  label: "Sending Responses"
+  label: 'Sending Responses'
   draft: false
 ---
 
-import { LinkButton } from "@astrojs/starlight/components";
+import { LinkButton } from '@astrojs/starlight/components';
 
 ## The Return Trip
 
@@ -34,14 +34,14 @@ We typically send data back in one of two ways:
 
 ```javascript
 // The Generalist (res.send)
-app.get("/", (req, res) => {
-  res.send("<h1>Welcome to the Dock</h1>"); // Content-Type: text/html
+app.get('/', (req, res) => {
+  res.send('<h1>Welcome to the Dock</h1>'); // Content-Type: text/html
 });
 
 // The Specialist (res.json) - PREFERRED for APIs
-app.get("/data", (req, res) => {
+app.get('/data', (req, res) => {
   // Automatically stringifies the object
-  res.json({ status: "loaded", cargo: ["box1", "box2"] });
+  res.json({ status: 'loaded', cargo: ['box1', 'box2'] });
 });
 ```
 
@@ -54,6 +54,15 @@ If your route handler finishes without calling `res.send()`, `res.json()`, or `r
 ---
 
 ## Extra Bits & Bytes
+
+<LinkButton
+  href="https://github.com/ProfessorSolo/Node2Know-ExpressResponseBasics"
+  variant="primary"
+  icon="external"
+  target="_blank"
+>
+  Express Response Basics - Demo Repo
+</LinkButton>
 
 <LinkButton
   href="https://expressjs.com/en/4x/api.html#res.send"
