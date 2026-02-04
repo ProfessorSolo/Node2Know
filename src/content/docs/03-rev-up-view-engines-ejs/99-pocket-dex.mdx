@@ -1,0 +1,47 @@
+---
+title: "Pocket Dex: The Service Manual"
+description: "Zero-fluff technical reference for EJS configuration and syntax."
+sidebar:
+  order: 99
+  label: "Pocket Dex: Service Manual"
+---
+
+## Dashboard Specs (Syntax)
+
+| Symbol      | Name             | Function                                                   | Example                    |
+| :---------- | :--------------- | :--------------------------------------------------------- | :------------------------- |
+| `<% %>`     | Scriptlet        | Executes JavaScript logic without output.                  | `<% if (user) { %>`        |
+| `<%= %>`    | Escaped Output   | Renders a value to the template; escapes HTML characters.  | `<%= user.name %>`         |
+| `<%- %>`    | Unescaped Output | Renders raw HTML value; **No sanitation**.                 | `<%- body %>`              |
+| `<%# %>`    | Comment          | Server-side comment; stripped before rendering.            | `<%# TODO: Fix this %>`    |
+| `include()` | Include          | Embeds another view file; must be used with unescaped tag. | `<%- include('header') %>` |
+
+## Under the Hood (Configuration)
+
+Essential settings for the Express application instance.
+
+- **Install EJS:** `npm install ejs`
+- **Install Layouts:** `npm install express-ejs-layouts`
+- **Set View Engine:** `app.set("view engine", "ejs")`
+- **Set Views Path:** `app.set("views", path.join(__dirname, "views"))`
+- **Enable Layouts:** `app.use(expressLayouts)`
+- **Set Default Layout:** `app.set("layout", "./layouts/master")`
+- **Render View:** `res.render("view-name", { data: value })`
+
+## Blown Gaskets (Common Hazards)
+
+| Hazard              | Cause                                        | Fix                                                        |
+| :------------------ | :------------------------------------------- | :--------------------------------------------------------- |
+| **XSS Injection**   | Using `<%- %>` with untrusted user input.    | Always use `<%= %>` for user-generated content.            |
+| **Broken Paths**    | Using relative paths like `./views`.         | ALWAYS use `path.join(__dirname, 'views')`.                |
+| **Layouts Ignored** | Middleware initialized _after_ routes.       | Move `app.use(expressLayouts)` above route definitions.    |
+| **Missing Vars**    | Accessing a variable not passed in `locals`. | Ensure all expected variables are in the `render` payload. |
+| **Silent Failures** | Logic errors inside `<% %>` blocks.          | Check server console; scriptlets don't print errors to UI. |
+
+## Master Mechanic Notes (Pro-Tips)
+
+- **Locals Unpacking:** Keys in the `res.render` object become top-level variables in the view.
+- **Partial Scope:** Partials automatically inherit access to all variables available in the parent view.
+- **Layout Injection:** The `body` variable in a layout file is a reserved keyword containing the rendered view string.
+- **Route Override:** Pass `layout: "./other_layout"` in `res.render` options to swap the layout frame for a specific response.
+- **Extension Lookup:** Express automatically appends `.ejs` when the view engine is set, so extensions in `res.render` are optional.

@@ -1,0 +1,47 @@
+---
+title: "EJS Engine Setup"
+description: "Configuring the Embedded JavaScript templating engine."
+sidebar:
+  order: 1
+  label: "EJS Engine Setup"
+---
+
+Listen close. A robust server doesn't just push raw JSON; sometimes it needs to paint the whole picture. Installing EJS isn't just adding a dependency—it's giving your application the ability to construct complete HTML documents on the fly, tailored to every request that hits your line.
+
+## Installation
+
+The EJS package must be installed as a dependency. Unlike middleware that is explicitly imported, Express handles the loading of view engines internally when properly configured.
+
+```bash
+npm install ejs
+```
+
+## Application Configuration
+
+To enable server-side rendering, specific settings on the Express application instance must be defined. The `views` setting specifies the directory lookup path for template files, while the `view engine` setting defines the extension and internal module to utilize for rendering.
+
+```javascript
+const express = require("express");
+const app = express();
+const path = require("path");
+
+// Configuration: Define the absolute path for template files
+app.set("views", path.join(__dirname, "views"));
+
+// Configuration: Set EJS as the default templating engine
+app.set("view engine", "ejs");
+```
+
+### The Path Module Necessity
+
+Do not rely on relative paths like `./views`. Relative paths are resolved relative to the process's current working directory (CWD), which may vary depending on how the script is executed.
+
+Using `path.join(__dirname, "views")` constructs an absolute path dynamically based on the location of the executing file (`__dirname`). This ensures the application correctly locates the views directory regardless of the operating system or the command used to start the process.
+
+<div class="next-step">
+  <h3>⏭ Rendering Static Views</h3>
+  <p>
+    Configuration is complete. Next, we examine how to serve these templates to
+    the client.
+  </p>
+</div>

@@ -1,0 +1,65 @@
+---
+title: "Partials & Reusability"
+description: "Isolating recurring UI components into modular files."
+sidebar:
+  order: 9
+  label: "Partials & Reusability"
+---
+
+Efficiency in engineering comes from component reuse. Instead of duplicating the same navigation bar or footer code across every single view file—which creates a maintenance nightmare—we extract these common elements into separate files called "partials". These logical units can then be injected into any template that requires them.
+
+## The Include Syntax
+
+To embed another view file, use the `include` function within an unescaped output tag `<%- %>`.
+
+```ejs
+<%- include('FILENAME') %>
+```
+
+We use the unescaped tag (`<%-`) because the result of the include function is raw HTML that needs to be rendered directly into the document stream. If you were to use the escaped tag (`<%=`), the included HTML would be printed as text strings visible to the user.
+
+## Modular Directory Structure
+
+Best practice dictates organizing these fragments in a dedicated subdirectory to separate full-page templates from component partials.
+
+```text
+/views
+  /partials
+    header.ejs
+    footer.ejs
+  index.ejs
+  users.ejs
+```
+
+## Variable Scoping in Partials
+
+A critical feature of specific EJS partials is that **they inherit the data context of the parent view**.
+
+If you pass a `title` variable to `users.ejs`, and `users.ejs` includes `header.ejs`, `header.ejs` can immediately access `<%= title %>` without any extra configuration.
+
+**File:** `views/partials/header.ejs`
+
+```html
+<header>
+  <!-- The 'title' variable is available here automatically -->
+  <h1><%= title %></h1>
+  <nav>
+    <a href="/">Home</a>
+    <a href="/users">Users</a>
+  </nav>
+</header>
+```
+
+**File:** `views/users.ejs`
+
+```ejs
+<!-- The path is relative to the current file or root views folder -->
+<%- include('partials/header') %>
+```
+
+<div class="next-step">
+  <h3>⏭ Layout Patterns</h3>
+  <p>
+    Partials handle components. Now let's handle the overall page structure.
+  </p>
+</div>

@@ -1,0 +1,86 @@
+---
+title: "Layout Patterns"
+description: "Implementing consistent page structure with wrapper templates."
+sidebar:
+  order: 10
+  label: "Layout Patterns"
+---
+
+Partials handle internal components, but they don't solve the problem of repeated structural boilerplate (like `<html>`, `<head>`, and `<body>` tags) in every file. To achieve true maintainability, we use a "Layout" pattern—a master template that wraps around your individual views.
+
+## The Layout Module
+
+Standard EJS does not support layouts out of the box. We must install a middleware package to enable this functionality.
+
+### Installation
+
+```bash
+npm install express-ejs-layouts
+```
+
+## Configuration
+
+We must register the middleware _before_ our route definitions and configure the default layout file.
+
+**File:** `app.js`
+
+```javascript
+const expressLayouts = require("express-ejs-layouts");
+
+// Middleware: Enable the layout engine
+app.use(expressLayouts);
+
+// Configuration: Set the default layout file
+// This assumes a file exists at /views/layouts/full-width.ejs
+app.set("layout", "./layouts/full-width");
+```
+
+## The Master Layout File
+
+A layout file is a standard EJS template with one special variable: `body`. When `express-ejs-layouts` processes a request, it renders your specific view (e.g., `users.ejs`) first, stores the result in a string, and then injects that string into the layout's `<%- body %>` tag.
+
+**File:** `views/layouts/full-width.ejs`
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/styles/main.css" />
+  </head>
+  <body>
+    <!-- Persistent Navigation -->
+    <%- include('../partials/header.ejs') %>
+
+    <!-- Injection Point: The specific view content renders here -->
+    <main><%- body %></main>
+
+    <!-- Persistent Footer -->
+    <%- include('../partials/footer.ejs') %>
+  </body>
+</html>
+```
+
+## Simplified Views
+
+With the layout handling the frame, your individual view files become much cleaner. They only need to contain the content relevant to that specific route.
+
+**File:** `views/users.ejs`
+
+```html
+<!-- No <html>, <head>, or <body> tags needed here -->
+<h2>User List</h2>
+<ul>
+  <% for (let i = 0; i < users.length; i++) { %>
+  <li><%= users[i] %></li>
+  <% } %>
+</ul>
+```
+
+<div class="next-step">
+  <h3>⏭ Route-Specific Layouts</h3>
+  <p>Sometimes the default frame doesn't fit. Let's look at overrides.</p>
+</div>

@@ -20,11 +20,11 @@ const COURSE_MODULES = [
       directory: '02-server-express-way',
       released: true,
     },
-  //   {
-  //     label: 'Form Factor: Portal to Data',
-  //     directory: '02-form-factor',
-  //     released: true,
-  //   },
+    {
+      label: 'Revving View Engines - EJS',
+      directory: '03-rev-up-view-engines-ejs',
+      released: true,
+    },
   //   {
   //     label: 'Git Control of Your Code',
   //     directory: '03-git-control-of-your-code',

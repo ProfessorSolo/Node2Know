@@ -1,0 +1,63 @@
+---
+title: "Global Data Context"
+description: "Defining application-wide variables available to all views."
+sidebar:
+  order: 12
+  label: "Global Data Context"
+---
+
+Passing static configuration data (like a site title or contact email) to every single `res.render` call violates the "Don't Repeat Yourself" (DRY) principle. Express provides a mechanism to define global variables that are automatically available to _every_ view in the application, eliminating the need to manually transport them through each route.
+
+## The `app.locals` Object
+
+The `app.locals` object is a JavaScript object whose properties are local variables within the application. Once set, these persist throughout the life of the application.
+
+**Correct Use Cases:**
+
+- Global configuration (Site Name, API keys for client-side scripts).
+- Helper functions (Formatters, utility methods).
+- Static data (Copyright year, contact info).
+
+**Incorrect Use Cases:**
+
+- **User Sessions:** Do not store user-specific data here. `app.locals` is shared across _all_ requests. Storing a user here would make that user visible to everyone. Use `res.locals` for request-specific data.
+
+### Implementation
+
+**File:** `app.js`
+
+```javascript
+const express = require("express");
+const app = express();
+
+// Configuration: Set global application variables
+// These are available in ALL views automatically
+app.locals.appTitle = "Node2Know";
+app.locals.adminEmail = "help@node2know.com";
+app.locals.copyrightYear = new Date().getFullYear();
+
+// Route Handler
+app.get("/", (req, res) => {
+  // No need to pass 'appTitle' here; it's already in the context
+  res.render("index");
+});
+```
+
+### Usage in Views
+
+In your EJS templates, these properties are accessed as top-level variables. You do not need to prefix them with `app.locals`.
+
+**File:** `views/partials/footer.ejs`
+
+```html
+<footer>
+  <!-- 'appTitle' and 'copyrightYear' come from app.locals -->
+  <p>&copy; <%= copyrightYear %> <%= appTitle %></p>
+  <p>Contact: <a href="mailto:<%= adminEmail %>"><%= adminEmail %></a></p>
+</footer>
+```
+
+<div class="next-step">
+  <h3>⏭ The Garage Lab</h3>
+  <p>Theory is done. Time to build the machine.</p>
+</div>

@@ -1,0 +1,97 @@
+---
+title: "Lab: The Service Bay"
+description: "Applying EJS concepts in a practical lab environment."
+sidebar:
+  order: 98
+  label: "Lab: The Service Bay"
+---
+
+import CautionBox from "../../../components/CautionBox.astro";
+
+Listen up. You've read the manuals, you've seen the specs, but that doesn't mean you know how to turn a wrench. Theory is nice, but in this shop, we judge you by what you can build.
+
+I've got three jobs lined up for you. Start with the routine maintenance. if you can handle that, maybe I'll let you touch the custom fabrication work. And if you're really good? well, I've got a chassis that needs a complete overhaul.
+
+Pop the hood. Let's see what you've got.
+
+## Tier 1: Routine Maintenance (The Tune-Up)
+
+We've got a stock sedan coming in. The owner just wants a digital dashboard installed. Nothing fancy—just needs to show the RPM and Fuel levels without catching fire.
+
+### The Specs
+
+1.  **Initialize the Shop:** Create a new Express server. Install `ejs`.
+2.  **Configure the Engine:** Set EJS as your view engine. Point it to a `views` folder.
+3.  **The Dashboard:** Create a `dashboard.ejs` file.
+4.  **Fuel Injection:** In your route, pass the following data object:
+    ```javascript
+    {
+      rpm: 3500,
+      fuel: 75,
+      status: "Idling"
+    }
+    ```
+5.  **Gauges:** Render these values on the page. Use `<h1>` for the status and `<h3>` for the others.
+
+<CautionBox title="Safety Check">
+  Make sure you're using **Escaped Output** `<%= %>`. If someone tries to inject bad fuel (malicious script) into that status variable, I don't want my shop blowing up.
+</CautionBox>
+
+### 🤖 AI Apprentice Prompt
+
+Stuck on the lift? Ask the AI to help you troubleshoot your pathing.
+
+> "My server is crashing and says it can't find the views directory. Inspect my `server.js` and explain how `path.join` fixes this issue."
+
+---
+
+## Tier 2: Custom Fabrication (The Body Kit)
+
+Alright, that was kid stuff. Now we've got a client who wants a custom parts list displayed. But here's the catch—they want it dynamic. If they add a part, it shows up. If the list is empty, it tells them to go shopping.
+
+### The Specs
+
+1.  ** The Inventory:** Pass this array to your view:
+    ```javascript
+    const mods = ["Spoiler", "Rims", "Nitrous", "Tint"];
+    ```
+2.  **The Fabrication:** Create a `parts-list.ejs`.
+3.  **The Loop:** Use a Scriptlet `<% %>` loop to iterate through the `mods` array and generate an `<li>` for each item.
+4.  **The Warning:** Add logic inside the loop. If the specific part is "Nitrous", give that `<li>` a class of `danger` (make it red with CSS).
+5.  **Shop Branding:** Create a partial named `header.ejs` that contains a generic nav bar. Include this partial at the top of your parts list.
+
+### 🤖 AI Apprentice Prompt
+
+Need to refactor that messy loop?
+
+> "Review this `forEach` loop in my EJS template. Refactor it to use a partial named `_part-item.ejs` for each list item to clean up the main file."
+
+---
+
+## Tier 3: The Solo Special (Frame-Off Restoration)
+
+You're still here? Impressive. Alright, this is the big one. We're rebuilding the entire chassis. I'm tired of copy-pasting headers and footers into every single file like some amateur. We're going to use a Master Layout.
+
+### The Specs
+
+1.  **Upgrade the Tools:** Install `express-ejs-layouts`.
+2.  **The Blueprint:** specificy `app.use(expressLayouts)` in your server configuration.
+3.  **The Chassis:** Create a `layout.ejs` file. This is your master frame. It should have the `<html>`, `<head>`, and `<body>` tags.
+4.  **The Injection:** Place your `header` partial inside the body, followed by the magical `<%- body %>` tag.
+5.  **The Assembly:** Render your `dashboard.ejs` from Tier 1 again. But this time, **delete** the HTML boilerplate from `dashboard.ejs`. It should _only_ contain the gauges.
+
+If you did it right, the dashboard will appear inside the chassis, with the header automatically applied.
+
+### 🤖 AI Apprentice Prompt
+
+Layouts refusing to cooperate?
+
+> "I installed `express-ejs-layouts` but my content is rendering below the HTML closing tag. Analyze my middleware order in `server.js` and explain why the layout engine must be initialized before the routes."
+
+---
+
+## Final Inspection
+
+Zip up your project folder. Ensure all dependencies are listed in `package.json`. If I see a `node_modules` folder in your submission, you're scrubbing the floors for a week.
+
+**Dismissed.**

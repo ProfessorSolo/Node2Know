@@ -1,0 +1,64 @@
+---
+title: "Revving Up View Engines"
+description: "Welcome to the Custom Body Shop. HTML is the chassis, EJS is the custom body work."
+sidebar:
+  order: 0
+  label: "Revving Up View Engines"
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+
+## Welcome to the Body Shop
+
+When we're doing any server-side generation of HTML, we could build up fragments with brutish string concatenation. But that's like duct-taping a bumper onto a Ferrari. It works, but it's ugly, dangerous, and prone to error.
+
+Instead, we use a **templating engine**. This handles the string interpolation for us, allowing us to "skin" our data with high-performance HTML bodies.
+
+There are many options on the market, each with its own tuning specs:
+
+- [Mustache](https://mustache.github.io/)
+- [Handlebars](https://handlebarsjs.com/)
+- [Nunjucks](https://mozilla.github.io/nunjucks/)
+- [Pug](https://pugjs.org/)
+
+But for our fleet, we'll be working primarily with the venerable **EJS** (Embedded JavaScript). Why? Because it's classic, reliable, and handles like a dream (although the syntax is a bit ugly and dated).
+
+<img
+  src="/assets/lessons/03-rev-up-view-engines-ejs/00-ghost-chassis.png"
+  alt="A translucent '69 muscle car revealing a glowing digital engine core, symbolizing the power of EJS templating."
+  width="100%"
+/>
+
+_Fig 1: The EJS Engine—high octane data injection._
+
+## VSCode EJS Formatting Extension
+
+EJS syntax is likely going to mess with our code formatting extensions.
+
+### Quick Fix: EJS Language Support
+
+There is a specific extension that helps VSCode understand the `<% %>` syntax so it stops screaming at you.
+
+- [EJS Language Support (DigitalBrainstem)](https://open-vsx.org/vscode/item?itemName=DigitalBrainstem.javascript-ejs-support)
+
+Install it, and your editor will stop flagging valid EJS tags as errors.
+
+---
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="https://ejs.co/"
+  icon="external"
+  variant="secondary"
+  target="_blank"
+>
+  EJS Docs From the Source
+</LinkButton>
+
+---
+
+<div class="next-step">
+  <h3>⏭ Setting Up Shop</h3>
+  <p>Let's get EJS installed and set up in our express body shop.</p>
+</div>

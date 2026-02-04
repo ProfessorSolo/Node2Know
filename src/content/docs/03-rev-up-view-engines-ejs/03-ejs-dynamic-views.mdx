@@ -1,0 +1,26 @@
+---
+title: "Dynamic View Requirements"
+description: "Understanding the data flow for server-side rendering."
+sidebar:
+  order: 3
+  label: "Dynamic View Requirements"
+---
+
+Now we engage the engine's primary function. The core value of server-side rendering is the ability to fetch data on the server and inject it directly into the HTML before it ever leaves the garage. This eliminates the "loading spinner" experience of client-side fetching and delivers a fully formed document to the user.
+
+## The Data Flow Requirement
+
+To transition from static files to dynamic templates, we must bridge the gap between our JavaScript logic (the route handler) and our markup (the EJS file).
+
+Consider a scenario where the server retrieves a list of users from a database. To render this, our system requires three specific capabilities:
+
+1.  **Transport**: A mechanism to pass the data (e.g., an Array of user objects and a page title) from the Express route into the render method.
+2.  **Logic**: Syntax within the template to execute JavaScript control structures, such as iterating over the user array.
+3.  **Interpolation**: Syntax to output the value of variables (e.g., a user's name) directly into HTML elements like `<h1>` or `<li>`.
+
+We will implement each of these capabilities in the following sections, starting with the transport mechanism.
+
+<div class="next-step">
+  <h3>⏭ Passing Data</h3>
+  <p>First step: Injecting server-side variables into the view layer.</p>
+</div>

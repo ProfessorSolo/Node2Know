@@ -1,0 +1,62 @@
+---
+title: "Route-Specific Layouts"
+description: "Overriding the global layout configuration per request."
+sidebar:
+  order: 11
+  label: "Route-Specific Layouts"
+---
+
+The global layout configuration applies to every view by default. However, applications often require different structural frames for different contexts (e.g., a "Login" page without navigation vs. a "Dashboard" with a sidebar). You can override the default layout by passing a specific `layout` property during the render call.
+
+## Overriding the Layout
+
+In the `res.render` options object, the `layout` key specifies the path to the desired wrapper template.
+
+```javascript
+res.render("profile", {
+  // Standard data payload
+  title: "User Profile",
+  user: userObject,
+
+  // Configuration override: Use the 'sidebar' layout instead of default
+  layout: "./layouts/sidebar",
+});
+```
+
+## Creating Alternative Layouts
+
+Alternative layouts function exactly like the default one: they must include the `<%- body %>` placeholder to determine where the view content is injected.
+
+**File:** `views/layouts/sidebar.ejs`
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+  </head>
+  <body>
+    <%- include('../partials/header.ejs') %>
+
+    <!-- Analysis: A 2-column grid structure distinct from the default layout -->
+    <div class="container-grid">
+      <main><%- body %></main>
+
+      <aside>
+        <h3>Dependencies</h3>
+        <!-- Sidebar content -->
+      </aside>
+    </div>
+
+    <%- include('../partials/footer.ejs') %>
+  </body>
+</html>
+```
+
+<div class="next-step">
+  <h3>⏭ Global Locals</h3>
+  <p>Available variables for every view, everywhere.</p>
+</div>

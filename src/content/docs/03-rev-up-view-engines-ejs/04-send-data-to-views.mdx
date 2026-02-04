@@ -1,0 +1,40 @@
+---
+title: "Sending Data Payload"
+description: "Injecting server-side variables into the template context."
+sidebar:
+  order: 4
+  label: "Sending Data Payload"
+---
+
+A high-performance engine needs fuel, and a dynamic view needs data. Simply rendering a file isn't enough; we need to inject a payload of variables from our server directly into the template's combustion chamber to generate a unique response for every request.
+
+## The Locals Object
+
+The `res.render()` method accepts a second argument known as the **locals object**.
+
+Properties defined on this object do not exist as a single "data" variable inside the view. Instead, the keys of this object are unpacked and exposed as distinct local variables available to the template.
+
+**File:** `/app.js`
+
+```javascript
+// Define the data payload
+const viewData = {
+  title: "EJS Demo - User List",
+  users: ["Curly", "Larry", "Josh"],
+};
+
+// Pass the payload as the second argument
+// The view will now have access to 'title' and 'users' variables directly
+app.get("/users", (req, res) => res.render("users", viewData));
+```
+
+In this example:
+
+1.  The view engine receives `viewData`.
+2.  It extracts `title` and `users`.
+3.  Inside `users.ejs`, you can reference `title` simply as `title`, not `viewData.title`.
+
+<div class="next-step">
+  <h3>⏭ Outputting Output</h3>
+  <p>The data is in the pipe. Now, let's burn it.</p>
+</div>

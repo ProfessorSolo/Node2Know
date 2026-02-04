@@ -1,0 +1,35 @@
+---
+title: "Server-Side Comments"
+description: "Documentation that does not render to the client."
+sidebar:
+  order: 7
+  label: "Server-Side Comments"
+---
+
+Code describes _how_, comments describe _why_. In server-side templates, you often need to document logic that shouldn't be visible to the end-user. EJS provides a specific syntax for internal notes that are stripped during the rendering process.
+
+## The Comment Syntax
+
+To create a comment that is invisible to the client, place a hash (`#`) immediately after the opening scriptlet tag: `<%#`.
+
+```ejs
+<%# This comment is for the developer only. %>
+<%# It will not be rendered in the HTML. %>
+```
+
+### Server-Side vs. Client-Side Comments
+
+It is important to distinguish between EJS comments and standard HTML comments.
+
+- **HTML Comments (`<!-- -->`)**: Sent to the browser. Visible if the user inspects the page source. Use these for structural notes intended for front-end debugging.
+- **EJS Comments (`<%# %>`)**: Removed by the server before the response is sent. Use these for documenting business logic, TODOs, or sensitive implementation details.
+
+```ejs
+<!-- I will be visible in the browser "View Source" -->
+<%# I will be completely removed by the EJS engine %>
+```
+
+<div class="next-step">
+  <h3>⏭ Putting It Together</h3>
+  <p>We've engaged all the subsystems. Now running a full system check.</p>
+</div>

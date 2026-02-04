@@ -1,0 +1,55 @@
+---
+title: "The Complete View Assembly"
+description: "Integrating logic, data, and markup into a cohesive response."
+sidebar:
+  order: 8
+  label: "Complete View Assembly"
+---
+
+We have defined the data source, understood the interpolation syntax, and structured the control logic. Now we assemble these components into a production-ready view. This file demonstrates the complete lifecycle of a server-rendered page: receiving data from the route, processing it with logic, and outputting the final HTML.
+
+## Implementation
+
+The following example integrates the `title` string and the `users` array into a single semantic HTML document. Observe how the control flow handles the "empty state" gracefully, ensuring robust presentation regardless of the data payload.
+
+**File:** `/views/users.ejs`
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EJS - Dynamic Data Demo</title>
+  </head>
+  <body>
+    <!-- Output the dynamic title passed from the route -->
+    <header>
+      <h1><%= title %></h1>
+      <nav><a href="/">Home</a> | <a href="/users">Users</a></nav>
+    </header>
+
+    <main>
+      <!-- Conditional Logic: handle empty data state -->
+      <% if (users.length === 0) { %>
+      <span>No users found</span>
+      <% } else { %>
+      <!-- Loop Logic: iterate over user data -->
+      <ul>
+        <% for (let i = 0; i < users.length; i++) { %>
+        <li><%= users[i] %></li>
+        <% } %>
+      </ul>
+      <% } %>
+    </main>
+
+    <footer>&copy; 2026 Node2Know</footer>
+  </body>
+</html>
+```
+
+<div class="next-step">
+  <h3>⏭ Partials & Reusability</h3>
+  <p>Copy-pasting headers and footers is inefficient. Let's modularize.</p>
+</div>

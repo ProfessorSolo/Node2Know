@@ -1,0 +1,54 @@
+---
+title: "Control Flow Logic"
+description: "Executing server-side logic within the template implementation."
+sidebar:
+  order: 6
+  label: "Control Flow Logic"
+---
+
+The output tags (`<%= %>`) handle display, but true dynamism requires logic. To conditionally render content or iterate over data collections, EJS uses "Scriptlet" tags (`<% %>`) that allow you to execute standard JavaScript code inside your views.
+
+## Scriptlet Tags (`<% %>`)
+
+Scriptlet tags accept standard JavaScript syntax. Unlike output tags, they do **not** print their result to the page; they are used strictly for control flow operations like loops and if-statements.
+
+### Iteration
+
+To render a list of items, we break a standard JavaScript `for` loop across multiple lines of HTML. The opening bracket `{` lives in the first scriptlet, and the closing bracket `}` lives in its own scriptlet at the end.
+
+```ejs
+<ul>
+  <% for (let i = 0; i < users.length; i++) { %>
+    <!-- Content inside the loop is rendered for each iteration -->
+    <li><%= users[i] %></li>
+  <% } %>
+</ul>
+```
+
+### Conditional Rendering
+
+Scriptlets allow you to perform presence checks or alter the output based on data states. This pattern handles scenarios like "Empty States" or access control.
+
+```ejs
+<% if (users.length === 0) { %>
+  <!-- Rendered if the condition is true -->
+  <div class="alert">No users found in the database.</div>
+<% } else { %>
+  <!-- Rendered if the condition is false -->
+  <ul>
+    <% users.forEach((user) => { %>
+      <li><%= user %></li>
+    <% }) %>
+  </ul>
+<% } %>
+```
+
+Note that we can use any valid JavaScript, including Array methods like `.forEach()`, which are often cleaner than standard `for` loops in templates.
+
+<div class="next-step">
+  <h3>⏭ Code Comments</h3>
+  <p>
+    Logic requires documentation. Let's see how to add comments that don't leak
+    to the client.
+  </p>
+</div>

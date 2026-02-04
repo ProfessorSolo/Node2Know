@@ -1,0 +1,53 @@
+---
+title: "Rendering a Static View"
+description: "Serving non-dynamic content through the view engine."
+sidebar:
+  order: 2
+  label: "Rendering a Static View"
+---
+
+Check the gauges. Before we start injecting high-octane data into our templates, we need to verify the pipeline is clear. Rendering a static file proves that Express can locate your views and that the EJS engine is properly engaged.
+
+## The View File
+
+Create a standard HTML structure within the `views` folder. Even though the file extension is `.ejs`, the content acts as standard HTML until special EJS tags are introduced. This demonstrates that the engine is backwards-compatible with plain markup.
+
+**File:** `views/raw-html.ejs`
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Static EJS View Rendering</title>
+  </head>
+  <body>
+    <header><h1>Static EJS View Rendering</h1></header>
+    <main>This is just plain 'ol HTML, being "rendered" by EJS.</main>
+  </body>
+</html>
+```
+
+## The Render Method
+
+In the route handler, use `res.render()` instead of `res.sendFile()`.
+
+```javascript
+// route to demonstrate EJS rendering a static HTML file
+app.get("/raw-html", (req, res) => res.render("raw-html"));
+```
+
+### How `res.render` Works
+
+The `res.render()` method abstracts several file system operations:
+
+1.  **Lookup**: It searches for the specified filename (`"raw-html"`) within the directory defined by your `app.set("views", ...)` configuration.
+2.  **Resolution**: It automatically attempts to match the extension defined by `app.set("view engine", ...)`, so you can omit `.ejs`.
+3.  **Compilation**: It passes the file content to the EJS compiler. Even though this specific file has no dynamic logic, the engine still processes it and returns the final HTML string to the client.
+
+<div class="next-step">
+  <h3>⏭ Dynamic Views</h3>
+  <p>The pipeline is open. Now, let's inject some data.</p>
+</div>

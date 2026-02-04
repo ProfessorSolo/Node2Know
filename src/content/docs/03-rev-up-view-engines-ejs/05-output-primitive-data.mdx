@@ -1,0 +1,43 @@
+---
+title: "Data Interpolation"
+description: "Outputting values while preventing Cross-Site Scripting (XSS)."
+sidebar:
+  order: 5
+  label: "Data Interpolation"
+---
+
+import CautionBox from "../../../components/CautionBox.astro";
+
+Data injection is the most common operation in any template engine. EJS provides specific tags to output the value of variables into your HTML. However, simply dumping data into a document is a security risk; you must choose the correct tag to ensure your application remains secure against injection attacks.
+
+## Escaped Output (`<%= %>`)
+
+To output primitive values (strings, numbers) safely, wrap the variable in the "escaped output" tags: `<%=` and `%>`.
+
+```html
+<h1><%= title %></h1>
+```
+
+When EJS encounters this tag, it converts the variable's value to a string and **escapes HTML characters**. Characters like `<`, `>`, `&`, and `"` are converted to their entity equivalents (e.g., `<` becomes `&lt;`).
+
+**Why this matters:** If a variable contains malicious code such as `<script>alert('hacked')</script>`, using `<%= %>` renders it as harmless plain text, neutralizing the execution of the script. This is your primary defense against **Cross-Site Scripting (XSS)**.
+
+## Unescaped Output (`<%- %>`)
+
+There are scenarios where rendering raw HTML is required (e.g., rendering content from a trusted rich text editor or including another template file). In these cases, use the "unescaped output" tags: `<%-` and `%>`.
+
+```html
+<%- "<strong>This text will be bold.</strong>" %>
+```
+
+<CautionBox title="Security Warning: XSS Vulnerability">
+  **CRITICAL:** The `<%- %>` tag performs NO sanitation.
+
+Never use this tag to output data supplied by a user (such as comments, usernames, or form inputs). Doing so allows attackers to inject arbitrary JavaScript into your page, potentially stealing session cookies or redirecting users. Only use unescaped output for content you explicitly trust and control.
+
+</CautionBox>
+
+<div class="next-step">
+  <h3>⏭ Control Flow</h3>
+  <p>We can output data. Now let's control how it's displayed.</p>
+</div>
