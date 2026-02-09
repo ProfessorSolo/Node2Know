@@ -7,6 +7,8 @@ sidebar:
 draft: false
 ---
 
+import { LinkButton } from "@astrojs/starlight/components";
+
 ## The Wind Tunnel Test
 
 We've installed the engine and learned the aerodynamics. Now it's time to build a test chassis and put it through the wind tunnel. A "static view" means the car looks the same every lap—no dynamic data, just pure structure.
@@ -56,6 +58,21 @@ app.get("/static", (req, res) => {
   res.render("static");
 });
 ```
+
+---
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="https://github.com/ProfessorSolo/Node2Know-04-03-A-Pug-Static-Views.git"
+  variant="primary"
+  icon="external"
+  target="_blank"
+>
+  Pug Static Views - GitHub Repo
+</LinkButton>
+
+---
 
 ### ⏭ Injecting Fuel
 

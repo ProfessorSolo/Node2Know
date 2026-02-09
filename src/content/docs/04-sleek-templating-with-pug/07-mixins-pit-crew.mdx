@@ -7,6 +7,8 @@ sidebar:
 draft: false
 ---
 
+import { LinkButton } from "@astrojs/starlight/components";
+
 ## Specialized Tools
 
 In the pit lane, we don't build a new tire wrench for every car. We use standard, reusable tools. In Pug, these are called **Mixins**. They function like JavaScript functions but for HTML structure. You define a template "tool" once and strictly reuse it.
@@ -57,6 +59,21 @@ mixin modal(title)
   p Unauthorized entry detected in Sector 7.
   button.btn-lockdown Seal Doors
 ```
+
+---
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="https://github.com/ProfessorSolo/Node2Know-02-02-C-Pug-Mixins-Layouts-Extends.git"
+  variant="primary"
+  icon="external"
+  target="_blank"
+>
+  Pug Mixins and Layouts - GitHub Repo
+</LinkButton>
+
+---
 
 ### ⏭ The Master Chassis
 

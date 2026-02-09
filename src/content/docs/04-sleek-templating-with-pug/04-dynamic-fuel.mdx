@@ -7,6 +7,8 @@ sidebar:
 draft: false
 ---
 
+import { LinkButton } from "@astrojs/starlight/components";
+
 ## High-Octane Output
 
 We've built the chassis (static HTML structure), but now we need to inject the fuel (dynamic data). In Pug, we distinguish between code that runs silently (tuning) and code that pumps output to the screen (combustion).
@@ -60,6 +62,21 @@ When you want to inject a variable right into the middle of a text block, use th
   //- You can run valid JS inside the braces
   p Win Rate: #{(wins / 100) * 100}%
 ```
+
+---
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="https://github.com/ProfessorSolo/Node2Know-02-02-B-Pug-Dynamic-Views.git"
+  variant="primary"
+  icon="external"
+  target="_blank"
+>
+  Pug Dynamic Fuel - GitHub Repo
+</LinkButton>
+
+---
 
 ### ⏭ Steering Logic
 
