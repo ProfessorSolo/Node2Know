@@ -1,0 +1,73 @@
+---
+title: "The Pit Stop Challenge"
+description: "Three tiers of Pug reinforcement exercises."
+sidebar:
+  order: 98
+  label: "Lab: Pit Stop"
+draft: false
+---
+
+## Authorized Service Center
+
+Professor Solo here. You've read the manuals, you've seen the diagrams. Now, put on the fire suit. We have three jobs in the queue.
+
+Your objective: Fix the broken chassis (HTML to Pug) and tune the engine (Logic).
+
+### 🛠️ Job 1: Tire Change (Maintenance)
+
+**Client:** "Formula Junior" Team  
+**Issue:** They have messy HTML scattered everywhere.  
+**Task:** Convert this snippet to pure Pug. No closing tags allowed.
+
+```html
+<div class="pit-box">
+  <h2 class="team-name">Red Bull</h2>
+  <ul class="stats">
+    <li>Wins: 12</li>
+    <li>Poles: 8</li>
+  </ul>
+</div>
+```
+
+<details>
+<summary>⚡ AI Mechanic Prompt</summary>
+
+> "Act as T.A. Watts. Review my Pug conversion of this HTML snippet. Check for 2-space indentation and ensure no closing tags are present. Rate my 'aerodynamic flow' on a scale of 1 to 10."
+
+</details>
+
+---
+
+### 🔧 Job 2: Engine Mapping (Custom Job)
+
+**Client:** "Scuderia Node"  
+**Issue:** The car renders, but the data isn't showing up.  
+**Task:** Create a mixin called `driverCard` that accepts an object `{ name, number, team }` and renders a card. Use that mixin to display two drivers.
+
+```javascript
+// Data to use:
+// { name: "Charles", number: 16, team: "Ferrari" }
+// { name: "Lando", number: 4, team: "McLaren" }
+```
+
+<details>
+<summary>⚡ AI Mechanic Prompt</summary>
+
+> "Act as Professor Solo. Review my Pug Mixin implementation. Did I use the `mixin` keyword correctly? Did I call it with the `+` symbol? If there's a syntax error, roast me gently but explain exactly where the whitespace broke."
+
+</details>
+
+---
+
+### 🏎️ Job 3: The Grand Prix (Solo Special)
+
+**Client:** "Mercedes-AMG Petronas"  
+**Issue:** They want a full dashboard.  
+**Task:** Create a `layout.pug` with a block for `content`. Then create a `dashboard.pug` that extends the layout. Iterate over an array of lap times and display them. If the lap time is under 1:20, give it a class of `.fast` (green text).
+
+<details>
+<summary>⚡ AI Mechanic Prompt</summary>
+
+> "Act as the Lead Engineer. I'm submitting my `layout.pug` and `dashboard.pug` for the Mercedes dashboard. Verify my use of `extends`, `block`, and the conditional class logic. If I missed the `.fast` class condition, send me back to the simulator."
+
+</details>

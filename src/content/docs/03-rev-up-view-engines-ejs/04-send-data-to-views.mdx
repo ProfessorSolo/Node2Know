@@ -14,18 +14,25 @@ The `res.render()` method accepts a second argument known as the **locals object
 
 Properties defined on this object do not exist as a single "data" variable inside the view. Instead, the keys of this object are unpacked and exposed as distinct local variables available to the template.
 
-**File:** `/app.js`
+**File:** `/thingRouter.js`
 
 ```javascript
-// Define the data payload
-const viewData = {
-  title: "EJS Demo - User List",
-  users: ["Curly", "Larry", "Josh"],
-};
+const things = [
+  { id: 1, name: "Thing 1", description: "Description 1", active: true },
+  { id: 2, name: "Thing 2", description: "Description 2", active: false },
+  { id: 3, name: "Thing 3", description: "Description 3", active: true },
+];
 
-// Pass the payload as the second argument
-// The view will now have access to 'title' and 'users' variables directly
-app.get("/users", (req, res) => res.render("users", viewData));
+thingRouter.get("/", (req, res) => {
+  // Define the data payload
+  const viewData = {
+    title: "EJS Demo - Thing List",
+    things: things,
+  };
+  // Pass the payload as the second argument
+  // The view will now have access to 'title' and 'things' variables directly
+  res.render("things", viewData);
+});
 ```
 
 In this example:

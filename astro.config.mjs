@@ -25,11 +25,11 @@ const COURSE_MODULES = [
       directory: '03-rev-up-view-engines-ejs',
       released: true,
     },
-  //   {
-  //     label: 'Git Control of Your Code',
-  //     directory: '03-git-control-of-your-code',
-  //     released: true,
-  //   },
+    {
+      label: 'Sleek Templating with Pug',
+      directory: '04-sleek-templating-with-pug',
+      released: true,
+    },
   //   {
   //     label: 'Optimal Image Prime',
   //     directory: '04-optimal-image-prime',

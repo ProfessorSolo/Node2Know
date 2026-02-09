@@ -1,0 +1,64 @@
+---
+title: "Static Test Run"
+description: "Creating and rendering your first static Pug view."
+sidebar:
+  order: 4
+  label: "Static Views"
+draft: false
+---
+
+## The Wind Tunnel Test
+
+We've installed the engine and learned the aerodynamics. Now it's time to build a test chassis and put it through the wind tunnel. A "static view" means the car looks the same every lap—no dynamic data, just pure structure.
+
+In this phase, we ensure that our indentation holds up under pressure and that the Express server can successfully paint the chassis (render the HTML) to the browser.
+
+![A browser window displaying a simple "Hello Pug" page, connected by a wire to a server log showing "200 OK - Rendered in 12ms".](/assets/lessons/04-sleek-templating-with-pug/03-static-views.png)
+
+## The View File
+
+Create a file named `static.pug` inside your `views/` directory.
+
+```pug
+//- views/static.pug
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title Static Pug Test
+  body
+    header
+      h1 Static Material
+
+    main
+      p.lead This content is hard-coded into the chassis.
+      p It will not change unless we rebuild the file.
+
+      div.container
+        span Indentation Check:
+        |  Passed.
+```
+
+> [!TIP]
+> **T.A. Watts says:**
+> See that `|` character in the last line? That's the **Piped Text** operator. It allows you to put plain text on a new indented line without creating a new tag. Useful for keeping your source code narrow.
+
+## The Server Route
+
+Now, tell the pit crew (Express) to render this specific chassis when the driver requests the route.
+
+```javascript
+// app.js
+app.get("/static", (req, res) => {
+  // We don't need the .pug extension here
+  // Express finds 'static.pug' based on the view engine setting
+  res.render("static");
+});
+```
+
+### ⏭ Injecting Fuel
+
+Static cars are for museums. We want to race. It's time to pump some dynamic fuel into this engine.
+
+**Next Lap:** Buffered code and interpolation.

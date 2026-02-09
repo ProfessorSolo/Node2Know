@@ -33,7 +33,8 @@ const app = express();
 // Configuration: Set global application variables
 // These are available in ALL views automatically
 app.locals.appTitle = "Node2Know";
-app.locals.adminEmail = "help@node2know.com";
+app.locals.adminEmail = "ps@professorsolo.com";
+app.locals.license = "Node2Know Learner License 1.0 (Node2Know-LEARN-1.0)";
 app.locals.copyrightYear = new Date().getFullYear();
 
 // Route Handler
@@ -51,9 +52,10 @@ In your EJS templates, these properties are accessed as top-level variables. You
 
 ```html
 <footer>
-  <!-- 'appTitle' and 'copyrightYear' come from app.locals -->
-  <p>&copy; <%= copyrightYear %> <%= appTitle %></p>
-  <p>Contact: <a href="mailto:<%= adminEmail %>"><%= adminEmail %></a></p>
+  <p>
+    &copy; <%= copyrightYear %> Josh Solomon - Professor Solo - <%= appTitle %>
+  </p>
+  <p>License: <%= license %></p>
 </footer>
 ```
 

@@ -1,0 +1,64 @@
+---
+title: "Iteration Laps"
+description: "Looping through arrays and objects."
+sidebar:
+  order: 7
+  label: "Iteration"
+draft: false
+---
+
+## The Endurance Test
+
+In F1, consistency is key. You need to drive the same lap perfect, over and over again. In templating, we call this iteration. We take a list of data items and render a component for `each` one.
+
+![A track map showing a car doing multiple laps. Each lap generates a new list item on a scoreboard.](/assets/lessons/04-sleek-templating-with-pug/06-iteration-laps.png)
+
+## `each` Loops
+
+The `each` keyword is your workhorse. It iterates over arrays and objects with zero fuss.
+
+### Arrays
+
+```pug
+- const drivers = ["Hamilton", "Verstappen", "Leclerc"]
+
+ul.driver-standings
+  each driver, index in drivers
+    li.rank-item
+      span.position= index + 1
+      span.name= driver
+```
+
+### Objects
+
+You can also iterate over keys and values in an object.
+
+```pug
+- const carStats = { engine: "V6 Hybrid", tires: "Soft", fuel: "98%" }
+
+dl.telemetry
+  each val, key in carStats
+    dt= key
+    dd= val
+```
+
+## `while` Loops
+
+Rarely used in views, but available if you need to run a loop based on a condition rather than a collection.
+
+```pug
+- let n = 0
+ul
+  while n < 4
+    li= n++
+```
+
+> [!CAUTION]
+> **Solo Warning:**
+> Ensure your `while` loop has a termination condition that actually happens. An infinite loop in a view render will crash the browser tab (or the server process) and burn out your engine.
+
+### ⏭ The Pit Crew
+
+Doing everything yourself is inefficient. It's time to call in the specialists.
+
+**Next Lap:** Mixins (Reusable code blocks).

@@ -1,0 +1,50 @@
+---
+title: "Installing the Engine"
+description: "Setting up Pug in your Express application."
+sidebar:
+  order: 2
+  label: "Engine Setup"
+draft: false
+---
+
+## Bolting to the Chassis
+
+Before we can start stripping weight, we need to install the core component. Think of this as dropping the new high-performance engine block into your existing Express chassis. It needs to be bolted down (installed) and wired up (configured) before we can turn the key.
+
+Once the engine is mounted, we tell the onboard computer (Express) to switch its fuel mapping from "Standard HTML" to "Pug Injection."
+
+![A terminal window showing the 'npm install' command with a green "Success" bar, next to a schematic showing "View Engine: Pug" being selected on a dashboard.](/assets/lessons/04-sleek-templating-with-pug/01-pug-engine-setup.png)
+
+## Installation
+
+First, install the package as a dependency.
+
+```bash
+npm install pug
+```
+
+## Configuration
+
+We need to configure Express to use Pug as the default view engine. This tells Express that when we render a file, it should look for `.pug` extensions and use the Pug engine to parse them.
+
+```javascript
+const express = require("express");
+const app = express();
+const path = require("path");
+
+// 1. Set the views directory
+app.set("views", path.join(__dirname, "views"));
+
+// 2. Set the view engine to 'pug'
+app.set("view engine", "pug");
+```
+
+> [!NOTE]
+> **T.A. Watts says:**
+> Notice we didn't `require('pug')`? Express handles that internally when you set the `view engine`. Don't clutter your file with unnecessary requires.
+
+### ⏭ Aerodynamic Syntax
+
+Engine is mounted. Now, let's learn how to shape the body panels for maximum speed.
+
+**Next Lap:** Classes, IDs, and the art of indentation.

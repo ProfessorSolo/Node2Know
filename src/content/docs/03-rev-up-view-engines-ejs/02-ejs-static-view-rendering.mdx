@@ -6,6 +6,8 @@ sidebar:
   label: "Rendering a Static View"
 ---
 
+import { LinkButton } from "@astrojs/starlight/components";
+
 Check the gauges. Before we start injecting high-octane data into our templates, we need to verify the pipeline is clear. Rendering a static file proves that Express can locate your views and that the EJS engine is properly engaged.
 
 ## The View File
@@ -46,6 +48,21 @@ The `res.render()` method abstracts several file system operations:
 1.  **Lookup**: It searches for the specified filename (`"raw-html"`) within the directory defined by your `app.set("views", ...)` configuration.
 2.  **Resolution**: It automatically attempts to match the extension defined by `app.set("view engine", ...)`, so you can omit `.ejs`.
 3.  **Compilation**: It passes the file content to the EJS compiler. Even though this specific file has no dynamic logic, the engine still processes it and returns the final HTML string to the client.
+
+---
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="https://github.com/ProfessorSolo/Node2Know-02-01-A-EJS-Intro.git"
+  variant="primary"
+  icon="external"
+  target="_blank"
+>
+  EJS Intro - Static View Rendering - GitHub Repo
+</LinkButton>
+
+---
 
 <div class="next-step">
   <h3>⏭ Dynamic Views</h3>

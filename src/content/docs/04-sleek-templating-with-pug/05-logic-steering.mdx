@@ -1,0 +1,59 @@
+---
+title: "Logic Steering"
+description: "Controlling the view flow with conditionals."
+sidebar:
+  order: 6
+  label: "Conditionals"
+draft: false
+---
+
+## Taking the Corner
+
+A straight line is fast, but boring. To handle the twists and turns of real application logic, we need steering. In Pug, we don't need opening and closing brackets for our javascript logic; we just use the keywords and indentation.
+
+![A steering wheel dashboard. "IF" turns left, "ELSE" turns right. "CASE" is a gear shifter selecting options 1, 2, or 3.](/assets/lessons/04-sleek-templating-with-pug/05-logic-steering.png)
+
+## If / Else
+
+The syntax is cleaner than standard JS. No parentheses required around the condition, and no curly braces.
+
+```pug
+- const user = { loggedIn: true, name: "Checo" }
+
+.nav-controls
+  if user.loggedIn
+    h2 Welcome back, #{user.name}
+    button.btn-logout Log Out
+  else
+    button.btn-login Log In
+    a(href="/register") Sign Up
+```
+
+> [!TIP]
+> **T.A. Watts says:**
+> You can also use `unless` if you want to be different. `unless x` is the same as `if !x`. It reads like English, which is nice, I guess.
+
+## Case / When
+
+For multiple conditions (switch statements), use `case` and `when`.
+
+```pug
+- const status = "pitstop"
+
+.status-indicator
+  case status
+    when "green-flag"
+      .light.green Go!
+    when "yellow-flag"
+      .light.yellow Caution
+    when "pitstop"
+      .light.blue Box Box Box
+    default
+      .light.red Race Stopped
+```
+
+### ⏭ Lap Iteration
+
+Steering is good. Now let's see how many laps we can do.
+
+**Next Lap:** Loops and Iteration (`each`).

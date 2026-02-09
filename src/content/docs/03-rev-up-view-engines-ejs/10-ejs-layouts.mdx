@@ -6,6 +6,8 @@ sidebar:
   label: "Layout Patterns"
 ---
 
+import { LinkButton } from "@astrojs/starlight/components";
+
 Partials handle internal components, but they don't solve the problem of repeated structural boilerplate (like `<html>`, `<head>`, and `<body>` tags) in every file. To achieve true maintainability, we use a "Layout" pattern—a master template that wraps around your individual views.
 
 ## The Layout Module
@@ -68,17 +70,55 @@ A layout file is a standard EJS template with one special variable: `body`. When
 
 With the layout handling the frame, your individual view files become much cleaner. They only need to contain the content relevant to that specific route.
 
-**File:** `views/users.ejs`
+**File:** `views/things.ejs`
 
 ```html
 <!-- No <html>, <head>, or <body> tags needed here -->
-<h2>User List</h2>
-<ul>
-  <% for (let i = 0; i < users.length; i++) { %>
-  <li><%= users[i] %></li>
-  <% } %>
-</ul>
+<article class="card">
+  <header>
+    <h2>Inventory Log</h2>
+    <h3>[ All the Things ]</h3>
+  </header>
+  <section>
+    <p class="bio">
+      "This area is designated for Thing containment. Do not feed the objects."
+    </p>
+    <p>The dynamic list of Things is rendered here.</p>
+    <p>
+      Currently, the data is hardcoded in the router. In a real application, the
+      data would be retrieved from a database.
+    </p>
+    <h4>// Status_Report</h4>
+    <ul>
+      <% things.forEach(thing => { %>
+      <li>
+        <a
+          href="/things/<%= thing.id %>"
+          style="color: inherit; text-decoration: none; display: block; width: 100%;"
+        >
+          <%= thing.name %> <% if (!thing.active) { %> (Inactive) <% } %>
+        </a>
+      </li>
+      <% }) %>
+    </ul>
+  </section>
+</article>
 ```
+
+---
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="https://github.com/ProfessorSolo/Node2Know-02-01-D-EJS-Layouts.git"
+  variant="primary"
+  icon="external"
+  target="_blank"
+>
+  EJS Layouts - GitHub Repo
+</LinkButton>
+
+---
 
 <div class="next-step">
   <h3>⏭ Route-Specific Layouts</h3>

@@ -1,0 +1,72 @@
+---
+title: "The Layout Chassis"
+description: "Using extends and blocks for master layouts."
+sidebar:
+  order: 9
+  label: "Layouts & Extends"
+draft: false
+---
+
+## The Monocoque Design
+
+F1 cars share a common chassis design. You don't rebuild the cockpit for every race; you just change the tires and the aero package. In Pug, we use **Layout Extension** to achieve this. We build one master file (the chassis) and then "extend" it for individual pages.
+
+![Exploded view diagram. A transparent "Ghost Car" (Layout) serves as the base. Different colored "Body Panels" (Views) snap onto it.](/assets/lessons/04-sleek-templating-with-pug/08-layout-chassis.png)
+
+## The Master Chassis (`layout.pug`)
+
+This file contains the common structure: doctype, head, scripts, and footer. It defines "slots" using the `block` keyword where other pages can insert their content.
+
+```pug
+//- views/layouts/main-layout.pug
+doctype html
+html(lang="en")
+  head
+    title Node F1 Racing
+    link(rel="stylesheet", href="/css/style.css")
+  body
+    include ../partials/nav.pug
+
+    //- The main content slot
+    block content
+
+    include ../partials/footer.pug
+```
+
+## The View File (`extends`)
+
+The individual view file declares which chassis it uses (`extends`) and then fills in the slots (`block`).
+
+```pug
+//- views/dashboard.pug
+extends layouts/main-layout.pug
+
+block content
+  h1 Race Dashboard
+  p Current Lap: 44/58
+
+  .telemetry-box
+    //- Specific content for this page
+    +lapChart(laps)
+```
+
+## Includes
+
+If you just need to paste a chunk of code (like a navbar or footer) without complex logic, use `include`.
+
+```pug
+//- views/partials/nav.pug
+nav
+  a(href="/") Pit Lane
+  a(href="/standings") Standings
+```
+
+> [!NOTE]
+> **T.A. Watts says:**
+> `include` is looking for a file path relative to the current file. `block` is logical inheritance. Know the difference, or your chassis will fall apart on the first turn.
+
+### ⏭ The Pit Stop Challenge
+
+You have the tools. You have the engine. Now it's time to prove you can handle the torque.
+
+**Next Lap:** The Lab.

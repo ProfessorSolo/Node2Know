@@ -18,10 +18,13 @@ To render a list of items, we break a standard JavaScript `for` loop across mult
 
 ```ejs
 <ul>
-  <% for (let i = 0; i < users.length; i++) { %>
-    <!-- Content inside the loop is rendered for each iteration -->
-    <li><%= users[i] %></li>
-  <% } %>
+  <% things.forEach(thing => { %>
+  <li>
+    <a href="/things/<%= thing.id %>" style="color: inherit; text-decoration: none; display: block; width: 100%;">
+      <%= thing.name %>
+    </a>
+  </li>
+  <% }) %>
 </ul>
 ```
 
@@ -30,14 +33,16 @@ To render a list of items, we break a standard JavaScript `for` loop across mult
 Scriptlets allow you to perform presence checks or alter the output based on data states. This pattern handles scenarios like "Empty States" or access control.
 
 ```ejs
-<% if (users.length === 0) { %>
+<% if (things.length === 0) { %>
   <!-- Rendered if the condition is true -->
-  <div class="alert">No users found in the database.</div>
+  <div class="alert">Nothing found in the database.</div>
 <% } else { %>
   <!-- Rendered if the condition is false -->
   <ul>
-    <% users.forEach((user) => { %>
-      <li><%= user %></li>
+    <% things.forEach((thing) => { %>
+      <li><%= thing.name %></li>
+      <!-- conditional output -->
+      <% if (!thing.active) { %> (Inactive) <% } %>
     <% }) %>
   </ul>
 <% } %>

@@ -6,6 +6,8 @@ sidebar:
   label: "Partials & Reusability"
 ---
 
+import { LinkButton } from "@astrojs/starlight/components";
+
 Efficiency in engineering comes from component reuse. Instead of duplicating the same navigation bar or footer code across every single view file—which creates a maintenance nightmare—we extract these common elements into separate files called "partials". These logical units can then be injected into any template that requires them.
 
 ## The Include Syntax
@@ -28,7 +30,7 @@ Best practice dictates organizing these fragments in a dedicated subdirectory to
     header.ejs
     footer.ejs
   index.ejs
-  users.ejs
+  things.ejs
 ```
 
 ## Variable Scoping in Partials
@@ -41,12 +43,13 @@ If you pass a `title` variable to `users.ejs`, and `users.ejs` includes `header.
 
 ```html
 <header>
-  <!-- The 'title' variable is available here automatically -->
-  <h1><%= title %></h1>
   <nav>
     <a href="/">Home</a>
-    <a href="/users">Users</a>
+    <a href="/about">About</a>
+    <a href="/josh">Josh</a>
+    <a href="/things">Things</a>
   </nav>
+  <h1><%= title %></h1>
 </header>
 ```
 
@@ -56,6 +59,21 @@ If you pass a `title` variable to `users.ejs`, and `users.ejs` includes `header.
 <!-- The path is relative to the current file or root views folder -->
 <%- include('partials/header') %>
 ```
+
+---
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="https://github.com/ProfessorSolo/Node2Know-02-01-C-EJS-Partials.git"
+  variant="primary"
+  icon="external"
+  target="_blank"
+>
+  EJS Partials - GitHub Repo
+</LinkButton>
+
+---
 
 <div class="next-step">
   <h3>⏭ Layout Patterns</h3>

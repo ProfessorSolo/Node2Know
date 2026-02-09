@@ -13,13 +13,12 @@ The global layout configuration applies to every view by default. However, appli
 In the `res.render` options object, the `layout` key specifies the path to the desired wrapper template.
 
 ```javascript
-res.render("profile", {
-  // Standard data payload
-  title: "User Profile",
-  user: userObject,
-
-  // Configuration override: Use the 'sidebar' layout instead of default
-  layout: "./layouts/sidebar",
+// route using the sidebar layout
+indexRouter.get("/dashboard", (req, res) => {
+  res.render("dashboard", {
+    title: "Mission Control",
+    layout: "layouts/sidebar",
+  });
 });
 ```
 
@@ -39,19 +38,34 @@ Alternative layouts function exactly like the default one: they must include the
     <title><%= title %></title>
   </head>
   <body>
-    <%- include('../partials/header.ejs') %>
+    <%- include("../partials/header.ejs", { title: title || "Dashboard" } ) %>
 
-    <!-- Analysis: A 2-column grid structure distinct from the default layout -->
-    <div class="container-grid">
-      <main><%- body %></main>
+    <div class="layout-sidebar">
+      <aside class="sidebar">
+        <h3>// System_Nav</h3>
+        <ul>
+          <li><a href="/dashboard">Overview</a></li>
+          <li><a href="/things">Inventory</a></li>
+          <li><a href="#">Analytics</a></li>
+          <li><a href="#">Settings</a></li>
+          <li><a href="/">Logout</a></li>
+        </ul>
 
-      <aside>
-        <h3>Dependencies</h3>
-        <!-- Sidebar content -->
+        <br />
+
+        <h3>// Server_Stats</h3>
+        <ul>
+          <li>Uptime: 99.9%</li>
+          <li>CPU: 12%</li>
+          <li>Memory: 450MB</li>
+          <li>Status: Online</li>
+        </ul>
       </aside>
+
+      <main><%- body %></main>
     </div>
 
-    <%- include('../partials/footer.ejs') %>
+    <%# persistent footer %> <%- include("../partials/footer.ejs" ) %>
   </body>
 </html>
 ```

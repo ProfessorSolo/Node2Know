@@ -1,0 +1,63 @@
+---
+title: "F1 Technical HUD"
+description: "Pocket reference for Pug syntax and logic."
+sidebar:
+  order: 99
+  label: "Codex: HUD"
+draft: false
+---
+
+## Telemetry Data
+
+(A holographic display flickers to life. T.A. Watts is tapping on the glass.)  
+"Don't memorize the manual. Memorize where to find the answers. Here is your heads-up display."
+
+### 🏎️ Aerodynamics (Syntax)
+
+| Component      | HTML                  | Pug                  | Note             |
+| :------------- | :-------------------- | :------------------- | :--------------- |
+| **Div Class**  | `<div class="box">`   | `.box`               | Div is default.  |
+| **ID**         | `<h1 id="title">`     | `h1#title`           | Hash for ID.     |
+| **Attributes** | `<input type="text">` | `input(type="text")` | Use parens.      |
+| **Text**       | `<p>Hello</p>`        | `p Hello`            | Space after tag. |
+| **Block Text** | (Multiline)           | `p.`                 | Dot for block.   |
+
+### ⛽ Fuel Injection (Data)
+
+| Type              | Symbol | Example           | Output                    |
+| :---------------- | :----- | :---------------- | :------------------------ |
+| **Buffered**      | `=`    | `h1= title`       | Output to HTML (Escaped). |
+| **Unbuffered**    | `-`    | `- const x = 1`   | Silent Execution.         |
+| **Unescaped**     | `!=`   | `div!= html`      | **DANGER** (Raw HTML).    |
+| **Interpolation** | `#{}`  | `p Hello #{name}` | Mix text & vars.          |
+
+### 🧭 Steering (Logic)
+
+| Maneuver        | Syntax              | key                |
+| :-------------- | :------------------ | :----------------- |
+| **Cornering**   | `if user.isLogged`  | No parens needed.  |
+| **Alternative** | `else`              | Indent below `if`. |
+| **Switch**      | `case status`       | Use `when "val"`.  |
+| **Laps**        | `each item in list` | Iterate arrays.    |
+| **Pit Stop**    | `include path/file` | Static insertion.  |
+| **Chassis**     | `extends layout`    | Use with `block`.  |
+
+### ⚠️ Hazard Indicators
+
+> [!WARNING]
+> **Check Engine Light (Common Errors):**
+>
+> 1.  **Mixed Indentation:** Using tabs and spaces in the same file. (Instant crash).
+> 2.  **Missing Space:** `h1Title` instead of `h1 Title`.
+> 3.  **Self-Closing:** Trying to use `img()` instead of `img`. Pug knows which tags self-close.
+
+### 🏁 Setup Command
+
+```bash
+npm install pug
+```
+
+```javascript
+app.set("view engine", "pug");
+app.set("views", path.join(__dirname, "views"));
+```

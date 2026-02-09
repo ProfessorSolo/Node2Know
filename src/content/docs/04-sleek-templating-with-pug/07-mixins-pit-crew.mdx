@@ -1,0 +1,65 @@
+---
+title: "Mixins (The Pit Crew)"
+description: "Creating reusable blocks of code with Mixins."
+sidebar:
+  order: 8
+  label: "Mixins"
+draft: false
+---
+
+## Specialized Tools
+
+In the pit lane, we don't build a new tire wrench for every car. We use standard, reusable tools. In Pug, these are called **Mixins**. They function like JavaScript functions but for HTML structure. You define a template "tool" once and strictly reuse it.
+
+![A schematic of a "Pit Gun" (Mixin). Inputs: Arguments (Pressure, Torque). Output: A perfectly secured wheel nut (HTML Component).](/assets/lessons/04-sleek-templating-with-pug/07-mixins-pit-crew.png)
+
+## Defining a Mixin
+
+Use the `mixin` keyword followed by the name and optional arguments into parentheses.
+
+```pug
+//- Definition
+mixin petCard(pet)
+  .card
+    .card-header
+      h2= pet.name
+    .card-body
+      p Breed: #{pet.breed}
+      p Age: #{pet.age}
+```
+
+## Using a Mixin
+
+To "call" the mixin, use the `+` symbol. This is the implementation trigger.
+
+```pug
+//- Usage
++petCard({ name: "Drago", breed: "Doberman", age: 4 })
++petCard({ name: "Rex", breed: "German Shepherd", age: 2 })
+```
+
+## Mixin Blocks
+
+Mixins can also accept a block of content, allowing you to wrap custom HTML inside a reusable container.
+
+```pug
+mixin modal(title)
+  .modal
+    h3= title
+    .modal-content
+      if block
+        block
+      else
+        p No content provided.
+
+//- Usage
++modal("Security Alert")
+  p Unauthorized entry detected in Sector 7.
+  button.btn-lockdown Seal Doors
+```
+
+### ⏭ The Master Chassis
+
+Mixins handle small components. But what about the main frame?
+
+**Next Lap:** Layouts, Extends, and Blocks (`layout.pug`).
