@@ -1,0 +1,74 @@
+---
+title: Inserting Documents
+description: Stashing assets in the Vault.
+sidebar:
+  order: 7
+  label: "Inserting Documents"
+draft: false
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+
+## The Drop
+
+Now that we have our `projects` collection, let's make a deposit.
+
+### insertOne()
+
+The precision tool. Used for adding a single asset.
+
+```javascript
+db.projects.insertOne({
+  title: "Neon Dodger",
+  tagline: "A fast arcade game.",
+  tech: ["HTML", "JS"],
+  isComplete: true,
+});
+```
+
+You should see an acknowledgement with an `insertedId`. That ID is the unique tracking number the Vault assigned to our asset.
+
+<img
+  src="/assets/lessons/05-mongodb-document-vault/07-insert-one.png"
+  alt="Inserting a document into a collection."
+  width="100%"
+/>
+_Fig 1: Inserting a single document into a collection._
+
+### insertMany()
+
+The bulk drop. Used for mass ingestion.
+
+```javascript
+db.projects.insertMany([
+  { title: "Task Tracker", tech: ["Node", "Express"] },
+  { title: "Weather Vane", tech: ["API", "CSS"] },
+]);
+```
+
+<img
+  src="/assets/lessons/05-mongodb-document-vault/07-insert-many.png"
+  alt="Inserting multiple documents into a collection."
+  width="100%"
+/>
+_Fig 2: Inserting multiple documents into a collection._
+
+<NoteBox title="Arrays">
+  Notice we passed an **Array** of objects to `insertMany`. If we pass a single
+  object, it will break (unless it is wrapped in an array).
+</NoteBox>
+
+## The Flexibility Superpower
+
+Did you notice what we **didn't** do?
+
+1.  We never created a "Schema" for the `projects` collection.
+2.  The first document had `isComplete` and `tagline` fields.
+3.  The next two documents **didn't** have those fields.
+
+**This is MongoDB's superpower.** We didn't have to run a database migration to add `tagline`. We just added it. The Vault accepts whatever shape of data we give it.
+
+### ⏭ Retrieving Assets
+
+Getting our data back out with `find()` and filtering.

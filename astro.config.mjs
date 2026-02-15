@@ -30,11 +30,11 @@ const COURSE_MODULES = [
       directory: '04-sleek-templating-with-pug',
       released: true,
     },
-  //   {
-  //     label: 'Optimal Image Prime',
-  //     directory: '04-optimal-image-prime',
-  //     released: true,
-  //   },
+    {
+      label: 'MongoDB Document Vault',
+      directory: '05-mongodb-document-vault',
+      released: false,
+    },
   //   {
   //     label: 'Hamburger Menu Magic',
   //     directory: '05-hamburger-menu-magic',

@@ -1,0 +1,87 @@
+---
+title: "Lab: The Library Architect"
+description: "Construct a digital archive for the Vault."
+sidebar:
+  order: 98
+  label: "Lab: Library Architect"
+draft: false
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+import CautionBox from "../../../components/CautionBox.astro";
+
+## The Mission
+
+Listen up, Recruit. Professor Solo needs a secure archive for his technical manuals. The old filing cabinet (a JSON file on a USB stick) fell into a volcano. Don't ask.
+
+Our mission is to initialize a new section of the Vault and populate it properly. No messy grids. Just pure, flexible documents.
+
+---
+
+## Tier 1: Maintenance (The Basics)
+
+**Objective:** Create the container and make a simple deposit.
+
+1.  **Log in:** Connect to your Atlas Cluster via `mongosh`.
+2.  **Initialize:** Switch to a new database called `library`.
+3.  **Construct:** Create a collection called `books`.
+4.  **Populate:** Insert ONE book with the following schema:
+    - `title`: "The Node2Know Manifesto"
+    - `author`: "Professor Solo"
+    - `year`: 2024
+    - `genres`: ["Education", "Cyberpunk", "Biography"]
+    - `isAvailable`: true
+
+<NoteBox title="Student-to-AI Prompt">
+  "I'm trying to insert a document into MongoDB but `mongosh` keeps giving me a
+  syntax error. Here is my command: [PASTE COMMAND]. Can you spot the bracket
+  mismatch?"
+</NoteBox>
+
+---
+
+## Tier 2: The Custom Job (Intermediate)
+
+**Objective:** Bulk import and targeted retrieval.
+
+1.  **Bulk Drop:** Use `insertMany()` to add **3 more books** at once.
+    - _Constraint:_ At least one book must be from a different author.
+    - _Constraint:_ One book should be missing the `year` field (to prove the schema is flexible).
+2.  **The Retrieve:** Write a query to find **only** the books written by "Professor Solo".
+
+<NoteBox title="Student-to-AI Prompt">
+  "How do I filter a MongoDB `find()` query to only show documents where the
+  `author` field equals 'Professor Solo'?"
+</NoteBox>
+
+---
+
+## Tier 3: The Solo Special (Hard)
+
+**Objective:** Advanced filtering and field projection.
+
+We need a manifest for the auditors, but they don't need to see the `_id` or the `genres`. They just want the titles.
+
+1.  **The Audit Query:** Find ALL books, but **only return the `title` and `year` fields**. Hide the `_id`.
+2.  **The Logic Check:** Explain why the document you inserted in Tier 2 (the one without a year) doesn't break the database, whereas in SQL it would have thrown a fit.
+
+<NoteBox title="Student-to-AI Prompt">
+  "In MongoDB, how do I use 'projection' to hide the `_id` field in my search
+  results?"
+</NoteBox>
+
+---
+
+## Submission Visual
+
+Take a screenshot of your terminal showing the output of your **Tier 3 Audit Query**.
+
+<CautionBox title="Professor Solo says">
+  "If you delete the `library` database by mistake, don't come crying to me.
+  That's why we call it a 'Drop' command. Once you drop it, it breaks."
+</CautionBox>
+
+### ⏭ The Codex
+
+A quick reference guide for your new MongoDB commands.

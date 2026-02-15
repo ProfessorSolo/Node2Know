@@ -1,0 +1,74 @@
+---
+title: "Codex: The Vault Manifest"
+description: "Emergency reference for MongoDB interactions."
+sidebar:
+  order: 99
+  label: "Codex: Vault Manifest"
+draft: false
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+
+## Infrastructure
+
+| Component         | Definition                                                  |
+| :---------------- | :---------------------------------------------------------- |
+| **Atlas**         | The Cloud Service (The Facility).                           |
+| **Cluster**       | The Server Instance (The Building).                         |
+| **Project**       | The Grouping of Clusters (The Job Site).                    |
+| **Database User** | The credentials for the _Application/Shell_ to access data. |
+
+## Terminal Commands (Mongosh)
+
+### Connection
+
+```bash
+mongosh "mongodb+srv://<cluster-url>/" --username <user>
+```
+
+### Navigation
+
+```javascript
+// Show all databases
+show dbs
+
+// Switch to a database (creates it if it doesn't exist)
+use node2know
+
+// Show collections in current db
+show collections
+```
+
+### CRUD Operations
+
+**Create (Insert)**
+
+```javascript
+// Single
+db.projects.insertOne({ title: "Solo App" });
+
+// Multiple
+db.projects.insertMany([{ title: "App A" }, { title: "App B" }]);
+```
+
+**Read (Find)**
+
+```javascript
+// Find All
+db.projects.find();
+
+// Find One (First Match)
+db.projects.findOne({ title: "Solo App" });
+
+// Filtered Find
+db.projects.find({ category: "game" });
+```
+
+<NoteBox title="Safety Protocol">
+  Always verify we are in the correct database (`db`) before running commands.
+</NoteBox>
+
+### ⏭ Next Chapter: Mongoose
+
+Automating the Vault interactions with strict schemas.

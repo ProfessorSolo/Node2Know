@@ -1,0 +1,66 @@
+---
+title: Atlas Infrastructure
+description: Constructing the cloud facility.
+sidebar:
+  order: 2
+  label: "Atlas Infrastructure"
+draft: false
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+
+## The Blueprint
+
+We aren't installing a database server on our machines. That's the "Backpack" way. We are provisioning a managed cluster in the cloud using **MongoDB Atlas**.
+
+Think of Atlas as the construction firm that builds and secures the Vault for us.
+
+## Phase 1: Account Creation
+
+1.  Navigate to the <a href="https://www.mongodb.com/cloud/atlas/register" target="_blank">MongoDB Atlas Registration Page</a>.
+2.  Sign up (Free tier is all we need).
+3.  **Verify your email.** You can't enter the facility without ID.
+
+## Phase 2: Building the Cluster
+
+Once logged in, you'll be dropped into a "Project." Think of a Project as a job site.
+
+<img
+  src="/assets/lessons/05-mongodb-document-vault/02-atlas-dashboard.png"
+  alt="MongoDB Atlas Dashboard"
+  width="100%"
+/>
+
+1.  Click **Create a Cluster**.
+2.  Select **Free** (The FREE option - formerly labeled M0 / Sandbox).
+    - _Do not select Flex or M10 unless you want to burn money._
+3.  **Cluster Name:**
+    - Default is `Cluster0`. We can rename it to `Node2Know-Vault` if we're feeling fancy, but `Cluster0` is fine.
+4.  **Cloud Provider & Region:**
+    - Pick **AWS**.
+    - Pick the region **closest** to us (e.g., `Oregon (us-west-2)`).
+    - _Latency matters. Don't build the vault on the moon if we live in New York._
+5.  - Keep both the sample data and security setup checkboxes checked.
+6.  Click **Create Deployment**
+
+Note: It will take 3-5 minutes for the cluster to be provisioned. This will happen behind the scenes while we continue with the next steps.
+
+### Visual Verification
+
+We should now see a Set up connection security modal.
+
+It will look something like this:
+
+<img
+  src="/assets/lessons/05-mongodb-document-vault/02-atlas-connection-security.png"
+  alt="MongoDB Atlas Set up connection security modal"
+  width="100%"
+/>
+
+_Fig 1: MongoDB Atlas Set up connection security modal._
+
+Hang tight, we'll deal with the security settings in the next step.
+
+### ⏭ Security Protocols
+
+Creating the keys to the kingdom (Database Users) and opening the blast doors (Network Access).

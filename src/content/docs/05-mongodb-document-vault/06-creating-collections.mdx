@@ -1,0 +1,80 @@
+---
+title: Creating Collections
+description: Initializing our data containers.
+sidebar:
+  order: 6
+  label: "Creating Collections"
+draft: false
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+
+## Switching Context
+
+By default, we land in the `test` or `sample_mflix`database. Let's create our own workspace.
+
+```javascript
+use node2know
+```
+
+We should see: `switched to db node2know`.
+
+We can use the `show databases` command to see all the databases in our cluster.
+
+```javascript
+show databases
+```
+
+<NoteBox title="Lazy Creation">
+  The database doesn't technically exist yet. MongoDB utilizes **Lazy
+  Creation**. The hallway isn't built until we put a box in it.
+</NoteBox>
+
+## The Explicit vs. Implicit Approach
+
+### Option A: Implicit (The Cowboy Way)
+
+Just insert a document into a collection that doesn't exist, and MongoDB will create it for us.
+
+```javascript
+db.users.insertOne({ name: "Solo" });
+```
+
+<img
+  src="/assets/lessons/05-mongodb-document-vault/06-implicit-collection-creation.png"
+  alt="Inserting a document into a collection that doesn't exist."
+  width="100%"
+/>
+_Fig 1: Inserting a document into a collection that doesn't exist._
+
+### Option B: Explicit (The Architect Way)
+
+We can create a collection manually if we want to set specific rules (validation, capped size, etc.).
+
+```javascript
+db.createCollection("students");
+```
+
+For our purposes, we will stick to the **Architect Way** to be intentional.
+
+```javascript
+db.createCollection("projects");
+```
+
+**Verify it exists:**
+
+```javascript
+show collections
+```
+
+<img
+  src="/assets/lessons/05-mongodb-document-vault/06-show-collections.png"
+  alt="Show collections."
+  width="100%"
+/>
+_Fig 2: Show collections._
+
+### ⏭ Inserting Documents
+
+Stashing our first digital assets using `insertOne` and `insertMany`.

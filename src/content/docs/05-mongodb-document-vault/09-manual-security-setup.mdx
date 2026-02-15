@@ -1,0 +1,97 @@
+---
+title: Manual Security Setup
+description: Understanding the keys and locks of the Vault.
+sidebar:
+  order: 9
+  label: "Manual Security Setup"
+draft: false
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import CautionBox from "../../../components/CautionBox.astro";
+
+## The Principle of Least Privilege
+
+In the security modal earlier, Atlas might have offered to create an **Admin** user for us. While convenient, using an Admin key for daily operations is like using a sledgehammer to open a delicate jewelry box.
+
+**The Golden Rule:** Only give an application the exact permissions it needs to do its job. Nothing more.
+
+If we use the `atlasAdmin` role for our simple web app, and a hacker steals those credentials, they can delete **everything**. If they steal a `readWrite` user's credentials, they can only mess with the data, not the infrastructure.
+
+## Step 1: Create a Dedicated App User
+
+Let's manually forge a key specifically for our application (or for us, acting as the developer).
+
+1.  In the left sidebar, under **Security**, click **Database Access**.
+2.  Click **Add New Database User**.
+3.  **Authentication Method:** Password.
+4.  **Username:** `student` (or `app_user`).
+5.  **Password:** Generate a secure one. **COPY IT.**
+6.  **Database User Privileges:**
+    - Select **Built-in Role**.
+    - Choose **Read and write to any database**.
+    - _Avoid:_ "Atlas Admin" (unless we are actually doing admin work).
+7.  Click **Add User**.
+
+<CautionBox title="Special Characters">
+  If your password contains special characters (like `@`, `:`, `/`, or `%`), you
+  MUST URL-encode them. For example, `@` becomes `%40`. If you don't, the
+  connection string will fail to parse.
+</CautionBox>
+
+Now we have a key that can open the deposit boxes but cannot demolish the building.
+
+## Step 2: The Network Bouncer (IP Whitelist)
+
+Even with the correct username/password, the Vault is invisible to the outside world. The **IP Access List** is the Bouncer. It checks the ID of the computer trying to connect.
+
+### Why "Function Not Found"?
+
+If we ever try to run `mongosh` or connect our Node app and it hangs forever (timeout), **99% of the time, it's the IP Whitelist.**
+
+- **Scenario:** We set it up at home.
+- **Problem:** We go to a coffee shop.
+- **Result:** Access Denied. The coffee shop's IP is not on the list.
+
+### The "Allow All" Debate
+
+We have two options:
+
+**Option A: My IP Only (Secure)**
+
+- **Pros:** Only our specific machine can connect.
+- **Cons:** We have to update this list every time we move locations.
+
+**Option B: Allow Anywhere (`0.0.0.0/0`)**
+
+- **Pros:** We can connect from home, school, Starbucks, or the moon.
+- **Cons:** If a hacker guesses our password, they can get in.
+
+### Professor Solo's Verdict
+
+For this **Learning Environment**, use **Option B (`0.0.0.0/0`)**.
+
+> [!WARNING]
+> **T.A. Watts says:**
+> "Professor Solo is letting you leave the blast doors open so you don't get locked out during finals. BUT, in a real production app (for a paying client), never use `0.0.0.0/0`. Always restrict access to your production server's specific IP address."
+
+## Exit Strategy
+
+We are done with the security console. Time to get back to code.
+
+**To Exit Mongosh:**
+Type `exit` and hit Enter, or press `Ctrl + C` twice.
+
+### Retrieving the App Connection String
+
+Now that we have a dedicated user (`student` or `app_user`), we need the connection string for **that** user, not the Admin one.
+
+1.  Go to the **Project Overview** (often the top-level **Overview** or **Database** deployment screen).
+2.  Click **Connect**.
+3.  Click **Drivers** (since we will be using Mongoose/Node.js soon) OR **Compass** if you want to use the GUI.
+4.  Copy the string.
+5.  **Crucial:** Replace `<password>` with the specific password we generated for **this specific user**.
+
+### ⏭ The Lab
+
+Ready to put these skills to the test? The Library needs an architect.

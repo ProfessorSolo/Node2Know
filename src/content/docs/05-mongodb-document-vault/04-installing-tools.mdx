@@ -1,0 +1,64 @@
+---
+title: Installing Tools
+description: Setting up the MongoDB Shell (mongosh).
+sidebar:
+  order: 4
+  label: "Installing Tools"
+draft: false
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+
+## The Interface: Mongosh
+
+We need a tool to talk to the cluster. We will use `mongosh` (MongoDB Shell), a JavaScript-based terminal interface.
+
+<NoteBox title="Why not the GUI (Compass)?">
+  Compass is great, but `mongosh` is faster for learning the commands. Plus, it
+  makes us look like hackers in a movie.
+</NoteBox>
+
+<img
+  src="/assets/lessons/05-mongodb-document-vault/04-connection-via-mongosh-shell.png"
+  alt="Choosing MongoDB Shell (mongosh) as the connection method"
+  width="100%"
+/>
+
+_Fig 1: Choosing MongoDB Shell (mongosh) as the connection method._
+
+## Installation
+
+### Option A: macOS (Homebrew)
+
+The easiest path for Mac users.
+
+```bash
+brew install mongosh
+```
+
+### Option B: Windows (Winget)
+
+The modern path for Windows users.
+
+```powershell
+winget install MongoDB.Mongosh
+```
+
+### Option C: Manual Install
+
+If package managers fail us, download the ZIP file from the <a href="https://www.mongodb.com/try/download/shell" target="_blank">official MongoDB Shell Download page</a>.
+
+## Verification
+
+Open your terminal and check the version to ensure it's installed.
+
+```bash
+mongosh --version
+```
+
+If we see a version number (e.g., `2.7.0`), our tools are ready.
+
+### ⏭ Establish Connection
+
+Wire the circuit: connecting our local terminal to the cloud cluster.

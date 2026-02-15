@@ -1,0 +1,61 @@
+---
+title: Establishing Connection
+description: Wiring the circuit between your terminal and the cloud.
+sidebar:
+  order: 5
+  label: "Establishing Connection"
+draft: false
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+
+## The Wiring Diagram
+
+To connect, we need a **Connection String**. This is a long URL that contains the address of the vault.
+
+## Phase 1: Retrieve the String
+
+1.  Go to the Atlas Cluster Dashboard.
+2.  Click **Connect**.
+3.  Click **MongoDB Shell (mongosh)**.
+4.  Copy the connection string provided. It looks like this:
+
+```bash
+mongodb+srv://<username>:<password>@cluster0.abc123.mongodb.net/
+```
+
+<img
+  src="/assets/lessons/05-mongodb-document-vault/05-mongosh-connection-string.png"
+  alt="MongoDB Shell (mongosh) connection string"
+  width="100%"
+/>
+
+_Fig 1: MongoDB Shell (mongosh) connection string._
+
+## Phase 2: The Handshake
+
+Open your terminal and paste the command.
+
+> [!CAUTION]
+> **Professor Solo Warning:**
+> We must manually replace `<username>` with our database user (e.g., `student`) and `<password>` with the password we saved earlier. If we paste `<password>` literally, the Vault will laugh at us.
+
+```bash
+mongosh "mongodb+srv://cluster0.abc123.mongodb.net/" --username student
+```
+
+When it asks for the password, type it in (it will be invisible) and hit Enter.
+
+## Verify Success
+
+If we see a prompt that looks like this:
+
+```bash
+Enterprise cluster0-shard-0:PRIMARY>
+```
+
+We are in. We have breached the mainframe. (Okay, we just logged in).
+
+### ⏭ Creating Collections
+
+Creating our first "Deposit Box" (Collection) inside the database.

@@ -1,0 +1,77 @@
+---
+title: Intro to the Vault
+description: Securing our data in a persistent NoSQL facility.
+sidebar:
+  order: 0
+  label: "Intro to the Vault"
+draft: false
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+
+<img
+  src="/assets/lessons/05-mongodb-document-vault/00-intro-vault-visual.png"
+  alt="Digital Bank Vault with glowing JSON documents"
+  width="100%"
+/>
+
+_Fig 1: Digital Bank Vault with glowing JSON documents._
+
+## The Problem with Foundations
+
+In the traditional world of SQL (Relational Databases), data storage requires the precision of a skyscraper architect. Before we lay a single brick, we must have a complete set of blueprints.
+
+We have to define every table, every column, and every relationship upfront. If we decide six months later that our "User" table needs a `socialMediaHandles` array, we can't just add it. We have to perform a **Migration**—essentially jackhammering the concrete foundation to run new pipes. It works, but it is heavy, slow, and resistant to change.
+
+## The Document Revolution
+
+As the web exploded in the late 2000s, developers needed something different. We needed to move fast and break things, not wait for a database architect to approve a schema change.
+
+The **Document Database** movement emerged from this need. Instead of forcing data into rigid spreadsheets (Relational Tables), these databases asked: _"Why don't we just store the data exactly as it looks in our code?"_
+
+Since modern web applications speak **JSON** (JavaScript Object Notation), storing data _as_ JSON documents became the logical evolution.
+
+## Enter: The Vault
+
+**MongoDB** is the leader of this revolution. It is a **NoSQL Document Database** that acts like a massive bank vault in the cloud (specifically, **MongoDB Atlas**).
+
+Unlike the rigid "Grid" of SQL databases, the Vault is flexible. It allows us to store **Documents** (JSON-like objects) in **Collections** (Deposit Boxes) without forcing us to pre-define exactly what shape those documents must take.
+
+### Why We Choose the Vault
+
+1.  **Agility:** We can adapt our data model as we code, without downtime migrations.
+2.  **Scale:** It grows from a single safety deposit box to a massive warehouse automatically.
+3.  **Speed:** It’s built for modern application throughput.
+
+### The Architect's Blueprint
+
+In this chapter, we are going to:
+
+1.  **Construct the Facility:** Set up a free MongoDB Atlas Cluster.
+2.  **Forge the Key:** Install `mongosh` to interact with our database.
+3.  **Make a Deposit:** Insert our first documents.
+4.  **Verify Assets:** Query the database to find what we stored.
+
+<NoteBox title="Professor Solo says">
+  "Treat database credentials like the combination to a bank vault. We should
+  never commit them to GitHub."
+</NoteBox>
+
+## Extra Bits & Bytes
+
+Want to see the official specs? Check out the MongoDB homepage.
+
+<LinkButton
+  href="https://www.mongodb.com/"
+  variant="secondary"
+  icon="external"
+  iconPlacement="start"
+  target="_blank"
+>
+  Visit MongoDB Official
+</LinkButton>
+
+### ⏭ SQL vs. NoSQL
+
+Comparing the "Grid" vs. the "Vault" mental models.
