@@ -10,9 +10,42 @@ draft: false
 import { LinkButton } from "@astrojs/starlight/components";
 import NoteBox from "../../../components/NoteBox.astro";
 
-## The Drop
+## What is a Document?
 
-Now that we have our `projects` collection, let's make a deposit.
+In the **MSSQL** universe, the closest analog to a Mongo **Document** is a **Row**.
+
+- **SQL Row:** A flat record in a table. Column A, Column B, Column C.
+- **MongoDB Document:** A rich, complex object.
+
+### The Big Difference: Depth
+
+A SQL Row is flat. If you want a list of "tags" for a blog post in SQL, you can't put them in the row. You have to create a separate `Tags` table and join them.
+
+In MongoDB, a Document is **3-Dimensional**. It can contain arrays and other documents inside it.
+
+```json
+{
+  "_id": "507f1f77bcf86cd799439011",
+  "title": "My Blog Post",
+  "tags": ["mongodb", "coding", "pizza"], // <-- An Array!
+  "author": {
+    "name": "Professor Solo", // <-- A Sub-document!
+    "role": "Site Foreman"
+  }
+}
+```
+
+### BSON (Binary JSON)
+
+While MongoDB documents look like JSON (JavaScript Object Notation), they are stored as **BSON** (Binary JSON).
+
+Why? JSON is text. It's slow to scan and limited in types (it doesn't know the difference between an Integer and a Float, or a Date and a String).
+
+BSON is binary. It's fast to scan, and it supports more data types, like `Date` objects and `ObjectId`.
+
+## File (insert) a Document
+
+We have our `projects` collection, let's deposit a document into it.
 
 ### insertOne()
 

@@ -9,6 +9,7 @@ draft: false
 
 import { LinkButton } from "@astrojs/starlight/components";
 import CautionBox from "../../../components/CautionBox.astro";
+import NoteBox from "../../../components/NoteBox.astro";
 
 ## The Principle of Least Privilege
 
@@ -41,7 +42,30 @@ Let's manually forge a key specifically for our application (or for us, acting a
 
 Now we have a key that can open the deposit boxes but cannot demolish the building.
 
-## Step 2: The Network Bouncer (IP Whitelist)
+## Step 2: Retrieving the App Connection String
+
+Now that we have a dedicated user (`student` or `app_user`), we need the connection string for **that** user, not the Admin one.
+
+1.  Go to the **Project Overview** (often the top-level **Overview** or **Database** deployment screen).
+2.  Click **Connect**.
+3.  Click **Drivers** (since we will be using Mongoose/Node.js soon) OR **Compass** if you want to use the GUI.
+4.  Copy the string.
+5.  **Crucial:** Replace `<password>` with the specific password we generated for **this specific user**.
+
+## Step 3: The Test Drive (Exit & Reconnect)
+
+We have the key. Let's see if it fits the lock.
+
+**1. Exit Mongosh:**
+We are currently logged in as our Admin user (or however we first connected). Type `exit` and hit Enter, or press `Ctrl + C` twice.
+
+**2. Reconnect with the New User:**
+Run the `mongosh` command again, but this time, use the connection string we just copied for our `student` user.
+
+**3. Verify Access:**
+If we see the prompt, we succeeded. We are now logged in with limited privileges.
+
+## Step 4: The Network Bouncer (IP Whitelist)
 
 Even with the correct username/password, the Vault is invisible to the outside world. The **IP Access List** is the Bouncer. It checks the ID of the computer trying to connect.
 
@@ -75,22 +99,13 @@ For this **Learning Environment**, use **Option B (`0.0.0.0/0`)**.
 > **T.A. Watts says:**
 > "Professor Solo is letting you leave the blast doors open so you don't get locked out during finals. BUT, in a real production app (for a paying client), never use `0.0.0.0/0`. Always restrict access to your production server's specific IP address."
 
-## Exit Strategy
+## Final Check
 
-We are done with the security console. Time to get back to code.
-
-**To Exit Mongosh:**
-Type `exit` and hit Enter, or press `Ctrl + C` twice.
-
-### Retrieving the App Connection String
-
-Now that we have a dedicated user (`student` or `app_user`), we need the connection string for **that** user, not the Admin one.
-
-1.  Go to the **Project Overview** (often the top-level **Overview** or **Database** deployment screen).
-2.  Click **Connect**.
-3.  Click **Drivers** (since we will be using Mongoose/Node.js soon) OR **Compass** if you want to use the GUI.
-4.  Copy the string.
-5.  **Crucial:** Replace `<password>` with the specific password we generated for **this specific user**.
+<NoteBox title="Don't Leave the Engine Running">
+  Before moving on, make sure to **exit** the `mongosh` process one last time.
+  We don't want it running in the background while we try to install packages in
+  the next lab. **Type `exit` and hit Enter.**
+</NoteBox>
 
 ### ⏭ The Lab
 

@@ -1,0 +1,75 @@
+---
+title: List Views made Easy
+sidebar:
+  order: 6
+  label: List Views made Easy
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+import CautionBox from "../../../components/CautionBox.astro";
+
+## Rendering the Gallery
+
+Now that we have our `projects` array, we can pass it to our EJS view.
+
+### The Middleman: Router
+
+Before we can render the view, we need a route to handle the request and fetch the data.
+
+`routers/projectRouter.js`
+
+```javascript
+const express = require("express");
+const router = express.Router();
+const _projectOps = require("../data/projects");
+
+router.get("/", async (req, res) => {
+  const projects = await _projectOps.getProjectList();
+  res.render("projects-list", { projects });
+});
+
+module.exports = router;
+```
+
+<CautionBox title="T.A. Watts">
+  **Don't forget the wires!** A router is useless unless `server.js` knows about
+  it. In server.js make sure to import and use the router.
+
+const projectRouter =require("./routers/projectRouter");
+
+// ...
+
+app.use("/projects",projectRouter);
+
+</CautionBox>
+
+### EJS Time:
+
+`views/projects-list.ejs`
+
+```html
+<h2>Project Gallery</h2>
+
+<% if (projects.length > 0) { %>
+<ul>
+  <% projects.forEach(project => { %>
+  <li>
+    <a href="/projects/<%= project.slug %>"> <%= project.title %> </a>
+  </li>
+  <% }) %>
+</ul>
+<% } else { %>
+<p>No projects found. Check back later!</p>
+<% } %>
+```
+
+### Logic Breakdown
+
+1.  **Check for Empty:** Always check `projects.length > 0` to avoid rendering an empty list.
+2.  **Looping:** Use `.forEach` to iterate through the documents.
+3.  **Linking:** We use `project.slug` in the URL to create a readable link.
+
+### ⏭ Next: Precision Finding
+
+We can list them all. Now let's pick one out of the crowd.

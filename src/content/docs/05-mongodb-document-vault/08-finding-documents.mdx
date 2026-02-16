@@ -14,6 +14,8 @@ import NoteBox from "../../../components/NoteBox.astro";
 
 We put data in. Now, can we get it back?
 
+![Finding Documents](/assets/lessons/05-mongodb-document-vault/08-finding-documents.png)
+
 ### find()
 
 The "Show Me Everything" command.
@@ -32,18 +34,38 @@ Also note: The documents are not "massaged" or "normalized" in any way. They are
 
 ### findOne()
 
-The "Sniper" command. Returns the **first** document that matches.
+Returns the **first** document that matches.
+
+By matches, we're talking about the query object we pass to the function - notice the empty curly braces.
+
+If the query object is empty, it will return the most recently inserted document.
 
 ```javascript
 db.projects.findOne({});
-// Returns the first document it finds.
+// Returns the most recently inserted document.
 ```
 
 ### Filtered Retrieval
 
 We can pass a query object to filter the results. We aren't just dumping the whole vault on the floor; we are looking for specific boxes.
 
-Let's add another project to our collection.
+Let's find all projects that use "Node".
+
+```javascript
+db.projects.find({ tech: "Node" });
+```
+
+<NoteBox title="Array Magic">
+  Wait... `tech` is an **Array** `['Node', 'Express']`. But we just asked for
+  the string `'Node'`.
+
+**MongoDB is smart.** If we query a field that holds an array, MongoDB
+automatically looks **inside** the array for a match. We don't need any
+special syntax.
+
+</NoteBox>
+
+Let's add another project to our collection to prove it.
 
 ```javascript
 db.projects.insertOne({
@@ -53,19 +75,14 @@ db.projects.insertOne({
 });
 ```
 
-Now let's find all projects that use "Node".
-
-```javascript
-// Find all projects that use "Node"
-db.projects.find({ tech: "Node" });
-```
+If we run the command again, we will see two documents.
 
 <NoteBox title="T.A. Watts says">
   This is a basic equality match. We will cover advanced filtering `$gt`, `$in`,
   etc. in the Mongoose chapters.
 </NoteBox>
 
-### ⏭ Mission Complete
+### ⏭ Introduction Complete
 
 We have successfully built a cluster, secured it, connected to it, added a collection, inserted some documents, and retrieved them.
 

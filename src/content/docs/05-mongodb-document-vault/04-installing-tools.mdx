@@ -1,31 +1,24 @@
 ---
-title: Installing Tools
+title: Shell Connection
 description: Setting up the MongoDB Shell (mongosh).
 sidebar:
   order: 4
-  label: "Installing Tools"
+  label: "Shell Connection"
 draft: false
 ---
 
 import { LinkButton } from "@astrojs/starlight/components";
 import NoteBox from "../../../components/NoteBox.astro";
 
-## The Interface: Mongosh
+## The MongoDB Shell: Mongosh
 
-We need a tool to talk to the cluster. We will use `mongosh` (MongoDB Shell), a JavaScript-based terminal interface.
+We need a tool to talk to the cluster.
+
+To get started, we will use `mongosh` (MongoDB Shell), a JS-based terminal interface.
 
 <NoteBox title="Why not the GUI (Compass)?">
-  Compass is great, but `mongosh` is faster for learning the commands. Plus, it
-  makes us look like hackers in a movie.
+  Compass is great, but `mongosh` is the bare-metal way to learn the basics.
 </NoteBox>
-
-<img
-  src="/assets/lessons/05-mongodb-document-vault/04-connection-via-mongosh-shell.png"
-  alt="Choosing MongoDB Shell (mongosh) as the connection method"
-  width="100%"
-/>
-
-_Fig 1: Choosing MongoDB Shell (mongosh) as the connection method._
 
 ## Installation
 
@@ -58,6 +51,18 @@ mongosh --version
 ```
 
 If we see a version number (e.g., `2.7.0`), our tools are ready.
+
+---
+
+### Choose **Shell** as the connection method
+
+<img
+  src="/assets/lessons/05-mongodb-document-vault/04-connection-via-mongosh-shell.png"
+  alt="Choosing MongoDB Shell (mongosh) as the connection method"
+  width="100%"
+/>
+
+_Fig 1: Choosing MongoDB Shell (mongosh) as the connection method._
 
 ### ⏭ Establish Connection
 

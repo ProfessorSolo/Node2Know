@@ -1,0 +1,82 @@
+---
+title: Defining the Schema
+sidebar:
+  order: 4
+  label: Defining Project Schema
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+import CautionBox from "../../../components/CautionBox.astro";
+
+## The Blueprint: `mongoose.Schema`
+
+To work with our projects collection, we need a simple schema. We define the properties we expect—like `title` and `slug`—and then pass that schema into `mongoose.model()`.
+
+This is far simpler than traditional SQL setups as it handles the mapping without rigid table definitions.
+
+### Define Schema, Create Model
+
+`data/projects.js`
+
+```javascript
+const mongoose = require("mongoose");
+
+// 1. The Blueprint: Define fields and types
+const projectSchema = new mongoose.Schema({
+  slug: { type: String, required: true, unique: true },
+  title: String,
+  description: String,
+  isActive: Boolean,
+});
+
+// 2. The Model: The constructor used to interact with the collection
+const Project = mongoose.model("Project", projectSchema);
+
+module.exports = Project;
+```
+
+### Key Mapping Rules
+
+- **Schema:** The definition of document shape + rules (types, required, defaults, validation).
+- **Model:** The interface we use to create, query, update, and delete documents.
+
+### Breaking Free from Migrations
+
+If we were using a traditional RDBMS (like SQL), changing our data structure would require writing a "migration" script—a tedious, fragile process of altering tables and ensuring data integrity.
+
+**With Mongoose, we just change the code.**
+
+#### 1. Adding New Fields
+
+When we add a new field to our Mongoose schema, existing documents in the database remain untouched.
+
+- **Existing Documents:** When we load an old document that lacks the new field, Mongoose will simply return `undefined` for that property.
+- **Default Values:** If we define a default value in our schema, Mongoose will apply that default to the document in our Node.js application memory when it is loaded, even if the field doesn't exist in the actual MongoDB document.
+- **Saving:** The new field is only physically added to a document once we explicitly call `.save()` on that specific record.
+
+#### 2. Removing Fields
+
+If we remove a field from our Mongoose schema, the data stays in our MongoDB collection, but our application will stop "seeing" it.
+
+- **Filtering:** Because the field is no longer in the schema, Mongoose will filter it out of the resulting object when we perform a query. This is a "soft delete" of the field from our application's perspective.
+
+<CautionBox>
+  It's fast, but it's not magic.
+  1.  **Changing Data Types:** If we change a field from `String` to `Number`, existing documents with string values will cause errors when loaded.
+  2.  **No Backfilling:** Adding a default value (e.g., `isActive: { type: Boolean, default: true }`) only applies to **new** documents. Old documents won't magically get this field unless we script it.
+</CautionBox>
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="/assets/resources/infographics/intro-to-mongoose/mongoose-schemas-and-models.png"
+  target="_blank"
+  variant="secondary"
+>
+  📘 Mongoose Schemas and Models (PNG)
+</LinkButton>
+
+### ⏭ Next: Fetching Data
+
+Schemaless schema approved. Model defined. Let's pull some data off the line.

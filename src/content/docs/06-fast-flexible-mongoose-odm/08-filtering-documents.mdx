@@ -1,0 +1,106 @@
+---
+title: Filtering Documents
+sidebar:
+  order: 8
+  label: Filtering Documents
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+import CautionBox from "../../../components/CautionBox.astro";
+
+## The Search Query
+
+To implement search, we extract the `searchTerm` from the URL's query string (e.g., `?q=search`). Express makes this easy by placing these values into the `req.query` object.
+
+### The Router Logic
+
+`routers/projectRouter.js`
+
+```javascript
+const express = require("express");
+const router = express.Router();
+const _projectOps = require("../data/projects");
+
+router.get("/", async (req, res) => {
+  // Extract 'q' from the URL query string
+  const searchTerm = req.query.q;
+
+  // Pass it to our data layer
+  const projects = await _projectOps.getProjectList(searchTerm);
+
+  res.render("projects-list", { projects, searchTerm });
+});
+```
+
+### The Data Layer Logic
+
+`data/projects.js`
+
+We need to update our `getProjectList` method to accept an optional argument.
+
+```javascript
+async getProjectList(titleContains = null) {
+  const filter = { isActive: true };
+
+  if (titleContains) {
+    // We'll see how to make this "fuzzy" in the next lesson.
+    // For now, it's an exact match on the title.
+    filter.title = titleContains;
+  }
+
+  return await Project.find(filter);
+}
+```
+
+### The View Logic
+
+`views/projects-list.ejs`
+
+We need a simple form to submit the GET request.
+
+```html
+<form action="/projects" method="GET">
+  <input
+    type="text"
+    name="q"
+    placeholder="Search projects..."
+    value="<%= searchTerm %>"
+  />
+  <button type="submit">Search</button>
+</form>
+```
+
+### A Note on URL Encoding
+
+When a user types "My Cool App" into the search box, the browser automatically encodes it into the URL as `?q=My+Cool+App` or `?q=My%20Cool%20App`.
+
+Express automatically decodes this back into "My Cool App" inside `req.query.q`.
+
+<NoteBox title="T.A. Watts - Handy Tip">
+  If we're constructing a link manually in our EJS (like a "tag" link), we must
+  use `encodeURIComponent()` to ensure the URL is valid.
+  e.g., `<a href="/projects?q=<%= encodeURIComponent(tag) %>">`
+</NoteBox>
+
+### Wait, what about SQL Injection?
+
+Since we aren't using SQL, we don't have SQL Injection. However, we _do_ have **NoSQL Injection**.
+
+If a hacker sends `?q[$ne]=something`, `req.query.q` becomes an object: `{ $ne: 'something' }`. If we pass this directly to our database, we might accidentally run a query like "Find all projects where title is NOT 'something'", which could leak data.
+
+<CautionBox title="T.A. Watts">
+  **Sanitize your inputs!**
+
+- Always ensure the input is the type you expect.
+- `const searchTerm = req.query.q ? String(req.query.q) : null;`
+- By wrapping it in `String()`, we force it to be a string, neutralizing any
+  malicious objects.
+
+</CautionBox>
+
+### ⏭ Next: Advanced Logic
+
+Basic string matching acheived, but it's not very flexible.
+
+Let's add some power so we can search multiple fields!

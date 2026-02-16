@@ -1,18 +1,27 @@
 ---
-title: Creating Collections
+title: Databases & Collections
 description: Initializing our data containers.
 sidebar:
   order: 6
-  label: "Creating Collections"
+  label: "Database Collections"
 draft: false
 ---
 
 import { LinkButton } from "@astrojs/starlight/components";
 import NoteBox from "../../../components/NoteBox.astro";
 
-## Switching Context
+## What is a Database?
 
-By default, we land in the `test` or `sample_mflix`database. Let's create our own workspace.
+In the **MSSQL** universe, we have a **Database**. Good news: In **MongoDB**, we also have a **Database**.
+
+- **SQL Database:** A container for tables, views, stored procedures, etc.
+- **MongoDB Database:** A container for collections.
+
+### Switching Databases
+
+When we first connect, we land in a default database (like `test`). To start working, we need to switch into our specific database universe.
+
+We use the `use` command to switch contexts.
 
 ```javascript
 use node2know
@@ -20,16 +29,21 @@ use node2know
 
 We should see: `switched to db node2know`.
 
-We can use the `show databases` command to see all the databases in our cluster.
-
-```javascript
-show databases
-```
-
 <NoteBox title="Lazy Creation">
   The database doesn't technically exist yet. MongoDB utilizes **Lazy
   Creation**. The hallway isn't built until we put a box in it.
 </NoteBox>
+
+## What is a Collection?
+
+Now that we are inside our `node2know` database, we need a place to store data.
+
+In the **MSSQL** universe, the closest analog to a Mongo **Collection** is a **Table**.
+
+- **SQL Table:** A rigid structure with defined columns and types.
+- **MongoDB Collection:** A flexible container for documents.
+
+The key difference? A collection is **Schemaless** by default. In a SQL table, every row must follow the same rules (columns). In a MongoDB collection, every document can have a completely different structure if we wanted (though for sanity, we usually keep them similar).
 
 ## The Explicit vs. Implicit Approach
 
@@ -77,4 +91,4 @@ _Fig 2: Show collections._
 
 ### ⏭ Inserting Documents
 
-Stashing our first digital assets using `insertOne` and `insertMany`.
+Stashing our first digital assets using `insertOne({})` and `insertMany([])`.

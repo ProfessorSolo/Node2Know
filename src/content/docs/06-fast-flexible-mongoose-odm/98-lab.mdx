@@ -1,0 +1,64 @@
+---
+title: The Pit Stop Challenge
+sidebar:
+  order: 11
+  label: Lab Exercises
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+
+## Simulation Mode: Active
+
+<NoteBox title="Professor Solo">
+  Reading the manual is fine, but we don't know the car until we've driven it.
+  Get in the seat.
+</NoteBox>
+
+---
+
+### Challenge 1: The Standard Tune-Up (Maintenance)
+
+**Scenario:** We need a new collection for "Team Members."
+**Task:** Define a Schema with a `name` (String), `role` (String), and `isDriver` (Boolean). Compile it into a Model named `Member`.
+
+<NoteBox title="AI Prompt" type="tip">
+  Write a Mongoose schema for a 'Member' with name, role, and isDriver fields.
+</NoteBox>
+
+---
+
+### Challenge 2: The Custom Mod (Medium)
+
+**Scenario:** We need to find all projects that are **NOT** active.
+**Task:** Write a `getArchivedProjects` function that returns all documents where `isActive` is `false`.
+
+```javascript
+/* 
+  Function: getArchivedProjects()
+  Returns: Array of projects where isActive is false
+*/
+```
+
+<NoteBox title="AI Prompt" type="tip">
+  How do I filter a Mongoose query to find documents where a boolean field is
+  false?
+</NoteBox>
+
+---
+
+### Challenge 3: The Solo Special (Hard)
+
+**Scenario:** A user wants to search for projects by `slug`, but they might type it in UPPERCASE using SPACES (e.g., "MY COOL APP").
+**Task:** Write a function that takes a messy input string, converts it to a proper slug (lowercase, hyphens), and _then_ searches the database for it.
+
+<NoteBox title="AI Prompt" type="tip">
+  Write a JavaScript function to regex replace spaces with hyphens and convert
+  to lowercase.
+</NoteBox>
+
+---
+
+### ⏭ Next: The Codex
+
+Tools down. Let's document what we learned.

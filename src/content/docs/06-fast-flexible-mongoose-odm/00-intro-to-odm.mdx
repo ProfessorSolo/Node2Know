@@ -1,0 +1,42 @@
+---
+title: Intro to ODM
+sidebar:
+  order: 0
+  label: Intro to ODM
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+
+## The Universal Translator
+
+Welcome to the **"Fast Lane"** of data management. In the previous chapters, we were hand-cranking raw queries like a mechanic tuning a carburetor screw by screw. Now, we're swapping out that manual toolkit for a high-performance **Object-Document Mapper (ODM)** efficiently designed for speed and precision.
+
+**Object-Document Mapping (ODM)** is a technique that bridges the gap between the objects in our Node.js code and the documents in our MongoDB database. Think of it as a translator that ensures our application logic and our database speak the same language.
+
+![ODM Visualization](/assets/lessons/06-fast-flexible-mongoose-odm/00-intro-to-odm.png)
+
+### Why use an ODM?
+
+1.  **Consistency**: An ODM helps prevent saving incomplete or malformed data by enforcing a structure before the data ever leaves our server.
+2.  **Abstraction**: Instead of writing complex, low-level query strings, we interact with the database using standard JavaScript methods and objects.
+
+<NoteBox title="Professor Solo">
+  Speed without control is just a crash waiting to happen. An ODM gives us the
+  speed of a document store with the discipline of a schema. It's the best of
+  both worlds.
+</NoteBox>
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="/assets/resources/infographics/intro-to-mongoose/intro-to-odm.png"
+  target="_blank"
+  variant="secondary"
+>
+  📘 Intro to ODM (PNG)
+</LinkButton>
+
+### ⏭ Next: Enter the Mongoose
+
+Now that we know _what_ an ODM is, let's meet the industry standard.

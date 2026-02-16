@@ -1,25 +1,28 @@
 ---
-title: Atlas Infrastructure
+title: Atlas - MongoDB in the Cloud
 description: Constructing the cloud facility.
 sidebar:
   order: 2
-  label: "Atlas Infrastructure"
+  label: "MongoDB Atlas"
 draft: false
 ---
 
 import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+import CautionBox from "../../../components/CautionBox.astro";
 
 ## The Blueprint
 
-We aren't installing a database server on our machines. That's the "Backpack" way. We are provisioning a managed cluster in the cloud using **MongoDB Atlas**.
+We could be installing a MongoDB server on our machines, but that's the old-school way of doing things.
 
-Think of Atlas as the construction firm that builds and secures the Vault for us.
+Let's provision a FREE managed cluster in the cloud using **MongoDB Atlas**.
 
 ## Phase 1: Account Creation
 
 1.  Navigate to the <a href="https://www.mongodb.com/cloud/atlas/register" target="_blank">MongoDB Atlas Registration Page</a>.
-2.  Sign up (Free tier is all we need).
-3.  **Verify your email.** You can't enter the facility without ID.
+2.  Sign up.
+    _(Use an email address you have access to long-term)_.
+3.  **Verify your email.** You can't enter the facility without verified ID.
 
 ## Phase 2: Building the Cluster
 
@@ -38,12 +41,17 @@ Once logged in, you'll be dropped into a "Project." Think of a Project as a job 
     - Default is `Cluster0`. We can rename it to `Node2Know-Vault` if we're feeling fancy, but `Cluster0` is fine.
 4.  **Cloud Provider & Region:**
     - Pick **AWS**.
-    - Pick the region **closest** to us (e.g., `Oregon (us-west-2)`).
-    - _Latency matters. Don't build the vault on the moon if we live in New York._
+    - Pick the region **closest** to us - e.g., `Oregon (us-west-2)`.
+      - _Latency matters. Don't build the vault on the moon._
 5.  - Keep both the sample data and security setup checkboxes checked.
 6.  Click **Create Deployment**
 
-Note: It will take 3-5 minutes for the cluster to be provisioned. This will happen behind the scenes while we continue with the next steps.
+<NoteBox title="Professor Solo says">
+  **Be patient:** It will take 3-5 minutes for the cluster to be provisioned.
+
+We can continue with the next steps while we wait.
+
+</NoteBox>
 
 ### Visual Verification
 
@@ -59,7 +67,12 @@ It will look something like this:
 
 _Fig 1: MongoDB Atlas Set up connection security modal._
 
-Hang tight, we'll deal with the security settings in the next step.
+<CautionBox title="Professor Solo says">
+  Hang tight, we'll deal with the security settings in the next step.
+
+**DO NOT click the Choose a Connection Method button yet!**
+
+</CautionBox>
 
 ### ⏭ Security Protocols
 

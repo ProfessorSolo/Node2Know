@@ -1,0 +1,48 @@
+---
+title: Robust Search with $or
+sidebar:
+  order: 9
+  label: Robust Search
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+
+## Beyond Exact Matches
+
+A basic search is often too narrow. By using the `$or` operator, we can tell Mongoose to return a document if the search term appears in either the `title` **OR** the `description`.
+
+### Filtering on Multiple Fields
+
+`data/projects.js`
+
+```javascript
+async getProjectList(searchTerm = null) {
+  let filter = { isActive: true };
+
+  if (searchTerm) {
+    // Check both fields using the $or operator and case-insensitive regex
+    filter.$or = [
+      { title: { $regex: searchTerm, $options: 'i' } },
+      { description: { $regex: searchTerm, $options: 'i' } }
+    ];
+  }
+
+  return await Project.find(filter);
+}
+```
+
+### Deconstructing the Query
+
+1.  **`$or`**: Takes an array of conditions. If _any_ are true, match.
+2.  **`$regex`**: Allows partial matching ("fast" matches "Fastest").
+3.  **`$options: 'i'`**: Case-insensitive ("FAST" matches "fast").
+
+<NoteBox title="Professor Solo">
+  This is the 'Google-lite' search. It's not full-text indexing, but for small
+  datasets, it's incredibly effective.
+</NoteBox>
+
+### ⏭ Next: Inputting Data
+
+We can read. Now we must write.

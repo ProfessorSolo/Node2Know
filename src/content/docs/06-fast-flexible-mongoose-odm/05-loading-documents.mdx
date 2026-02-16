@@ -1,0 +1,70 @@
+---
+title: Loading Documents
+sidebar:
+  order: 5
+  label: Loading Documents
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+
+## The Retrieval Method
+
+In `mongosh`, we used `db.projects.find()`.
+
+In Mongoose, we use the Model's `.find()` method. Note that while many functions look identical to the shell, Mongoose adds extra features like automated validation.
+
+### SELECT FROM WHERE - Mongoose Style
+
+`data/projects.js`
+
+We'll add a helper class to manage our database operations. Here is the **full** content of `data/projects.js`:
+
+```javascript
+const mongoose = require("mongoose");
+
+// 1. The Blueprint: Define fields and types
+const projectSchema = new mongoose.Schema({
+  slug: { type: String, required: true, unique: true },
+  title: String,
+  description: String,
+  isActive: Boolean,
+});
+
+// 2. The Model: The constructor used to interact with the collection
+const Project = mongoose.model("Project", projectSchema);
+
+// 3. The Operations: Helper methods
+class ProjectOps {
+  async getProjectList() {
+    // Similar to mongosh: returns all documents matching the criteria
+    return await Project.find({ isActive: true });
+  }
+}
+
+module.exports = new ProjectOps();
+```
+
+### A Note on Architecture
+
+We might notice we're defining the Schema, creating the Model, and writing our database queries all in the same file (`data/projects.js`).
+
+**"Wait, isn't that breaking MVC?"**
+
+Technically? Maybe a little. Pragmatically? It's efficient.
+We aren't building a monolith here. By keeping the data structure (Schema) next to the data operations (Queries), we avoid jumping between five different files just to change a variable name. It's clean, organized, and keeps our "context switching" to a minimum.
+
+<NoteBox title="T.A. Watts">
+  **Ensure we use `await`.**
+
+- Database operations are asynchronous.
+
+- If we don't await the promise, our view will render before the data arrives.
+
+</NoteBox>
+
+### ⏭ Next: Visualizing the Data
+
+We have the data.
+
+Let's list it out and link it up.

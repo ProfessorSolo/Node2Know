@@ -35,11 +35,11 @@ const COURSE_MODULES = [
       directory: '05-mongodb-document-vault',
       released: false,
     },
-  //   {
-  //     label: 'Hamburger Menu Magic',
-  //     directory: '05-hamburger-menu-magic',
-  //     released: true,
-  //   },
+    {
+      label: 'Fast Flexible Mongoose ODM',
+      directory: '06-fast-flexible-mongoose-odm',
+      released: false,
+    },
   //   {
   //     label: 'Transformative Styling',
   //     directory: '06-transformative-styling',

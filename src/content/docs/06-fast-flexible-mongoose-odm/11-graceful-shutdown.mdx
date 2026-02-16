@@ -1,0 +1,66 @@
+---
+title: Graceful Shutdown
+sidebar:
+  order: 11
+  label: Graceful Shutdown
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+
+## Killing the Engine
+
+When we stop our Node.js application (like hitting `Ctrl+C` in the terminal), the process terminates immediately. If our database connection is still active, this abrupt stop can leave operations hanging or connections "open" on the database side until they timeout.
+
+To prevent this, we implement a **Graceful Shutdown**. This ensures we close our Mongoose connection properly before the Node process exits.
+
+### The Terminator
+
+`server.js`
+
+We listen for termination signals (like `SIGINT` for `Ctrl+C`) and run cleanup code.
+
+```javascript
+// Function to handle a graceful shutdown
+const gracefulShutdown = async (signal) => {
+  console.log(`\n${signal} received. Closing Mongoose connection...`);
+  try {
+    await mongoose.connection.close();
+    console.log("Mongoose connection closed. Exit complete.");
+    process.exit(0); // Exit with a "success" code
+  } catch (err) {
+    console.error("Error during Mongoose disconnection:", err);
+    process.exit(1); // Exit with an "error" code
+  }
+};
+
+// Listen for Ctrl+C (Manual stop)
+process.on("SIGINT", () => gracefulShutdown("SIGINT"));
+
+// Listen for termination (Production stop)
+process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
+```
+
+### Where does this go?
+
+You can place this code anywhere in `server.js` (after `mongoose` is required), but it's best practice to keep it:
+
+1.  **At the bottom of the file:** This keeps your main application logic (middleware, routes) clean and scannable.
+2.  **Near the DB connection:** Some developers prefer to group it with the `mongoose.connect()` call so all database-lifecycle code is in one place.
+
+Either way, it's an **event listener**, so it sits quietly in the background until the process is told to stop.
+
+### Why This Matters
+
+1.  **Data Integrity:** Ensures any pending writes are handled (or at least the connection is closed cleanly).
+2.  **Resource Management:** Frees up connection slots on the MongoDB server immediately rather than waiting for timeouts.
+3.  **Professionalism:** It's the difference between parking the car and crashing it into the garage wall.
+
+<NoteBox title="T.A. Watts">
+  Always clean up your toys. Leaving open database connections is sloppy coding.
+</NoteBox>
+
+### ⏭ Next: Mongoose Explorations
+
+We've only scratched the surface of what Mongoose can do.
+Time for you to flex your Mongoose muscles in the Lab.

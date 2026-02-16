@@ -1,0 +1,102 @@
+---
+title: Initial App Setup
+sidebar:
+  order: 2
+  label: Initial App Setup
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+import CautionBox from "../../../components/CautionBox.astro";
+
+## The Pit Crew: Installing Dependencies
+
+Before we hit the track, we need to equip our `package.json` with the necessary tools. This is our pit stop.
+
+We are organizing our logic into folders (`data`, `routers`, `views`) to keep the project scannable as it speeds up.
+
+### 1. Initialize & Install
+
+In the terminal, navigate to the project folder:
+
+```bash
+npm init -y
+npm install express mongoose ejs dotenv
+```
+
+<NoteBox title="T.A. Watts">
+  We're using `node --watch` (native to Node v18+) for development speed. It
+  restarts the server automatically when we save a file, just like `nodemon`
+  used to do.
+</NoteBox>
+
+### 2. Configure Environment Variables
+
+Create a `.env` file in the root directory. This is where we store our sensitive connection string.
+
+```bash
+MONGO_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/<database-name>?retryWrites=true&w=majority
+PORT=3000
+```
+
+<CautionBox>
+
+Make sure to replace `<username>`, `<password>`, and `<database-name>` with your actual MongoDB credentials.
+
+Also, make sure your .env file is ignored in your .gitignore file (lest you commit your credentials to GitHub for all to see!).
+
+</CautionBox>
+
+### 3. The Project Blueprint
+
+For the rest of this chapter, we're building a **Project Pulse** application. It's a portfolio manager where we can track our coding projects, their status (active/archived), and descriptions.
+
+**Directory Structure:**
+
+```text
+/my-project-pulse
+  ├── /data          # Mongoose Models (Schemas)
+  ├── /public        # Static assets (CSS, images)
+  ├── /routers       # Express Routes
+  ├── /views         # EJS Templates
+  ├── .env           # Environment Variables
+  ├── server.js      # Entry Point
+  └── package.json   # Dependencies
+```
+
+### 4. Boilerplate: `server.js`
+
+Before we connect to the database in the next lesson, let's get our standard Express server running.
+
+<NoteBox title="T.A. Watts">
+  This is our "clean slate." Copy this into `server.js`. It includes Express,
+  EJS, and the basic middleware, but **no Mongoose yet**. That comes next.
+</NoteBox>
+
+```javascript
+require("dotenv").config();
+const express = require("express");
+const app = express();
+const port = process.env.PORT || 3000;
+
+// Middleware
+app.use(express.urlencoded({ extended: true })); // Parse form data
+app.use(express.static("public")); // Serve static files
+
+// View Engine
+app.set("view engine", "ejs");
+
+// Temporary Route (Just to check if it works)
+app.get("/", (req, res) => {
+  res.send("<h1>Server is Running! Next Stop: MongoDB.</h1>");
+});
+
+// Start Server
+app.listen(port, () => {
+  console.log(`Server running on http://localhost:${port}`);
+});
+```
+
+### ⏭ Next: Open the Gates to MongoDB
+
+Boilerplate is ready. The chassis is built. Now let's get some data pipes going.

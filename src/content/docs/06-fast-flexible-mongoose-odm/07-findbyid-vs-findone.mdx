@@ -1,0 +1,89 @@
+---
+title: Details, details
+sidebar:
+  order: 7
+  label: Details, details
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+import CautionBox from "../../../components/CautionBox.astro";
+
+## findById() vs. findOne()
+
+Mongoose provides specialized methods for single documents:
+
+1.  **`findById(id)`**: Searches specifically for the `_id` field.
+2.  **`findOne({ field: value })`**: Searches for the first document matching a custom criteria.
+
+### When to use findById()
+
+`findById()` is the workhorse of internal operations. It's guaranteed to be unique and is the fastest way to retrieve a specific document.
+
+**Perfect for:**
+
+- **Admin Dashboards:** Editing a specific record (`/admin/projects/65c123.../edit`).
+- **Relationships:** Looking up a user by their ID stored in a session.
+- **API Endpoints:** Where the client already knows the ID.
+
+However, for public-facing pages, IDs are clunky. That's where `findOne()` shines.
+
+### Why Slugs?
+
+IDs like `65c123...` are ugly. URLs like `/projects/my-cool-app` (using slugs) are better for:
+
+- **SEO**: Search engines can read the keywords.
+- **UX**: Users can read the URL.
+
+<CautionBox title="T.A. Watts">
+  **Watch out!!** Slugs are fragile. Ensure they strictly contain **lowercase
+  letters, numbers, and hyphens**. A space, a capital letter, or a special
+  character (like `?`, `&`, or `/`) can break our URL logic or even crash the
+  router.
+</CautionBox>
+
+### findOne() in action
+
+`data/projects.js`
+
+```javascript
+async getProjectBySlug(slug) {
+  // We use findOne because we are searching by a custom field (slug)
+  return await Project.findOne({ slug: slug, isActive: true });
+}
+```
+
+### Slugs in the Router
+
+`routers/projectRouter.js`
+
+We use a **route parameter** (`:slug`) to capture the project identifier from the URL.
+
+```javascript
+router.get("/:slug", async (req, res) => {
+  const { slug } = req.params;
+  const project = await _projectOps.getProjectBySlug(slug);
+
+  if (project) {
+    res.render("project-detail", { project });
+  } else {
+    res.status(404).render("404");
+  }
+});
+```
+
+### The Detail View
+
+`views/project-detail.ejs`
+
+```html
+<article>
+  <h2><%= project.title %></h2>
+  <p><%= project.description %></p>
+  <a href="/projects">← Back to Gallery</a>
+</article>
+```
+
+### ⏭ Next: Narrowing the Search
+
+We can find all. We can find one. Now let's find some.

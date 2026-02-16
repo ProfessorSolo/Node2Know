@@ -1,17 +1,29 @@
 ---
-title: Establishing Connection
+title: Connecting to the Cluster
 description: Wiring the circuit between your terminal and the cloud.
 sidebar:
   order: 5
-  label: "Establishing Connection"
+  label: "Connect to the Cluster"
 draft: false
 ---
 
 import { LinkButton } from "@astrojs/starlight/components";
+import CautionBox from "../../../components/CautionBox.astro";
 
-## The Wiring Diagram
+## What is a Cluster?
 
-To connect, we need a **Connection String**. This is a long URL that contains the address of the vault.
+Before we jack in, we need to know what we are connecting to.
+
+In the **MSSQL** universe, the closest analog to a MongoDB Cluster is the **SQL Server Instance**.
+
+- **SQL Server Instance:** A single environment that hosts multiple databases.
+- **MongoDB Cluster:** A group of servers (called a _Replica Set_) that hosts multiple databases.
+
+The key difference? A Cluster is a team. It typically consists of three servers holding the exact same data. If the leader (Primary) goes down, one of the backups (Secondaries) immediately takes command. We don't connect to a single machine; we connect to the _team_.
+
+## The Connection String
+
+To connect, we need a **Connection String**. This is a long URL that contains the address of the cluster as well as the credentials to access it.
 
 ## Phase 1: Retrieve the String
 
@@ -36,26 +48,30 @@ _Fig 1: MongoDB Shell (mongosh) connection string._
 
 Open your terminal and paste the command.
 
-> [!CAUTION]
-> **Professor Solo Warning:**
-> We must manually replace `<username>` with our database user (e.g., `student`) and `<password>` with the password we saved earlier. If we paste `<password>` literally, the Vault will laugh at us.
+<CautionBox>
+
+Replace `<username>` with the credentials saved earlier.
+
+It will prompt you for the corresponding password .
 
 ```bash
-mongosh "mongodb+srv://cluster0.abc123.mongodb.net/" --username student
+mongosh "mongodb+srv://cluster0.abc123.mongodb.net/" --username <username>
 ```
+
+</CautionBox>
 
 When it asks for the password, type it in (it will be invisible) and hit Enter.
 
 ## Verify Success
 
-If we see a prompt that looks like this:
+We will know we are in if we see a prompt that looks like this:
 
 ```bash
 Enterprise cluster0-shard-0:PRIMARY>
 ```
 
-We are in. We have breached the mainframe. (Okay, we just logged in).
+We have breached the mainframe. (Okay, we just logged in).
 
-### ⏭ Creating Collections
+### ⏭ Creating Databases and Collections
 
-Creating our first "Deposit Box" (Collection) inside the database.
+Let's get building. We have data to store.

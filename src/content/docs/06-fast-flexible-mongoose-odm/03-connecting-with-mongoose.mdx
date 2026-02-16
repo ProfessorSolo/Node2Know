@@ -1,0 +1,51 @@
+---
+title: Connecting with Mongoose
+sidebar:
+  order: 3
+  label: Connecting with Mongoose
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+
+## Establishing the Link
+
+Mongoose simplifies connection management. We connect **once** at the start of our app, and Mongoose handles the connection pool in the background, ensuring our app stays "live" even during idle periods.
+
+### Mongoose Connect
+
+In `server.js`, we set up our Express app and connect to MongoDB immediately.
+
+```javascript
+require("dotenv").config();
+const express = require("express");
+const mongoose = require("mongoose");
+const app = express();
+
+// 1. Ignite the Database Connection
+mongoose.connect(process.env.MONGO_URI);
+
+// 1b. Store the connection in a variable
+const db = mongoose.connection;
+
+// 2. Listen for Connection Events
+db.on("error", console.error.bind(console, "MongoDB connection error:"));
+db.once("open", () => {
+  console.log("Successfully connected to MongoDB!");
+});
+
+// 3. Middlewares
+app.use(express.urlencoded({ extended: true }));
+app.set("view engine", "ejs");
+
+// Router imports will go here...
+```
+
+### Understanding the Events
+
+- **`db.on('error', ...)`**: This listener stays active. If the connection drops mid-race, it will log the error.
+- **`db.once('open', ...)`**: This fires only once when the initial connection is successful. It's our "Green Light."
+
+### ⏭ Next: Data Blueprint
+
+Now let's talk data structure - the fast like a mongoose way.

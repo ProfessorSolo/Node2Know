@@ -1,0 +1,80 @@
+---
+title: Pocket Mong-o-Dex
+sidebar:
+  order: 12
+  label: Pocket Mong-o-Dex
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+
+## The Fast Lane Manual
+
+<NoteBox title="T.A. Watts">
+  If we write raw MongoDB queries in this app, we're walking home.
+</NoteBox>
+
+### Syntax HUD
+
+| Syntax                        | Purpose                | Example                                       |
+| :---------------------------- | :--------------------- | :-------------------------------------------- |
+| **`new mongoose.Schema({})`** | Defines the structure. | `const s = new LinkSchema({ url: String })`   |
+| **`mongoose.model()`**        | Creates the Factory.   | `const Link = mongoose.model('Link', s)`      |
+| **`Model.find({})`**          | Returns an Array.      | `await Project.find({ active: true })`        |
+| **`Model.findOne({})`**       | Returns an Object.     | `await Project.findOne({ slug: 'abc' })`      |
+| **`Model.findById(id)`**      | Searches by `_id`.     | `await Project.findById('65c...')`            |
+| **`new Model(data).save()`**  | Writes to DB.          | `const p = new Project(data); await p.save()` |
+
+---
+
+### The Blueprint
+
+**Dependencies:**
+`npm install express mongoose ejs dotenv`
+
+**Server Connection:**
+
+```javascript
+mongoose.connect(process.env.MONGO_URI);
+const db = mongoose.connection;
+db.on("error", console.error);
+db.once("open", () => console.log("Connected!"));
+```
+
+---
+
+### Hazard Map
+
+| Hazard               | Fix                                         |
+| :------------------- | :------------------------------------------ |
+| **Pending Promise**  | Forgot `await` on our database call.        |
+| **Connection Error** | Check the `.env` file and IP Whitelist.     |
+| **Empty Objects**    | Our Schema might not match our data fields. |
+| **Ugly URLs**        | Use Slugs (`my-page`) instead of IDs.       |
+
+---
+
+### Solo's Pro-Notes
+
+- **Schema vs. Model:** The Schema is the _floor plan_. The Model is the _house factory_. We can't live in a floor plan.
+- **Queries:** Mongoose queries return a **Query Object**, not a standard Promise, but they behave like Promises so we can (and must) `await` them.
+
+---
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="/assets/resources/slide-decks/intro-to-mongoose/Mongoose_Fundamentals_Your_ODM_for_MongoDB.pdf"
+  target="_blank"
+  variant="secondary"
+>
+  📘 Mongoose Fundamentals: Your ODM for MongoDB (PDF)
+</LinkButton>
+
+<LinkButton
+  href="/assets/resources/infographics/intro-to-mongoose/mongoose-cheatsheet-part-1.png"
+  target="_blank"
+  variant="secondary"
+>
+  📘 Mongoose Cheatsheet Part 1 (PNG)
+</LinkButton>

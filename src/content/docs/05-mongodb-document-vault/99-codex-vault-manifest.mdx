@@ -1,9 +1,9 @@
 ---
-title: "Codex: The Vault Manifest"
+title: "Codex: The MongoDB Manifest"
 description: "Emergency reference for MongoDB interactions."
 sidebar:
   order: 99
-  label: "Codex: Vault Manifest"
+  label: "Codex: MongoDB Manifest"
 draft: false
 ---
 
@@ -40,7 +40,7 @@ use node2know
 show collections
 ```
 
-### CRUD Operations
+### Create and Read Operations
 
 **Create (Insert)**
 
@@ -68,6 +68,24 @@ db.projects.find({ category: "game" });
 <NoteBox title="Safety Protocol">
   Always verify we are in the correct database (`db`) before running commands.
 </NoteBox>
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="/assets/resources/slide-decks/intro-to-mongodb/MongoDB_Fundamentals_The_Vault_Approach.pdf"
+  target="_blank"
+  variant="secondary"
+>
+  📘 MongoDB Fundamentals: The Vault Approach (PDF)
+</LinkButton>
+
+<LinkButton
+  href="/assets/resources/infographics/intro-to-mongodb/mongosh-cheatsheet-part-1.png"
+  target="_blank"
+  variant="secondary"
+>
+  📘 MongoDB (Mongosh) Cheatsheet Part 1 (PNG)
+</LinkButton>
 
 ### ⏭ Next Chapter: Mongoose
 

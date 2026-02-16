@@ -1,0 +1,70 @@
+---
+title: Intro to Mongoose
+sidebar:
+  order: 1
+  label: Intro to Mongoose
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+
+## The Industry Standard
+
+**Mongoose** is the industry-standard ODM for Node.js. It allows us to define a **Schema**, which acts as a blueprint for our data.
+
+It manages relationships between data, provides schema validation, and is used to translate between objects in code and the representation of those objects in MongoDB.
+
+### Core Benefits
+
+- **Flexible Evolution**: A major perk of Mongoose is that our Schema can change over time without needing a "migration". If we add a field today, existing documents stay as-is, and new ones follow the new rules.
+- **The Model**: Once a Schema is defined, we pass it into `mongoose.model()`. This creates a JavaScript constructor that allows us to query, save, and delete documents with ease.
+
+<NoteBox title="T.A. Watts">
+  Don't confuse the **Schema** (the plan) with the **Model** (the tool). We
+  build the tool *from* the plan.
+</NoteBox>
+
+## Extra Bits & Bytes
+
+Want to see the official specs? Check out the MongoDB homepage.
+
+<LinkButton
+  href="https://mongoosejs.com/"
+  variant="secondary"
+  icon="external"
+  iconPlacement="start"
+  target="_blank"
+>
+  Visit Mongoose Official Website
+</LinkButton>
+
+---
+
+<LinkButton
+  href="/assets/resources/infographics/intro-to-mongoose/what-is-mongoose.png"
+  target="_blank"
+  variant="secondary"
+>
+  📘 What is Mongoose? (PNG)
+</LinkButton>
+
+<LinkButton
+  href="/assets/resources/infographics/intro-to-mongoose/intro-to-mongoose.png"
+  target="_blank"
+  variant="secondary"
+>
+  📘 Intro to Mongoose (PNG)
+</LinkButton>
+
+<LinkButton
+  href="https://github.com/ProfessorSolo/Node2Know-03-MongoDB-Mongoose-Intro"
+  variant="primary"
+  icon="external"
+  target="_blank"
+>
+  MongoDB & Mongoose Intro - Demo Repo - Completed Minimal Server
+</LinkButton>
+
+### ⏭ Next: Pop the Hood
+
+Let's get our hands dirty and set up the application structure.
