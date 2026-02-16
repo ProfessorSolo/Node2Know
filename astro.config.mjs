@@ -15,31 +15,31 @@ const COURSE_MODULES = [
     directory: '01-intro-to-node',
     released: true,
   },
-    {
-      label: 'Server Express Way',
-      directory: '02-server-express-way',
-      released: true,
-    },
-    {
-      label: 'Revving View Engines - EJS',
-      directory: '03-rev-up-view-engines-ejs',
-      released: true,
-    },
-    {
-      label: 'Sleek Templating with Pug',
-      directory: '04-sleek-templating-with-pug',
-      released: true,
-    },
-    {
-      label: 'MongoDB Document Vault',
-      directory: '05-mongodb-document-vault',
-      released: false,
-    },
-    {
-      label: 'Fast Flexible Mongoose ODM',
-      directory: '06-fast-flexible-mongoose-odm',
-      released: false,
-    },
+  {
+    label: 'Server Express Way',
+    directory: '02-server-express-way',
+    released: true,
+  },
+  {
+    label: 'Revving View Engines - EJS',
+    directory: '03-rev-up-view-engines-ejs',
+    released: true,
+  },
+  {
+    label: 'Sleek Templating with Pug',
+    directory: '04-sleek-templating-with-pug',
+    released: true,
+  },
+  {
+    label: 'MongoDB Document Vault',
+    directory: '05-mongodb-document-vault',
+    released: true,
+  },
+  {
+    label: 'Fast Flexible Mongoose ODM',
+    directory: '06-fast-flexible-mongoose-odm',
+    released: true,
+  },
   //   {
   //     label: 'Transformative Styling',
   //     directory: '06-transformative-styling',
