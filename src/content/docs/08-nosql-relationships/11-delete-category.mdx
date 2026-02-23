@@ -1,0 +1,164 @@
+---
+title: Deleting Categories
+sidebar:
+  order: 11
+  label: Deleting Categories
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+import CautionBox from "../../../components/CautionBox.astro";
+
+## Relational Deletion
+
+If we delete a category that is actively assigned to a Project, that project will lose its categorization, and our app might crash trying to render undefined data if we aren't careful. We need to implement database checks before we blindly delete data!
+
+<CautionBox title="T.A. Watts">
+  Hold it right there! Do **not** let users capriciously delete records that are
+  referenced by other collections. You'll leave your database littered with
+  orphaned IDs, causing catastrophic rendering errors down the line. Always
+  check for active relationships before purging!
+</CautionBox>
+
+### 1. Guarding the Delete Operation
+
+Let's modify our `CategoryOps` to check if any projects rely on this category _before_ we delete it.
+
+```javascript
+// data/categories.js
+  async deleteCategoryById(id) {
+    // 1. Fetch the Project model dynamically to avoid circular dependencies
+    const Project = require("mongoose").model("Project");
+
+    // 2. Count any projects using this category
+    const refCount = await Project.countDocuments({ categoryId: id });
+
+    // 3. Reject deletion if attached to active projects
+    if (refCount > 0) {
+        return { success: false, message: "Cannot delete: category has assigned projects." };
+    }
+
+    // 4. Safe to proceed
+    const deleted = await Category.findByIdAndDelete(id);
+    return { success: !!deleted, message: "Category deleted." };
+  }
+```
+
+### 2. Updating Read Operations (For UI Protection)
+
+It's bad UI to let the user click "Delete" if it's going to fail anyway. We should visually disable the button if the category is in use!
+
+To do this, we need to know the `refCount` when we load the list of categories. Update `getAllCategories`:
+
+```javascript
+// data/categories.js
+  async getAllCategories() {
+    // We use .lean() to return plain JSON objects so we can freely attach the refCount property
+    const categories = await Category.find({}).sort({ name: 1 }).lean();
+
+    const Project = require('mongoose').model('Project');
+
+    // Iterate through and attach the count
+    for (let c of categories) {
+        c.refCount = await Project.countDocuments({ categoryId: c._id });
+    }
+
+    return categories;
+  }
+```
+
+### 3. Securing the User Interface
+
+Now update the `views/admin/categories/index.ejs` list view to show this reference count and visually disable the delete button.
+
+```html
+{{/* views/admin/categories/index.ejs (Modifications) */}}
+    <div class="admin-main">
+      <strong><%= c.name %></strong><br />
+      <small>/categories/<%= c.slug %></small><br />
+      <!-- NEW: Display the reference count -->
+      <small><strong><%= c.refCount %></strong> Linked Projects</small>
+      <% if (c.description) { %>
+      <p><%= c.description %></p>
+      <% } %>
+    </div>
+
+    <div class="admin-actions">
+      <div style="display:flex; gap:.5rem; justify-content:flex-end;">
+        <a class="btn" href="/admin/categories/<%= c._id %>/edit">Edit</a>
+        <!-- NEW: Disable button natively if refCount > 0 -->
+        <button
+          class="btn btn-danger category-delete"
+          <%= c.refCount > 0 ? "disabled" : "" %>
+        >Delete</button>
+      </div>
+    </div>
+```
+
+### 4. Admin API Route
+
+Since deletion usually happens via an AJAX click event on the list page, we need an endpoint to process the request and handle the error message gracefully.
+
+```javascript
+// routers/adminRouter.js
+
+// DELETE: delete a category by id
+router.delete("/categories/:id", async (req, res) => {
+  const { id } = req.params;
+  const result = await _categoryOps.deleteCategoryById(id);
+
+  if (!result.success) {
+    // Return a 400 Bad Request if the deletion check failed
+    return res.status(400).json({ message: result.message });
+  }
+
+  res.json({ message: result.message, deletedId: id });
+});
+```
+
+### 5. Client-Side Script
+
+Finally, we need to wire up the actual JavaScript that listens for the button click and sends the `DELETE` request.
+
+Create `categories.js` in your `public/scripts/admin` folder.
+
+```javascript
+// public/scripts/admin/categories.js
+const deleteButtons = document.querySelectorAll(".category-delete");
+
+deleteButtons.forEach((btn) => {
+  btn.addEventListener("click", async (e) => {
+    e.preventDefault();
+
+    // The button disables natively in ejs, but just in case:
+    if (btn.hasAttribute("disabled")) return;
+
+    if (!confirm("Are you sure you want to delete this category?")) return;
+
+    // We stored the database ID on the <li> wrapper
+    const categoryItem = e.target.closest(".js-category");
+    const categoryId = categoryItem.dataset.id;
+
+    try {
+      const response = await fetch(`/admin/categories/${categoryId}`, {
+        method: "DELETE",
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to delete category");
+      }
+
+      // Success! Remove the category from the UI
+      categoryItem.remove();
+    } catch (error) {
+      alert(error.message);
+    }
+  });
+});
+```
+
+### ⏭ Next: Assigning Categories
+
+Now that categories exist safely in their own robust CRUD system, how do we attach them directly to our projects?

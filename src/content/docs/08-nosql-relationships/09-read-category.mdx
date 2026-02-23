@@ -1,0 +1,87 @@
+---
+title: Reading Categories
+sidebar:
+  order: 9
+  label: Reading Categories
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+
+## Reading Categories
+
+To manage our growing list, we need an admin dashboard that lists them out.
+
+### 1. The Data Operations
+
+We need to implement two straightforward read operations in our `CategoryOps` class.
+
+```javascript
+// data/categories.js
+  async getAllCategories() {
+    return await Category.find({}).sort({ name: 1 });
+  }
+
+  async getCategoryById(id) {
+    return await Category.findById(id);
+  }
+```
+
+### 2. The List View
+
+Let's build a standard list view to show all categories. (You'll notice we are building the framework for an 'Edit' link and a 'Delete' button, even though we haven't wired up those functions yet!)
+
+```ejs
+{{/* views/admin/categories/index.ejs */}}
+<h2>Admin: Categories</h2>
+
+<p>
+  <a class="btn" href="/admin/categories/new">+ Create Category</a>
+</p>
+
+<ul class="admin-list js-categories-list">
+  <% categories.forEach(c => { %>
+  <li
+    class="admin-item js-category"
+    data-id="<%= c._id %>"
+    style="display:flex; justify-content:space-between; align-items:center;margin-bottom:1rem;"
+  >
+    <div class="admin-main">
+      <strong><%= c.name %></strong><br />
+      <small>/categories/<%= c.slug %></small><br />
+      <% if (c.description) { %>
+      <p><%= c.description %></p>
+      <% } %>
+    </div>
+
+    <div class="admin-actions">
+      <div style="display:flex; gap:.5rem; justify-content:flex-end;">
+        <a class="btn" href="/admin/categories/<%= c._id %>/edit">Edit</a>
+        <!-- We will wire up the delete button shortly -->
+        <button class="btn btn-danger category-delete">Delete</button>
+      </div>
+    </div>
+  </li>
+  <% }) %>
+</ul>
+
+<script src="/scripts/admin/categories.js"></script>
+```
+
+### 3. Admin Routing
+
+Now we need the `GET` route to fetch all categories and display this index view.
+
+```javascript
+// routers/adminRouter.js (Additions)
+
+// GET: show all categories
+router.get("/categories", async (req, res) => {
+  const categories = await _categoryOps.getAllCategories();
+  res.render("admin/categories/index", { categories });
+});
+```
+
+### ⏭ Next: Updating Categories
+
+We can create and list our categories. Our next challenge is turning our simple form into a dual-purpose editor capable of making updates!

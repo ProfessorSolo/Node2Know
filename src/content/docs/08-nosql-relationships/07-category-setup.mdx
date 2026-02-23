@@ -28,251 +28,29 @@ const Category = mongoose.model("Category", categorySchema);
 
 class CategoryOps {
   async getAllCategories() {
-    return await Category.find({}).sort({ name: 1 });
+    // To be implemented
   }
 
   async getCategoryById(id) {
-    return await Category.findById(id);
+    // To be implemented
   }
 
   async createCategory(formData) {
-    try {
-      const category = new Category(formData);
-      await category.save();
-      return { success: true, category };
-    } catch (error) {
-      return { success: false, error, category: null };
-    }
+    // To be implemented
   }
 
   async updateCategoryById(id, updates) {
-    try {
-      const category = await Category.findById(id);
-      if (!category) {
-        return {
-          success: false,
-          category: null,
-          errorMessage: "Category not found.",
-        };
-      }
-
-      category.slug = updates.slug;
-      category.name = updates.name;
-      category.description = updates.description;
-
-      await category.save();
-      return { success: true, category, errorMessage: "" };
-    } catch (error) {
-      return { success: false, category: null, errorMessage: "Update failed." };
-    }
+    // To be implemented
   }
 
   async deleteCategoryById(id) {
-    return await Category.findByIdAndDelete(id);
+    // To be implemented
   }
 }
 
 module.exports = new CategoryOps();
 ```
 
-## Admin Views
+### ⏭ Next: Creating Categories
 
-Since categories are their own collection, they need their own management interface before we can attach projects to them.
-
-Let's build out standard CRUD views for categories in your `views/admin/categories` folder:
-
-### 1. Category List View (Admin)
-
-A list view showing all categories with links to edit them.
-
-`views/admin/categories/index.ejs`
-
-```ejs
-<h2>Admin: Categories</h2>
-
-<p>
-  <a class="btn" href="/admin/categories/new">+ Create Category</a>
-</p>
-
-<ul class="admin-list js-categories-list">
-  <% categories.forEach(c => { %>
-  <li
-    class="admin-item js-category"
-    data-id="<%= c._id %>"
-    style="display:flex; justify-content:space-between; align-items:center;margin-bottom:1rem;"
-  >
-    <div class="admin-main">
-      <strong><%= c.name %></strong><br />
-      <small>/categories/<%= c.slug %></small><br />
-      <% if (c.description) { %>
-      <p><%= c.description %></p>
-      <% } %>
-    </div>
-
-    <div class="admin-actions">
-      <div style="display:flex; gap:.5rem; justify-content:flex-end;">
-        <a class="btn" href="/admin/categories/<%= c._id %>/edit">Edit</a>
-        <button class="btn btn-danger category-delete">Delete</button>
-      </div>
-    </div>
-  </li>
-  <% }) %>
-</ul>
-
-<script src="/scripts/admin/categories.js"></script>
-```
-
-### 2. Category Form View (Admin)
-
-A dual-purpose form template to both Create and Update a category document.
-
-`views/admin/categories/category-form.ejs`
-
-```ejs
-<h2><%= category_id ? "Edit" : "Create" %> Category</h2>
-<a href="/admin/categories">Back to Categories</a>
-<form
-  action="<%= category_id ? `/admin/categories/${category_id}` : `/admin/categories` %>"
-  method="POST"
->
-  <% if (category_id) { %>
-  <input type="hidden" name="category_id" value="<%= category_id %>" />
-  <% } %>
-
-  <label>
-    Name
-    <input
-      type="text"
-      name="name"
-      required
-      value="<%= category?.name || '' %>"
-    />
-  </label>
-
-  <label>
-    Slug
-    <input
-      type="text"
-      name="slug"
-      required
-      value="<%= category?.slug || '' %>"
-      placeholder="e.g. web-development"
-    />
-  </label>
-
-  <label>
-    Description
-    <textarea name="description" rows="5">
-<%= category?.description || '' %></textarea
-    >
-  </label>
-
-  <button type="submit">Save</button>
-
-  <% if (errorMessage) { %>
-  <p class="alert"><%= errorMessage %></p>
-  <% } %>
-</form>
-```
-
-<NoteBox title="T.A. Watts" type="warning">
-  Ensure your `category-form` forces a valid, URL-safe slug schema so we don't
-  end up with broken category links later!
-</NoteBox>
-
-## Admin Routing - Category Management
-
-You will also need to handle the routing for your new category views. Add these routes to your existing admin router:
-
-```javascript
-// routers/adminRouter.js (Additions)
-const _categoryOps = require("../data/categories");
-
-// GET: show all categories
-router.get("/categories", async (req, res) => {
-  const categories = await _categoryOps.getAllCategories();
-  res.render("admin/categories/index", { categories });
-});
-
-// GET: show empty create category form
-router.get("/categories/new", (req, res) => {
-  res.render("admin/categories/category-form", {
-    category_id: null,
-    category: null,
-    errorMessage: "",
-  });
-});
-
-// POST: handle create category form submission
-router.post("/categories", async (req, res) => {
-  const formData = {
-    name: req.body.name,
-    slug: req.body.slug,
-    description: req.body.description,
-  };
-
-  const result = await _categoryOps.createCategory(formData);
-
-  if (!result.success) {
-    return res.render("admin/categories/category-form", {
-      category_id: null,
-      category: formData,
-      errorMessage: "Error. Unable to create category.",
-    });
-  }
-
-  res.redirect("/admin/categories");
-});
-
-// GET: show populated edit category form
-router.get("/categories/:id/edit", async (req, res) => {
-  const { id } = req.params;
-  const category = await _categoryOps.getCategoryById(id);
-
-  if (!category) return res.status(404).render("404");
-
-  res.render("admin/categories/category-form", {
-    category_id: id,
-    category,
-    errorMessage: "",
-  });
-});
-
-// POST: handle edit category form submission
-router.post("/categories/:id", async (req, res) => {
-  const { id } = req.params;
-  const updates = {
-    name: req.body.name,
-    slug: req.body.slug,
-    description: req.body.description,
-  };
-
-  const result = await _categoryOps.updateCategoryById(id, updates);
-
-  if (!result.success) {
-    return res.render("admin/categories/category-form", {
-      category_id: id,
-      category: result.category || updates,
-      errorMessage: result.errorMessage || "Error. Unable to update category.",
-    });
-  }
-
-  res.redirect("/admin/categories");
-});
-
-// DELETE: delete a category by id
-router.delete("/categories/:id", async (req, res) => {
-  const { id } = req.params;
-  const deleted = await _categoryOps.deleteCategoryById(id);
-
-  if (!deleted) {
-    return res.status(404).json({ message: "Category not found." });
-  }
-
-  res.json({ message: "Category deleted.", deletedId: id });
-});
-```
-
-### ⏭ Next: Assigning Categories
-
-Now that categories exist, how do we attach them to our projects?
+We have our model, but no way to interact with it yet. Next, let's build the operations and views necessary to create our first categories.

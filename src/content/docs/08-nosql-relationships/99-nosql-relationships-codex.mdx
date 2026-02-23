@@ -111,6 +111,26 @@ if (post.authorId.toString() === currentUser.id) { %>
 <% } %>
 ```
 
+### 5. Referential Integrity Deletions
+
+Before deleting a referenced document, ensure no other documents currently rely on it. This prevents orphaned data and application crashes when fetching lists!
+
+```javascript
+// Secure deletion operation checking for relationships
+async deleteCategoryById(id) {
+    // 1. Fetch the dependent model dynamically
+    const Project = require("mongoose").model("Project");
+
+    // 2. Count active connections
+    const refCount = await Project.countDocuments({ categoryId: id });
+    if (refCount > 0) return { success: false, error: "Active references exist." };
+
+    // 3. Delete safely
+    await Category.findByIdAndDelete(id);
+    return { success: true };
+}
+```
+
 ## Extra Bits & Bytes
 
 - [Mongoose Subdocuments Documentation](https://mongoosejs.com/docs/subdocs.html)

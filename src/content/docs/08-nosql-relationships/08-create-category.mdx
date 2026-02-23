@@ -1,0 +1,122 @@
+---
+title: Creating Categories
+sidebar:
+  order: 8
+  label: Creating Categories
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+
+## Creating Categories
+
+Now that our data model stub is set up, let's build the ability to actually create categories in the database.
+
+### 1. The Data Operation
+
+First, implement the `createCategory` method in our `CategoryOps` class.
+
+```javascript
+// data/categories.js
+  async createCategory(formData) {
+    try {
+      const category = new Category(formData);
+      await category.save();
+      return { success: true, category };
+    } catch (error) {
+      return { success: false, error, category: null };
+    }
+  }
+```
+
+### 2. The Create Form View
+
+Next, we need an admin form view so we can input new categories. Let's create `category-form.ejs` in `views/admin/categories/`.
+
+```ejs
+{{/* views/admin/categories/category-form.ejs */}}
+<h2>Create Category</h2>
+<a href="/admin/categories">Back to Categories</a>
+<form action="/admin/categories" method="POST">
+
+  <label>
+    Name
+    <input
+      type="text"
+      name="name"
+      required
+      value="<%= category?.name || '' %>"
+    />
+  </label>
+
+  <label>
+    Slug
+    <input
+      type="text"
+      name="slug"
+      required
+      value="<%= category?.slug || '' %>"
+      placeholder="e.g. web-development"
+    />
+  </label>
+
+  <label>
+    Description
+    <textarea name="description" rows="5">
+<%= category?.description || '' %></textarea
+    >
+  </label>
+
+  <button type="submit">Save</button>
+
+  <% if (errorMessage) { %>
+  <p class="alert"><%= errorMessage %></p>
+  <% } %>
+</form>
+```
+
+<NoteBox title="T.A. Watts" type="warning">
+  Ensure your `category-form` forces a valid, URL-safe slug schema so we don't
+  end up with broken category links later!
+</NoteBox>
+
+### 3. Admin Routing
+
+Now we need to handle the `GET` route to render the empty form, and the `POST` route to submit it. Add these to your admin router.
+
+```javascript
+// routers/adminRouter.js (Additions)
+const _categoryOps = require("../data/categories");
+
+// GET: show empty create category form
+router.get("/categories/new", (req, res) => {
+  res.render("admin/categories/category-form", {
+    category: null,
+    errorMessage: "",
+  });
+});
+
+// POST: handle create category form submission
+router.post("/categories", async (req, res) => {
+  const formData = {
+    name: req.body.name,
+    slug: req.body.slug,
+    description: req.body.description,
+  };
+
+  const result = await _categoryOps.createCategory(formData);
+
+  if (!result.success) {
+    return res.render("admin/categories/category-form", {
+      category: formData,
+      errorMessage: "Error. Unable to create category.",
+    });
+  }
+
+  res.redirect("/admin/categories");
+});
+```
+
+### ⏭ Next: Reading Categories
+
+We can create them, but right now our redirect goes nowhere! Next, we need to build the views and operations to actually see the categories we've made.

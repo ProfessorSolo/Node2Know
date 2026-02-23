@@ -1,0 +1,156 @@
+---
+title: Updating Categories
+sidebar:
+  order: 10
+  label: Updating Categories
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+
+## Updating Categories
+
+We want our existing create form to be "dual-purpose." We shouldn't need a separate template for editing categories if the fields are the exact same!
+
+### 1. The Data Operation
+
+First, implement the update logic in our `CategoryOps` class.
+
+```javascript
+// data/categories.js
+  async updateCategoryById(id, updates) {
+    try {
+      const category = await Category.findById(id);
+      if (!category) {
+        return {
+          success: false,
+          category: null,
+          errorMessage: "Category not found.",
+        };
+      }
+
+      category.slug = updates.slug;
+      category.name = updates.name;
+      category.description = updates.description;
+
+      await category.save();
+      return { success: true, category, errorMessage: "" };
+    } catch (error) {
+      return { success: false, category: null, errorMessage: "Update failed." };
+    }
+  }
+```
+
+### 2. Dual-Purpose Form
+
+Let's modify our `category-form.ejs` to smartly handle both creates and updates! Notice how the heading, form action, and hidden inputs change dynamically based on whether a `category_id` was passed to the view.
+
+```ejs
+{{/* views/admin/categories/category-form.ejs */}}
+<h2><%= category_id ? "Edit" : "Create" %> Category</h2>
+<a href="/admin/categories">Back to Categories</a>
+<form
+  action="<%= category_id ? `/admin/categories/${category_id}` : `/admin/categories` %>"
+  method="POST"
+>
+  <% if (category_id) { %>
+  <input type="hidden" name="category_id" value="<%= category_id %>" />
+  <% } %>
+
+  <label>
+    Name
+    <input
+      type="text"
+      name="name"
+      required
+      value="<%= category?.name || '' %>"
+    />
+  </label>
+
+  <label>
+    Slug
+    <input
+      type="text"
+      name="slug"
+      required
+      value="<%= category?.slug || '' %>"
+      placeholder="e.g. web-development"
+    />
+  </label>
+
+  <label>
+    Description
+    <textarea name="description" rows="5">
+<%= category?.description || '' %></textarea
+    >
+  </label>
+
+  <button type="submit">Save</button>
+
+  <% if (errorMessage) { %>
+  <p class="alert"><%= errorMessage %></p>
+  <% } %>
+</form>
+```
+
+### 3. Admin Routing
+
+Now let's add the routes for showing the populated form and handling the edit submission.
+
+Also, ensure your earlier `GET /categories/new` route passes a `category_id: null` to avoid template errors!
+
+```javascript
+// routers/adminRouter.js (Additions)
+
+// GET: show empty create category form
+// -> UPDATE this existing route to include category_id
+router.get("/categories/new", (req, res) => {
+  res.render("admin/categories/category-form", {
+    category_id: null, // NEW
+    category: null,
+    errorMessage: "",
+  });
+});
+
+// GET: show populated edit category form
+router.get("/categories/:id/edit", async (req, res) => {
+  const { id } = req.params;
+  const category = await _categoryOps.getCategoryById(id);
+
+  if (!category) return res.status(404).render("404");
+
+  res.render("admin/categories/category-form", {
+    category_id: id,
+    category,
+    errorMessage: "",
+  });
+});
+
+// POST: handle edit category form submission
+router.post("/categories/:id", async (req, res) => {
+  const { id } = req.params;
+  const updates = {
+    name: req.body.name,
+    slug: req.body.slug,
+    description: req.body.description,
+  };
+
+  const result = await _categoryOps.updateCategoryById(id, updates);
+
+  if (!result.success) {
+    return res.render("admin/categories/category-form", {
+      category_id: id,
+      category: result.category || updates,
+      errorMessage: result.errorMessage || "Error. Unable to update category.",
+    });
+  }
+
+  res.redirect("/admin/categories");
+});
+
+// Important: Make sure that your previous POST /categories ALSO returns category_id: null on error!
+```
+
+### ⏭ Next: Deleting Categories & Referential Integrity
+
+What happens when we want to delete a category that a project is currently using? Let's add a protective layer to our delete operation.
