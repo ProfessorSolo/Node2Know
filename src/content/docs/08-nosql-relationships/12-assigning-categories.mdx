@@ -145,7 +145,7 @@ Now we have `categories` available! Update `project-form.ejs` to include a dropd
     <% categories.forEach(cat => { %>
       <option
         value="<%= cat._id %>"
-        <%= project?.categoryId?.toString() === cat._id.toString() ? "selected" : "" %>
+        <%= (project?.categoryId?._id || project?.categoryId)?.toString() === cat._id.toString() ? "selected" : "" %>
       >
         <%= cat.name %>
       </option>
@@ -157,9 +157,10 @@ Now we have `categories` available! Update `project-form.ejs` to include a dropd
 <NoteBox title="Professor Solo">
   Notice the use of `.toString()` during the selected conditional block. When
   Mongoose queries IDs, they return as `ObjectId` complex objects, not raw
-  strings. Comparing an `ObjectId` object strictly `===` to a string will fail.
-  You must cast the `ObjectId` to `.toString()` before making value comparisons
-  in views!
+  strings. Comparing an `ObjectId` strictly `===` to a string will fail. Our
+  logic `(project?.categoryId?._id || project?.categoryId)` is also extra
+  robust: it securely grabs the ID regardless of whether `categoryId` is
+  currently a raw `ObjectId` or a fully populated category document!
 </NoteBox>
 
 ### 4. Update the Admin Project List
