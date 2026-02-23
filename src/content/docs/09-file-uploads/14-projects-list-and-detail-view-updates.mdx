@@ -1,0 +1,70 @@
+---
+title: Project List and Detail Views
+sidebar:
+  order: 14
+  label: View Updates
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+import CautionBox from "../../../components/CautionBox.astro";
+
+## Reading Metadata on the Front End
+
+Because we saved our files inside public folders (`/public/uploads`), the Express static middleware automatically exposes these images as directly loadable URLs!
+
+All we have to do inside our views is look up the MongoDB metadata (to find the matching filename strings) and construct standard HTML image tags.
+
+### The Featured Project Thumbnail
+
+On `projects-list.ejs`, where we map across every project dynamically in a loop, we probably only want to show _one_ thumbnail image instead of every single screenshot it owns.
+
+We use JavaScript's native Array `.find()` to locate the subdocument marked as "featured":
+
+```html
+{{/* views/projects-list.ejs */}}
+<% const featured = project.screenshots.find(s => s.isFeatured === true); %> <%
+if (featured) { %>
+<img src="/uploads/<%= featured.filename %>" alt="<%= featured.altText %>" />
+<% } %>
+```
+
+### The Full Project Gallery Page
+
+On `project-detail.ejs`, we are looking at the specific project. Now we want to iterate over _all_ the screenshots, and perhaps even sort them logically by the `.order` sequence we established in the metadata!
+
+```html
+{{/* views/project-detail.ejs */}}
+
+<% if (project.screenshots && project.screenshots.length) { %>
+<h3>Project Screenshots</h3>
+
+<ul class="screenshots">
+  <% project.screenshots.sort((a,b) => a.order - b.order).forEach(s => { %>
+  <li>
+    <figure>
+      <img
+        src="/uploads/<%= s.filename %>"
+        alt="<%= s.altText || project.title + ' screenshot' %>"
+      />
+      <figcaption><%= s.caption %></figcaption>
+    </figure>
+  </li>
+  <% }) %>
+</ul>
+<% } %>
+```
+
+<CautionBox title="T.A. Watts" type="warning">
+  Notice the fallback pattern on the `alt` attribute tag above! `s.altText ||
+  project.title + ' screenshot'`. Always ensure that even if metadata is skipped
+  by the user, the layout handles accessibility fallbacks gracefully.
+</CautionBox>
+
+## Extra Bits & Bytes
+
+{{/* Placeholder for EJS array manipulation templates */}}
+
+### ⏭ Next: Wrapping it Up
+
+You've successfully built a relational database mapper and navigated the complexities of processing binary document streams!

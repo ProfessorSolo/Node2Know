@@ -1,0 +1,83 @@
+---
+title: The Mutation Pit Stop
+sidebar:
+  order: 98
+  label: The Mutation Pit Stop
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import CautionBox from "../../../components/CautionBox.astro";
+import NoteBox from "../../../components/NoteBox.astro";
+
+## Welcome to the Garage
+
+Alright, you've seen the blueprints for safe mutations and you've watched me build an admin console. Now it's your turn to pick up the tools.
+
+Data destruction and modification are powerful capabilities. If you get it wrong in the real world, you don't just get a broken page—you lose user data. T.A. Watts is standing by with a clipboard, ready to fail you if you try using a `GET` request to delete something. Treat every exercise here as if it were a production database.
+
+### Tier 1: Maintenance (Easy)
+
+**The Objective:** Implement a missing delete route.
+
+Your team has built a frontend `fetch()` call that sends an HTTP `DELETE` to `/admin/logs/:id`. Your job is to catch that request, delete the log from Mongoose, and send a JSON response back.
+
+1.  Open your `adminRouter.js`.
+2.  Write the `router.delete()` endpoint for `/logs/:id`.
+3.  Use the `Log` model and call `findByIdAndDelete()`.
+4.  If the document is null, respond with a `404` status. Otherwise, respond with a JSON success message.
+
+**Student-to-AI Concept Prompt:**
+
+> "I built the delete route, but how can I verify that my Mongoose `findByIdAndDelete()` method is actually working without building a whole frontend to test it? Explain how I can act as the client using a tool or script."
+
+### Tier 2: The Custom Job (Medium)
+
+**The Objective:** Expand the dual-purpose form.
+
+Your project needs an internal "Notes" field that only admins can see. It shouldn't be publicly visible, but it needs to be updatable from the project creation/edit form.
+
+1.  Add a `adminNotes` String field to your Mongoose Project schema.
+2.  Update your `project-form.ejs` to include a new `<textarea>` for these notes. Ensure it properly uses optional chaining (`?.`) so it doesn't crash on the Create view.
+3.  Update your POST routes (both create and update) to capture `req.body.adminNotes` and pass it to your Ops layer.
+
+**Student-to-AI Refactor Prompt:**
+
+> "I have added three new fields to my EJS form and my Express POST route is getting very long because I am manually mapping `req.body.fieldOne`, `req.body.fieldTwo`, etc. How can I refactor my route handler to cleanly capture all form data while still being safe about what gets saved to the database?"
+
+### Tier 3: The Solo Special (Hard)
+
+**The Objective:** The "Soft Delete" Refactor.
+
+Deleting data permanently is dangerous. In many enterprise systems, we don't actually delete records; we just hide them. This is called a "Soft Delete."
+
+1.  Add an `isArchived` Boolean field to your Contact schema (default: `false`).
+2.  Refactor your Delete Button front-end logic. Instead of sending a `DELETE` request, have it send a `POST` request to `/admin/contacts/:id/archive`.
+3.  Refactor your Ops layer. Do NOT use `findByIdAndDelete()`. Instead, use the **Load → Modify → Save** pattern to change `isArchived` to `true`.
+4.  Update your Admin Inbox view to only display contacts where `isArchived` is `false`.
+
+<CautionBox title="T.A. Watts">
+  If you use a `GET` request for the archive button, I will personally revoke
+  your admin access. State changes require `POST` (or `PUT`/`PATCH`/`DELETE`).
+</CautionBox>
+
+**Student-to-AI Debug Prompt:**
+
+> "I refactored my delete logic to perform a 'Soft Delete' by updating an `isArchived` boolean. When I click the button, the terminal shows the database updated, but the contact submission doesn't disappear from my screen until I manually refresh the page. Why did my old `fetch()` delete code instantly remove the item, but this new code doesn't?"
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="https://mongoosejs.com/docs/queries.html"
+  variant="secondary"
+  icon="external"
+  iconPlacement="start"
+  target="_blank"
+>
+  Mongoose Docs: Queries
+</LinkButton>
+
+---
+
+### ⏭ Next: The Mongoose Codex
+
+Time to check your gear. Proceed to the Codex for a high-density technical reference of everything we just built.

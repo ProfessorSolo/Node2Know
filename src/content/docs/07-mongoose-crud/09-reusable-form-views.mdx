@@ -1,0 +1,111 @@
+---
+title: Reusable Form Views
+sidebar:
+  order: 9
+  label: Reusable Form Views
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import CautionBox from "../../../components/CautionBox.astro";
+
+## One Form to Rule Them All
+
+We're going to build one EJS file, `project-form.ejs`, that handles both creating new projects and editing existing ones. We are relying on the Express router to pass down three critical variables:
+
+- `project_id`: (Null for New, ObjectId for Edit)
+- `project`: (Null for New, the populated document for Edit)
+- `errorMessage`: (A string if something goes wrong, like validation breaking)
+
+If we conditionally check for `project_id`, we can bend the form structure to match our needs.
+
+### The EJS Conditional Boilerplate
+
+Let's dissect the primary elements of the form. Notice the use of JavaScript Optional Chaining (`?.`) to prevent our application from crashing when `project` is `null`. If `project` doesn't exist, we fallback to an empty string (`|| ''`).
+
+```html
+<!-- views/admin/project-form.ejs -->
+<h2><%= project_id ? "Edit" : "Create" %> Project</h2>
+<a href="/admin/projects">Back to Projects</a>
+<form
+  action="<%= project_id ? `/admin/projects/${project_id}` : `/admin/projects` %>"
+  method="POST"
+>
+  <% if (project_id) { %>
+    <input type="hidden" name="project_id" value="<%= project_id %>" />
+  <% } %>
+
+  <label>
+    Title
+    <input
+      type="text"
+      name="title"
+      required
+      value="<%= project?.title || '' %>"
+    />
+  </label>
+
+  <label>
+    Slug
+    <input
+      type="text"
+      name="slug"
+      required
+      value="<%= project?.slug || '' %>"
+      placeholder="e.g. expense-tracker"
+    />
+  </label>
+
+  <label>
+    Description
+    <textarea name="description" rows="5"><%= project?.description || '' %></textarea>
+  </label>
+
+  <fieldset style="border: none; padding: 0; margin: 0 0 1rem 0;">
+    <legend>Active?</legend>
+
+    <label style="display:inline-flex; gap:.4rem; align-items:center; margin-right:1rem;">
+      <input
+        type="radio"
+        name="activeState"
+        value="active"
+        <%= (project?.isActive ?? true) ? "checked" : "" %>
+      />
+      Active
+    </label>
+
+    <label style="display:inline-flex; gap:.4rem; align-items:center;">
+      <input
+        type="radio"
+        name="activeState"
+        value="inactive"
+        <%= (project?.isActive ?? true) ? "" : "checked" %>
+      />
+      Inactive
+    </label>
+  </fieldset>
+
+  <button type="submit">Save</button>
+
+  <% if (errorMessage) { %>
+    <p class="alert"><%= errorMessage %></p>
+  <% } %>
+</form>
+```
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining"
+  variant="secondary"
+  icon="external"
+  iconPlacement="start"
+  target="_blank"
+>
+  MDN Web Docs: Optional Chaining (?.)
+</LinkButton>
+
+---
+
+### ⏭ Next: Serving the Forms
+
+We have the view constructed. Now we need the Express Router to serve it properly and catch it when the user hits "Save".

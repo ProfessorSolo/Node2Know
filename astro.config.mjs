@@ -40,16 +40,16 @@ const COURSE_MODULES = [
     directory: '06-fast-flexible-mongoose-odm',
     released: true,
   },
-  //   {
-  //     label: 'Transformative Styling',
-  //     directory: '06-transformative-styling',
-  //     released: true,
-  //   },
-  //   {
-  //     label: 'Ion Drive Transition Lab',
-  //     directory: '07-ion-drive-transition-lab',
-  //     released: true,
-  //   },
+  {
+    label: 'Mongoose CRUD',
+    directory: '07-mongoose-crud',
+    released: true,
+  },
+  {
+    label: 'NoSQL Relationships',
+    directory: '08-nosql-relationships',
+    released: true,
+  },
   //   {
   //     label: 'Annie Mation',
   //     directory: '08-annie-mation',

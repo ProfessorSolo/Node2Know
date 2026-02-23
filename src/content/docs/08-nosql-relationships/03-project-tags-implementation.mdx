@@ -1,0 +1,90 @@
+---
+title: Project Tags Implementation
+sidebar:
+  order: 3
+  label: Project Tags Setup
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+
+## Add the Field
+
+Instead of creating a new primitive array, we are going to define a completely new `Schema` right inside our `projects.js` file, and embed that Subdocument array on the Project.
+
+```javascript
+// data/projects.js
+
+// NEW: Define the Subdocument structure
+const tagSchema = new mongoose.Schema(
+  {
+    name: { type: String, required: true },
+  },
+  { _id: false },
+);
+
+const projectSchema = new mongoose.Schema({
+  // ... existing fields ...
+
+  // Embed the new schema as an array
+  tags: [tagSchema],
+});
+```
+
+Because we defined `tagSchema` above the `projectSchema`, Mongoose knows we expect an array of objects (each with a `name` property) attached to the Project.
+
+<NoteBox title="Professor Solo" type="tip">
+  Did you notice `{ _id: false }`? By default, Mongoose generates a unique `ObjectId` for *every single item* inside a subdocument array! Since our tags are just lightweight descriptors and we won't ever need to look up a specific tag by a database ID, we can safely turn this off to save database space and reduce visual clutter in our documents.
+</NoteBox>
+
+## String Input to Schema Arrays
+
+HTML frontend forms send string values, not subdocument Arrays. How do we take an HTML input like `"Node, Express"` and turn it into the `[{name: "Node"}, {name: "Express"}]` array our Schema requires?
+
+### 1. Update the EJS Form
+
+We create a single comma-separated text input in our admin view. To ensure that editing works smoothly later, we write a ternary operator that `.map()`s over existing tag objects to extract their names, and `.join()`s them back into that familiar comma structure dynamically.
+
+```html
+{{/* views/admin/projects/project-form.ejs */}}
+<label>
+  Tags (comma-separated)
+  <input
+    type="text"
+    name="tags"
+    value="<%= project?.tags?.map(t => t.name).join(', ') || '' %>"
+    placeholder="node, express, mongodb"
+  />
+</label>
+```
+
+### 2. Parse the Input string in Data Operations
+
+Your admin router processes `"node, express, mongodb"` as a single long string on `req.body.tags`. You need to split and sanitize this string before wrapping the values into objects that match your Subdocument `tagSchema`:
+
+```javascript
+// routers/adminRouter.js
+function parseTags(tagsText) {
+  if (!tagsText) return [];
+  return tagsText
+    .split(",") // Break the text by the commas
+    .map((t) => t.trim()) // Remove any whitespace padding
+    .filter(Boolean) // Filter out any empty items from trailing commas
+    .map((t) => ({ name: t })); // Wrap the string into {name: "string"}
+}
+
+// In the POST route:
+const formData = {
+  // ... other fields ...
+  tags: parseTags(req.body.tags),
+};
+```
+
+<NoteBox title="Professor Solo">
+  A quick `filter(Boolean)` safely strips out any empty strings that a rogue
+  trailing comma `,` dynamically pushed into our split tag array!
+</NoteBox>
+
+### ⏭ Next: Displaying Tags
+
+Now that tags are saving to the database, let's render them beautifully on the public project page and allow users to click them!

@@ -1,0 +1,180 @@
+---
+title: Project Categories
+sidebar:
+  order: 8
+  label: Project Categories
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+
+## Connecting Projects to Categories
+
+With our `Category` model and admin views ready, we need to wire our `Project` to actually use them.
+
+### 1. Update the Project Schema
+
+We add the `categoryId` field to the Project schema. We declare this as a strict `ObjectId` that specifically references the "Category" model.
+
+```javascript
+// data/projects.js
+
+// ... existing code - imports and tag schema definition
+
+const projectSchema = new mongoose.Schema({
+  slug: { type: String, required: true, unique: true },
+  title: { type: String, required: true },
+  description: String,
+  isActive: Boolean,
+
+  tags: [tagSchema],
+
+  // NEW: Related Data
+  categoryId: { type: mongoose.Schema.Types.ObjectId, ref: "Category" },
+});
+```
+
+<NoteBox title="T.A. Watts" type="tip">
+  Our project schema is now ready to use the category data we created in the
+  previous step! Note that we don't need to import the category model here
+  because we are using the `ref` property to reference the model by name.
+</NoteBox>
+
+### 2. Update the Admin Router
+
+Creating or updating a Project now requires selecting a Category. To populate that dropdown, your admin router needs to fetch _all_ categories before rendering the form anytime the project form is loaded (Create, Edit, and on Submission Errors). We also need to capture `categoryId` from `req.body` in our `POST` routes!
+
+Update our project admin routes in `adminRouter.js`:
+
+`routers/adminRouter.js`
+
+```javascript
+// GET: show empty create project form
+router.get("/projects/new", async (req, res) => {
+  const categories = await _categoryOps.getAllCategories();
+  res.render("admin/projects/project-form", {
+    project_id: null,
+    project: null,
+    categories,
+    errorMessage: "",
+  });
+});
+
+// POST: handle create project form submission
+router.post("/projects", async (req, res) => {
+  const formData = {
+    title: req.body.title,
+    slug: req.body.slug,
+    description: req.body.description,
+    tags: parseTags(req.body.tags),
+    categoryId: req.body.categoryId, // NEW
+    isActive: req.body.activeState === "active",
+  };
+
+  const result = await _projectOps.createProject(formData);
+
+  if (!result.success) {
+    const categories = await _categoryOps.getAllCategories();
+    return res.render("admin/projects/project-form", {
+      project_id: null,
+      project: formData,
+      categories, // NEW
+      errorMessage: "Error. Unable to create project.",
+    });
+  }
+
+  res.redirect("/admin/projects");
+});
+
+// GET: show populated edit project form
+router.get("/projects/:id/edit", async (req, res) => {
+  const { id } = req.params;
+  const project = await _projectOps.getProjectById(id);
+
+  if (!project) return res.status(404).render("404");
+
+  const categories = await _categoryOps.getAllCategories();
+
+  res.render("admin/projects/project-form", {
+    project_id: id,
+    project,
+    categories, // NEW
+    errorMessage: "",
+  });
+});
+
+// POST: handle edit project form submission
+router.post("/projects/:id", async (req, res) => {
+  const { id } = req.params;
+  const updates = {
+    title: req.body.title,
+    slug: req.body.slug,
+    description: req.body.description,
+    tags: parseTags(req.body.tags),
+    categoryId: req.body.categoryId, // NEW
+    isActive: req.body.activeState === "active",
+  };
+
+  const result = await _projectOps.updateProjectById(id, updates);
+
+  if (!result.success) {
+    const categories = await _categoryOps.getAllCategories();
+    return res.render("admin/projects/project-form", {
+      project_id: id,
+      project: result.project || updates,
+      tags: formData.tags.map((t) => t.name).join(", "), // NEW
+      categories, // NEW
+      errorMessage: result.errorMessage || "Error. Unable to update project.",
+    });
+  }
+
+  res.redirect("/admin/projects");
+});
+```
+
+### 3. Update the Project Form UI
+
+Now we have `categories` available! Update `project-form.ejs` to include a dropdown `<select>` menu.
+
+```html
+{{/* views/admin/projects/project-form.ejs */}}
+<label>
+  Category
+  <select name="categoryId">
+    <option value="">-- none --</option>
+    <% categories.forEach(cat => { %>
+      <option
+        value="<%= cat._id %>"
+        <%= project?.categoryId?.toString() === cat._id.toString() ? "selected" : "" %>
+      >
+        <%= cat.name %>
+      </option>
+    <% }) %>
+  </select>
+</label>
+```
+
+<NoteBox title="Professor Solo">
+  Notice the use of `.toString()` during the selected conditional block. When
+  Mongoose queries IDs, they return as `ObjectId` complex objects, not raw
+  strings. Comparing an `ObjectId` object strictly `===` to a string will fail.
+  You must cast the `ObjectId` to `.toString()` before making value comparisons
+  in views!
+</NoteBox>
+
+### 4. Update the Admin Project List
+
+If we are building out an admin dashboard, we can now conditionally render this combined property in our project list loops as well by checking the populated `categoryId`!
+
+`views/admin/projects/index.ejs`
+
+```html
+Category:
+<small class="pill <%= p.categoryId ? 'pill-active' : 'pill-inactive' %>">
+  <%= p.categoryId ? p.categoryId.name : "None" %>
+</small>
+```
+
+### ⏭ Next: Translating References
+
+Now your database captures the relationship. But what happens when we read that project back from the database? How do we hydrate the actual category name?

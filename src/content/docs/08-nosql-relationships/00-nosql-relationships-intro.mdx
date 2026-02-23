@@ -1,0 +1,45 @@
+---
+title: NoSQL Relationships
+sidebar:
+  order: 0
+  label: NoSQL Relationships
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+
+<img
+  src="/assets/lessons/08-nosql-relationships/nosql-relationships-intro.png"
+  alt="NoSQL Relationships Architecture"
+/>
+
+_Fig 1: NoSQL Relationships Architecture_
+
+NoSQL doesn't mean _no relationships_. It just means we model them differently than robust SQL joins.
+
+## Handling Project Data
+
+In this chapter, we level up our Project feature from "single collection CRUD" to "portfolio-grade data modeling" by adding powerful relational concepts:
+
+1. **Embedded Data**
+   A project can have an array of simple string Tags nested directly inside it.
+2. **Referenced Data**
+   A project can be assigned to a specific reusable Category document stored in a different collection.
+
+By the end of this module, we will implement an admin edit form that fully supports creating models and selecting relational assignments, linking it all cleanly in the database and rendering it on our views.
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="https://github.com/ProfessorSolo/Node2Know-04-01-Mongo-Delete-and-Update.git"
+  variant="secondary"
+  icon="external"
+  iconPlacement="start"
+  target="_blank"
+>
+  Starting Demo Repo - Continuing from Update and Delete lesson.
+</LinkButton>
+
+### ⏭ Next: Modeling Data Relationships
+
+Before writing code, we need to decide _how_ to relate our data together in MongoDB.

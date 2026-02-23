@@ -1,0 +1,63 @@
+---
+title: Screenshots As Embeds
+sidebar:
+  order: 8
+  label: Screenshots as Embeds
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+
+## The Subdocument Model
+
+We decided tags should be embedded _simple strings_. What about media like screenshots?
+
+We know MongoDB cannot store the physical _file_, so we store the physical image locally in `/public/uploads`. But we _do_ need to store the image's meta information: the filename, alternative text, timestamps, captions, etc.
+
+Since a Project can have zero, one, or multiple screenshots, we need an array. But since an `alt_text` needs to explicitly pair with its `filename`, a primitive array of Strings will not work. We need an array of **Objects**.
+
+### The Screenshot Schema
+
+In Mongoose, arrays of Objects are called **Subdocuments**. We can create a standalone schema specifically for the visual shape of this embedded data.
+
+```javascript
+// data/projects.js
+const mongoose = require("mongoose");
+
+// A sub-schema explicitly designed to shape items inside an array
+const screenshotSchema = new mongoose.Schema(
+  {
+    originalName: String,
+    filename: String,
+    altText: String, // Optional descriptive text
+    caption: String, // Optional display string
+    isFeatured: { type: Boolean, default: false },
+    order: { type: Number, default: 0 },
+    uploadedAt: { type: Date, default: Date.now },
+  },
+  { _id: false }, // Avoid MongoDB generating unique nested IDs inside this embedded array unless specifically needed!
+);
+
+const projectSchema = new mongoose.Schema({
+  // ... other fields
+
+  // Array of strictly shaped subdocuments!
+  screenshots: [screenshotSchema],
+});
+```
+
+<NoteBox title="Professor Solo">
+  Why use an embedded `screenshotSchema` instead of a separate referenced media
+  collection? A project's screenshots fundamentally exist *to support that
+  specific project*. They operate in the context of the parent project.
+  Furthermore, fetching a Project instantly gives you all its image metadata
+  without expensive `populate()` joins.
+</NoteBox>
+
+## Extra Bits & Bytes
+
+{{/* Placeholder for Mongoose Subdocument references */}}
+
+### ⏭ Next: Planning the Uploads
+
+Before creating the backend router mapping for this data, let's look closely at how we intend the feature to operate.

@@ -1,0 +1,101 @@
+---
+title: Displaying Tags
+sidebar:
+  order: 4
+  label: Displaying Tags
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+
+## Rendering Tags on the Project Page
+
+With our `tagSchema` embedded on each project, we can loop through them on our public-facing `project.ejs` view to render them.
+
+Let's also make them clickable so that users can instantly filter the master project list by that specific tag!
+
+```html
+{{/* views/project-detail.ejs */}}
+<div class="project-tags">
+  <% project.tags.forEach(tag => { %>
+  <a href="/projects?tag=<%= tag.name %>" class="pill tag-pill"
+    ><%= tag.name %></a
+  >
+  <% }) %>
+</div>
+```
+
+## Creating a Dynamic Tag Filter
+
+Our tags now point to `/projects?tag=Node`. This is a query parameter string! We can intercept this inside our existing `projectRouter.js` to modify the default behavior of the index view.
+
+If a `req.query.tag` was provided in the URL, we can filter the database search to only return projects that have a matching tag name inside their embedded array.
+
+Since we also want to preserve the ability to search by an optional `?q=` text query, we need to handle both parameters thoughtfully!
+
+```javascript
+// routers/projectRouter.js
+const express = require("express");
+const router = express.Router();
+const _projectOps = require("../data/projects");
+
+// GET: show all projects (with optional tag & search filtering)
+router.get("/", async (req, res) => {
+  // 1. Capture the query parameters
+  const searchTerm = req.query.q;
+  const tagQuery = req.query.tag;
+  let projects;
+
+  // 2. Conditionally fetch based on the active queries
+  if (searchTerm && tagQuery) {
+    // Both are active: fetch by search first, then filter by tag in memory
+    projects = await _projectOps.getProjectList(searchTerm);
+    projects = projects.filter((project) =>
+      project.tags.some((tag) => tag.name === tagQuery),
+    );
+  } else if (tagQuery) {
+    // Only tag is active: search specifically for the tag in the database
+    projects = await _projectOps.getProjectsByTag(tagQuery);
+  } else {
+    // Only search (or neither) is active
+    projects = await _projectOps.getProjectList(searchTerm);
+  }
+
+  // 3. Render the view, passing the projects and the active query context
+  res.render("projects/index", { projects, activeTag: tagQuery, searchTerm });
+});
+```
+
+Because Mongoose is so smart, it can automatically search inside embedded arrays. Add a new `getProjectsByTag` method to your `data/projects.js` class:
+
+```javascript
+// data/projects.js
+async getProjectsByTag(tagName) {
+    // MongoDB knows to look inside the 'tags' array for any object whose 'name' property matches!
+    return await Project.find({ "tags.name": tagName, isActive: true });
+}
+```
+
+## Updating the Project List View
+
+Finally, let's update `views/projects-list.ejs` to provide some context. If the user clicked a tag, we should show them what tag they are filtering by, and provide a button to clear the filter.
+
+```html
+{{/* views/projects-list.ejs (At the top of the grid) */}} <% if (activeTag) {
+%>
+<div class="filter-notice">
+  <h3>Showing results for tag: <span><%= activeTag %></span></h3>
+  <a href="/projects" class="btn btn-secondary btn-small">Clear Filter</a>
+</div>
+<% } %>
+```
+
+<NoteBox title="Professor Solo" type="tip">
+  Notice how we didn't have to define complex chains or relational lookups? By
+  defining a robust `tagSchema` subdocument, MongoDB handles searching deeply
+  nested arrays smoothly and efficiently!
+</NoteBox>
+
+### ⏭ Next: Understanding Object References
+
+We've mastered embedding subdocuments! But what happens when we need to build reusable resources like global "Categories"? It's time to dive into Object Reference architecture.

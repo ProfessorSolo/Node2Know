@@ -1,0 +1,63 @@
+---
+title: Dual-Purpose Forms
+sidebar:
+  order: 8
+  label: Dual-Purpose Forms
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import CautionBox from "../../../components/CautionBox.astro";
+
+## Don't Repeat Yourself
+
+When building a management interface, you'll quickly notice that creating a new item (like a Project footprint) and updating an existing one require almost identical HTML forms.
+
+They both need the same `<input>` fields, the same `<textarea>` elements, and the same labels. The only real differences are:
+
+1. **The Destination:** A creation form submits to a "New" route; an edit form submits to an "Update" route aiming at a specific ID.
+2. **The Initial Values:** A creation form is blank; an edit form is pre-filled with the existing data.
+
+Rather than maintaining a `project-create.ejs` and a `project-update.ejs` side-by-side, we consolidate them into a single **Dual-Purpose Form**.
+
+### The Control Signal: `project_id`
+
+The secret to a dual-purpose form is passing down a variable that tells the view which mode it's in. If we pass down a `project_id`, the view knows it is in **Edit Mode**. If `project_id` is null or undefined, the view acts as a **Create Mode** form.
+
+We use this single piece of logic to dynamically change the form's `action` target and the values inside the inputs.
+
+<CautionBox title="T.A. Watts">
+  Copy-pasting form HTML is a nightmare for maintenance. If you add a new
+  "Category" field later, you don't want to add it to two different files.
+  Consolidate your forms early to protect your sanity.
+</CautionBox>
+
+<img
+  src="/assets/lessons/07-mongoose-crud/dual-purpose-form-concept.png"
+  alt="A Neon-Retro themed technical flow diagram showing entirely identical HTML forms diverging based on the presence of an ID variable, routing to 'Create New Endpoint' vs 'Update Existing Endpoint'."
+/>
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="/assets/resources/infographics/mongoose-crud/dual-purpose-forms.png"
+  target="_blank"
+  variant="secondary"
+>
+  📘 Dual-Purpose Forms Infographic (PNG)
+</LinkButton>
+
+<LinkButton
+  href="https://en.wikipedia.org/wiki/Don%27t_repeat_yourself"
+  variant="secondary"
+  icon="external"
+  iconPlacement="start"
+  target="_blank"
+>
+  Wikipedia: DRY Principle
+</LinkButton>
+
+---
+
+### ⏭ Next: The EJS Conditional Boilerplate
+
+Let's look at the actual EJS syntax required to build a form that bends to our will.

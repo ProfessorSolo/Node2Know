@@ -1,0 +1,136 @@
+---
+title: Create and Update Routes
+sidebar:
+  order: 10
+  label: Create and Update Routes
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+
+## Directing the Traffic
+
+With our dual-purpose interface built, we need two pairs of routes in our `adminRouter.js`. One pair handles the **Create** flow (GET the form, POST the submission). The other pair handles the **Edit** flow.
+
+Because both sets of routes use the exact same EJS view (`project-form.ejs`), we must be incredibly rigorous about the data we pass down to the `res.render()` function.
+
+If a route fails to pass `project_id`, `project`, or `errorMessage`, our EJS will throw an error and crash the page.
+
+### 1. The "Create" Routes
+
+When serving the new form, we explicitly pass `null` values because there is no existing document.
+
+```js
+// routers/adminRouter.js
+const express = require("express");
+const router = express.Router();
+const _contactOps = require("../data/contacts");
+// New: Add the projects operations
+const _projectOps = require("../data/projects");
+
+// Exiting Contact Routes
+// ...
+
+// New: PROJECT ROUTES
+
+// GET: show all projects (active and inactive)
+router.get("/projects", async (req, res) => {
+  const projects = await _projectOps.getAllProjects();
+  res.render("admin/projects/index", { projects });
+});
+
+// GET: show empty create project form
+router.get("/projects/new", (req, res) => {
+  res.render("admin/projects/project-form", {
+    project_id: null,
+    project: null,
+    errorMessage: "",
+  });
+});
+
+// POST: handle create project form submission
+router.post("/projects", async (req, res) => {
+  // 1. Parse the incoming body
+  const formData = {
+    title: req.body.title,
+    slug: req.body.slug,
+    description: req.body.description,
+    isActive: req.body.isActive === "true", // Radio returns a string "true" or "false"
+  };
+
+  const result = await _projectOps.createProject(formData);
+
+  if (!result.success) {
+    // If it fails, send the form back with the data they entered so they don't lose it
+    return res.render("admin/projects/project-form", {
+      project_id: null,
+      project: formData,
+      errorMessage: "Error. Unable to create project.",
+    });
+  }
+
+  res.redirect("/admin/projects");
+});
+```
+
+### 2. The "Update" (Edit) Routes
+
+When serving the edit form, we must first retrieve the document using the ID from the URL (`req.params.id`).
+
+```js
+// GET: show populated edit project form
+router.get("/projects/:id/edit", async (req, res) => {
+  const { id } = req.params;
+
+  // Retrieve the document
+  const project = await _projectOps.getProjectById(id);
+
+  // Guard clause against bad IDs
+  if (!project) return res.status(404).render("404");
+
+  res.render("admin/projects/project-form", {
+    project_id: id,
+    project,
+    errorMessage: "",
+  });
+});
+
+// POST: handle edit project form submission
+router.post("/projects/:id", async (req, res) => {
+  const { id } = req.params;
+
+  console.log("body", req.body);
+
+  const updates = {
+    title: req.body.title,
+    slug: req.body.slug,
+    description: req.body.description,
+    isActive: req.body.activeState === "active",
+  };
+
+  const result = await _projectOps.updateProjectById(id, updates);
+
+  if (!result.success) {
+    return res.render("admin/projects/project-form", {
+      project_id: id,
+      project: result.project || updates, // keep whatever data they submitted
+      errorMessage: result.errorMessage || "Error. Unable to update project.",
+    });
+  }
+
+  res.redirect("/admin/projects");
+});
+```
+
+<NoteBox title="T.A. Watts">
+  Look closely at the failure states in the `POST` endpoints. If a database
+  operation fails, we **do not redirect**. We re-render the template and pass
+  the invalid `formData` right back down as the `project`. This ensures the user
+  doesn't lose the five paragraphs of text they just spent ten minutes typing.
+</NoteBox>
+
+---
+
+### ⏭ Next: The Ops Handshake
+
+Our router has caught the data. Now we need to pass it down to Mongoose to perform the actual saving and updating.

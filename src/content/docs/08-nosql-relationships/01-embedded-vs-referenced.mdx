@@ -1,0 +1,73 @@
+---
+title: Embedded vs Referenced
+sidebar:
+  order: 1
+  label: Embedded vs Referenced
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+
+## Modeling Relationships in MongoDB
+
+Unlike SQL's strict relational tables, MongoDB gives us the flexibility to format data around _how our application will actually read it_. MongoDB lets us model relationships in two main ways: **Embedded** and **Referenced**.
+
+<img
+  src="/assets/lessons/08-nosql-relationships/embedded-vs-referenced.png"
+  alt="Embedded vs Referenced Architecture"
+/>
+_Fig 1: Embedded vs. Referenced Architecture_
+
+### Embedded (Subdocuments)
+
+Embedded data means storing the related data **inside** the parent document.
+
+- **The Pros:** Reads are blazing fast because it only takes _one query_ to get the parent and all related child details.
+- **The Cons:** Updates can be difficult (modifying nested arrays) and data replication (if sub-data is reused) can cause inconsistency.
+
+### Referenced (ObjectId)
+
+Referenced data means storing the related data in its own separate collection, while the parent document simply stores an `ObjectId` (a reference) to it.
+
+- **The Philosophy:** "The related thing has its own life outside of the parent."
+- **The Pros:** Highly reusable. You can update the referenced document once and every parent that references it gets the updated context automatically.
+- **The Cons:** Requires multiple queries to retrieve the parent _and_ the details of the referenced child.
+
+<NoteBox title="Professor Solo">
+  For our portfolio project, we will combine both strategies: * **Categories**
+  will be **Referenced** (reusable, cleanly populated). * **Tags and
+  Screenshots** will be **Embedded** (simplifies data models, fast reads).
+</NoteBox>
+
+## The Architect's Cheat Sheet
+
+| Factor            | Embedded                                                                                                | Referenced                                                                                  |
+| :---------------- | :------------------------------------------------------------------------------------------------------ | :------------------------------------------------------------------------------------------ |
+| **Location**      | Inside Parent Doc (Subdocuments/Arrays)                                                                 | Independent Collection (Mapped via ObjectId)                                                |
+| **Best For**      | Metadata that only matters inside its parent. E-commerce order receipts, blog post tags.                | Generalized concepts used widely across the app. Categories, Authors, Users.                |
+| **Speed**         | ⚡ Extremely Fast execution. Returns instantly with parent search.                                      | ⏳ Moderate. Requires `.populate()` queries to append data.                                 |
+| **Modifications** | Difficult to normalize. Needs complex array modifications if changing data identically across all docs. | Easy to normalize. Updates one item independently and it updates everywhere simultaneously. |
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="https://www.mongodb.com/docs/manual/applications/data-models-relationships/"
+  variant="secondary"
+  icon="external"
+  iconPlacement="start"
+  target="_blank"
+>
+  MongoDB Schema Design: Relationships
+</LinkButton>
+
+<LinkButton
+  href="/assets/resources/infographics/nosql-relationships/embedded-vs-referenced-data.png"
+  target="_blank"
+  variant="secondary"
+>
+  📘 Embedded vs Referenced Data Infographic (PNG)
+</LinkButton>
+
+### ⏭ Next: Embedded Tags
+
+Let's look at a simpler, more performant approach for lightweight metadata: "Tags".

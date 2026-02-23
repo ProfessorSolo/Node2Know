@@ -1,0 +1,43 @@
+---
+title: Updating and Deleting Data
+sidebar:
+  order: 0
+  label: Updating and Deleting Data
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+
+## The latter half of CRUD
+
+So far, we've been admiring the engine while it idles—fetching data and looking at it. But to build real applications, we need the power to make changes. We need to move from "we can create and read stuff" to **"we can manage stuff."**
+
+In this chapter, we're building the admin controls that make an app feel alive. We will learn to **delete** and **update** documents safely and predictably.
+
+### The Power of Intention
+
+MongoDB stores documents. It doesn't care _why_ you are changing them. Mongoose gives us the tools to manage those changes smoothly. But to do this right, we need to introduce an **Admin Layer**—a controlled entry point for our mutation operations.
+
+We don't want just anyone walking onto the job site and swinging a sledgehammer. By grouping our "destructive" actions (like deletes and updates) behind a specific administrative entry point, we prepare our application for real-world authentication and security down the road.
+
+<img
+  src="/assets/lessons/07-mongoose-crud/mutations-power-tools.png"
+  alt="A Neon-Retro themed technical diagram showing a tool chest containing HTTP Verbs locked behind an 'Admin Access Only' gate."
+/>
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="https://mongoosejs.com/docs/documents.html#updating-using-save"
+  variant="secondary"
+  icon="external"
+  iconPlacement="start"
+  target="_blank"
+>
+  Mongoose Docs: Updating Using Save
+</LinkButton>
+
+---
+
+### ⏭ Next: Setting the Boundaries
+
+Let's lay the groundwork for our safe mutation zone by preparing the Admin Area.

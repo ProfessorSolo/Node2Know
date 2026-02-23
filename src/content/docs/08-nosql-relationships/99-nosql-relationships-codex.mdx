@@ -1,0 +1,125 @@
+---
+title: F1 Technical HUD
+sidebar:
+  order: 99
+  label: 99 - Codex (NoSQL Relationships)
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import CautionBox from "../../../components/CautionBox.astro";
+
+## Referenced vs Embedded Cheat Sheet
+
+The rapid-reference table for determining your database linkage strategy.
+
+| Factor            | Embedded                                                                                                | Referenced                                                                                  |
+| :---------------- | :------------------------------------------------------------------------------------------------------ | :------------------------------------------------------------------------------------------ |
+| **Location**      | Inside Parent Doc (Subdocuments/Arrays)                                                                 | Independent Collection (Mapped via ObjectId)                                                |
+| **Best For**      | Metadata that only makes sense inside its parent. Simple tags, specific project milestones.             | Generalized concepts used widely across the app. Categories, Authors, Taxonomy.             |
+| **Speed**         | ⚡ Extremely Fast execution. Returns instantly with parent search.                                      | ⏳ Moderate. Requires `.populate()` queries to append data.                                 |
+| **Modifications** | Difficult to normalize. Needs complex array modifications if changing data identically across all docs. | Easy to normalize. Updates one item independently and it updates everywhere simultaneously. |
+
+## Mongoose Implementation Guide
+
+### 1. Schema Definitions
+
+**Defining a Subdocument (Embedded Array)**
+
+```javascript
+// 1. Define the subdocument schema (turn off standalone _ids)
+const commentSchema = new mongoose.Schema(
+  {
+    author: { type: String, required: true },
+    body: { type: String, required: true },
+  },
+  { _id: false },
+);
+
+// 2. Embed it as an array in the parent schema
+const postSchema = new mongoose.Schema({
+  title: String,
+  comments: [commentSchema], // Nests the subdocument
+});
+```
+
+**Defining an Object Reference (Relational)**
+
+```javascript
+const postSchema = new mongoose.Schema({
+  title: String,
+  // References the 'User' collection model via ObjectId
+  authorId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+});
+```
+
+### 2. Modifying Embedded Arrays
+
+Embedded arrays are just Javascript arrays until you run `.save()`!
+
+```javascript
+// Add a new comment to a post
+const post = await Post.findById(id);
+post.comments.push({ author: "Solo", body: "Great post!" });
+await post.save();
+```
+
+**Overwriting an Array from a Form Submission**
+If your form submits multiple text inputs with the same name (e.g., `name="tags"`), Express parses it as an array if there are multiple, or a string if there is only one. You must normalize this before saving:
+
+```javascript
+// Helper function to safely parse tag inputs
+const parseTags = (tagsInput) => {
+  if (!tagsInput) return [];
+  if (typeof tagsInput === "string") return [{ name: tagsInput }];
+  return tagsInput.map((tag) => ({ name: tag }));
+};
+
+// ... inside your route
+post.tags = parseTags(req.body.tags);
+await post.save();
+```
+
+### 3. Querying Relationships
+
+**Searching Inside an Embedded Array**
+MongoDB automatically searches inside arrays of objects if you use dot notation on the property path.
+
+```javascript
+// Find any post where AT LEAST ONE comment was authored by "Solo"
+const posts = await Post.find({ "comments.author": "Solo" });
+```
+
+**Populating Object References**
+Use `.populate()` to replace the stored `ObjectId` string with the actual referenced document from the other collection.
+
+```javascript
+// Find a post and populate its author details
+const post = await Post.findById(id).populate("authorId");
+
+// post.authorId is now a full nested object:
+console.log(post.authorId.name); // Returns the User's name
+```
+
+### 4. Working with ObjectIds in Views
+
+Mongoose returns ObjectIds as complex objects, not strings. If you need to compare an ObjectId to a string (like a value conditionally selected from a dropdown), you must cast it to a string first!
+
+```html
+{{/* EJS Template Condition comparing an ObjectId to a string variable */}} <%
+if (post.authorId.toString() === currentUser.id) { %>
+<p>You wrote this post!</p>
+<% } %>
+```
+
+## Extra Bits & Bytes
+
+- [Mongoose Subdocuments Documentation](https://mongoosejs.com/docs/subdocs.html)
+- [Mongoose Populate Documentation](https://mongoosejs.com/docs/populate.html)
+
+<LinkButton
+  href="/assets/resources/slide-decks/nosql-relationships/Mongoose_Relationship_Mastery.pdf"
+  target="_blank"
+  variant="secondary"
+>
+  📘 Mongoose Relationships Mastery Guide (PDF)
+</LinkButton>

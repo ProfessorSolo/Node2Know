@@ -1,0 +1,98 @@
+---
+title: Delete Routing and Logic
+sidebar:
+  order: 4
+  label: Delete Routing and Logic
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+
+## Back-End Demolition
+
+To make our delete button functional, we need to establish the back-end infrastructure. This requires two pieces: the Mongoose database operation (the Ops Layer) and the Express route to handle the incoming HTTP request (the API endpoint).
+
+### The Mongoose Ops Layer
+
+First, we add the deletion capability to our data abstraction layer. This keeps our database concerns separated from our Express routing concerns.
+
+```js
+// data/contacts.js
+const mongoose = require("mongoose");
+
+class ContactOps {
+  // existing code...
+
+  async getAllContactsAdmin() {
+    return await Contact.find({}).sort({ postedDate: -1 });
+  }
+
+  // NEW: The core demolition logically isolated
+  async deleteContactById(id) {
+    return await Contact.findByIdAndDelete(id);
+  }
+}
+
+module.exports = new ContactOps();
+```
+
+### The Express Router (HTTP DELETE)
+
+Next, we establish the endpoint. Crucially, we do _not_ use a `GET` request to delete data. A GET request should never mutate state. By using an HTTP `DELETE` request, we clearly express our intention: "I want to destroy the resource at this URL."
+
+```js
+// routers/adminRouter.js
+const express = require("express");
+const router = express.Router();
+const _contactOps = require("../data/contacts");
+
+// Admin: delete a contact submission by id
+router.delete("/contacts/:id", async (req, res) => {
+  // 1. Extract the parameters
+  const { id } = req.params;
+
+  // 2. Perform the operation via our Ops layer
+  const deleted = await _contactOps.deleteContactById(id);
+
+  // 3. Handle the 'null' (Not Found) state
+  if (!deleted) {
+    return res.status(404).json({ message: "Contact submission not found." });
+  }
+
+  // 4. Return success
+  res.json({ message: "Contact deleted.", deletedId: id });
+});
+
+module.exports = router;
+```
+
+<NoteBox title="Professor Solo">
+  Because this route responds to an asynchronous JavaScript `fetch()` call from
+  the browser (which we will build next), we don't use `res.render()` or
+  `res.redirect()`. We send raw data back via `res.json()`.
+</NoteBox>
+
+<img
+  src="/assets/lessons/07-mongoose-crud/delete-route-flow.png"
+  alt="Flow diagram showing HTTP DELETE to Express Router to Mongoose Ops Layer to MongoDB"
+/>
+
+_Fig 1: Deletion Route Architecture_
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/DELETE"
+  variant="secondary"
+  icon="external"
+  iconPlacement="start"
+  target="_blank"
+>
+  MDN Web Docs: HTTP DELETE Method
+</LinkButton>
+
+---
+
+### ⏭ Next: The Front-End Trigger
+
+Our backend is ready to delete documents. Now, we need to teach our browser how to send the destruction signal.

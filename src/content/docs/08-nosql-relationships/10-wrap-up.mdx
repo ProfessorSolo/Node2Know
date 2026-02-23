@@ -1,0 +1,50 @@
+---
+title: Relationship Wrap-Up
+sidebar:
+  order: 10
+  label: Relationship Wrap Up
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+
+## What We Built
+
+You have successfully upgraded your standalone application into an architecture capable of handling complex data linking!
+
+<img
+  src="/assets/lessons/08-nosql-relationships/nosql-relationships-wrapup.png"
+  alt="Merging streams of Categories and Tags data into a central Project Core utilizing Mongoose Populate"
+/>
+
+_Fig 1: Dynamic Data Merging with Mongoose_
+
+### The Big Wins for This Chapter
+
+- **Embedded Arrays:** Storing data efficiently directly on `Project.tags` for extremely fast reads.
+- **Referenced Relationships:** Using an independent `Category` model attached via an `ObjectId`.
+- **The Populate() Pipeline:** Dynamically fusing data from two separate collections into a single payload using Mongoose on demand.
+- **Dynamic Routing:** Building public `/categories/:slug` endpoints that filter related data.
+
+When designing your NoSQL architecture, remember that **every choice is a trade-off between read performance and write flexibility.**
+
+- **Embedded Documents** (like our `tags`) are incredibly fast to read because they require no additional queries. However, if a tag name needs to change globally, you must query and update every single project that contains that embedded tag.
+- **Referenced Documents** (like our `Category`) are slower to read, requiring Mongoose to `populate()` the data by running a second query behind the scenes. However, they are incredibly easy to update. Changing a Category's name in one place instantly updates how that Category appears across all assigned projects.
+
+As your applications grow, you will frequently use both patterns—often within the same model—to balance performance with maintainability!
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="https://github.com/ProfessorSolo/Node2Know-04-02-Mongo-Relationships.git"
+  variant="secondary"
+  icon="external"
+  iconPlacement="start"
+  target="_blank"
+>
+  Completed Demo Repo - Use as a reference, not an assignment starter.
+</LinkButton>
+
+### ⏭ Next Lesson: File Uploads
+
+Now that our application handles relationships cleanly, it's time to tackle the tricky subject of media. How do we take image files from an admin form and attach them to these projects?

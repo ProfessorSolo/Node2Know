@@ -1,0 +1,95 @@
+---
+title: Client-Side Delete Requests
+sidebar:
+  order: 5
+  label: Client-Side Delete Requests
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import CautionBox from "../../../components/CautionBox.astro";
+
+## Wiring the Big Red Button
+
+We have our Admin Inbox view (with `data-id` attributes on the buttons) and our Express backend waiting for an HTTP `DELETE` verb. Standard HTML forms cannot send `DELETE` requests directly—they can only send `GET` or `POST`. To perform this mutation cleanly, we must rely on client-side JavaScript.
+
+### Using fetch() to Delete
+
+We'll attach an event listener to the entire document and listen for clicks. When a user clicks an element with the `.js-delete-contact` class, we fire our deletion logic.
+
+This approach uses **Event Delegation**, which is much more efficient than attaching individual listeners to every single button.
+
+```js
+// /public/scripts/admin/contacts.js
+
+const list = document.querySelector(".js-contacts-list");
+if (!list) {
+  // Script loaded on a page without the contacts list — bail quietly.
+  // (Keeps things simple for multi-page admin areas.)
+} else {
+  // DELETE (click)
+  list.addEventListener("click", async (e) => {
+    const btn = e.target.closest("button.contact-delete");
+    if (!btn) return;
+
+    const li = btn.closest("li.js-contact");
+    const id = li?.dataset.id;
+    if (!id) return;
+
+    const ok = confirm(
+      "Delete this contact submission?\n\nThis cannot be undone.",
+    );
+    if (!ok) return;
+
+    try {
+      const res = await fetch(`/admin/contacts/${id}`, {
+        method: "DELETE",
+        headers: { Accept: "application/json" },
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        alert(data?.message || "Delete failed.");
+        return;
+      }
+
+      li.remove();
+    } catch (err) {
+      alert("Network error. Delete failed.");
+    }
+  });
+}
+```
+
+<CautionBox title="T.A. Watts">
+  Always build guardrails around your destructive operations. A simple
+  `confirm()` dialog might seem tedious, but it saves your users from destroying
+  data over an accidental slip of the mouse. Of course, in a real-world app,
+  you'd want to use a more sophisticated UI for this.
+</CautionBox>
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="/assets/resources/infographics/mongoose-crud/mongoose-delete.png"
+  target="_blank"
+  variant="secondary"
+>
+  📘 Mongoose Delete Infographic (PNG)
+</LinkButton>
+
+<LinkButton
+  href="https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch"
+  variant="secondary"
+  icon="external"
+  iconPlacement="start"
+  target="_blank"
+>
+  MDN Web Docs: Using the Fetch API
+</LinkButton>
+
+---
+
+### ⏭ Next: Updating State
+
+Deleting a document handles the cleanup. But what about when we want to keep the document and just change its state—like marking a message as read?

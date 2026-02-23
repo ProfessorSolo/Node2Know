@@ -1,0 +1,41 @@
+---
+title: Categories by Object Reference
+sidebar:
+  order: 6
+  label: Categories by Reference
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+
+## Why Reference Categories?
+
+<img
+  src="/assets/lessons/08-nosql-relationships/nosql-categories-architecture.png"
+  alt="Category Architecture"
+/>
+_Fig 1: Category Architecture_
+
+When deciding how to model Categories for our Projects, we could technically just embed a string inside the Project document: `category: "Web App"`.
+
+However, we are going to use **Object References** for Categories. Why?
+
+### The Architectural Trade-offs
+
+By treating Categories as their own distinct collection and associating them via an `ObjectId` reference, we gain:
+
+1.  **Reusability:** A single Category document (e.g., "Full-Stack") can be references uniformly by dozens of projects.
+2.  **Consistency:** Renaming the "Full-Stack" category to "Full-Stack Development" requires updating exactly _one_ document. All associated projects inherit the new spelling immediately when referencing it.
+3.  **Standalone Potential:** Having a discrete Category collection allows us to safely build a "Browse By Category" global navigation, or add metadata specific to the category itself (like an icon or description).
+
+<NoteBox title="Professor Solo">
+  A robust architecture plans for scaling. If we embed categories as strings
+  directly on projects, what happens when we want to rename a category? We would
+  have to run an update command across *every single project* that uses that
+  string. Worse, spelling mistakes during data entry create fractured, unlinked
+  data.
+</NoteBox>
+
+### ⏭ Next: Building the Model
+
+Let's actually write the Category model and wire up its views in our application.

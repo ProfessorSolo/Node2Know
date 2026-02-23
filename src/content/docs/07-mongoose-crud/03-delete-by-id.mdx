@@ -1,0 +1,63 @@
+---
+title: Understanding Delete Operations
+sidebar:
+  order: 3
+  label: Understanding Delete Operations
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import CautionBox from "../../../components/CautionBox.astro";
+
+## Erasing the Evidence
+
+When it comes to removing documents, MongoDB gives us a few options. We could delete one item, or we could delete many items that match a specific filter.
+
+For the most common use cases—like removing a single contact submission from our inbox—Mongoose provides an incredibly ergonomic method: `Model.findByIdAndDelete(id)`.
+
+### How findByIdAndDelete Works
+
+This method is precise and predictable. We pass it the unique `_id` of the document we want to destroy. Mongoose takes that ID, finds the matching document in the database, removes it permanently, and then returns the (now deleted) document to our application.
+
+Here is the crucial part: if Mongoose _fails_ to find a document with that ID, it doesn't crash. Instead, it completes its search and returns `null`.
+
+```js
+// Hypothetical backend logic
+
+// 1. We grab the ID of the submission we want to remove
+const idToRemove = "65b9e4a3d8c11f42d2a4c11b"; // Example ObjectId
+
+// 2. We ask Mongoose to find it and delete it in one step
+const deletedDoc = await Contact.findByIdAndDelete(idToRemove);
+
+// 3. We check the result
+if (deletedDoc === null) {
+  console.log("Nothing to delete! Document not found.");
+} else {
+  console.log(`Success! Deleted submission from: ${deletedDoc.email}`);
+}
+```
+
+<CautionBox title="T.A. Watts">
+  Mutations are power tools. Before you wire up an endpoint that deletes data,
+  you must understand what happens if the operation fails. Handling that `null`
+  return is a requirement, not a suggestion. A silent failure is worse than a
+  loud bug.
+</CautionBox>
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="https://mongoosejs.com/docs/api/model.html#Model.findByIdAndDelete()"
+  variant="secondary"
+  icon="external"
+  iconPlacement="start"
+  target="_blank"
+>
+  Mongoose Docs: findByIdAndDelete
+</LinkButton>
+
+---
+
+### ⏭ Next: Connecting the Wires
+
+Now that we understand the Mongoose method, let's wire it up to our Data Ops layer and our Express Router.

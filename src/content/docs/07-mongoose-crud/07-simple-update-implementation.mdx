@@ -1,0 +1,193 @@
+---
+title: Implementing a Simple Update
+sidebar:
+  order: 7
+  label: Implementing a Simple Update
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+
+## Marking the Inbox
+
+To test our update pattern, we will add a simple boolean flag to our Contact schema: `isRead`. When a user submits a message, it defaults to `false`. From the admin panel, we want a button to switch that flag to `true`.
+
+Since this is a simple, single-action mutation, we can use a standard HTML form targeting an Express POST route. We don't even need client-side `fetch()` for this one.
+
+### 1. The Schema Addition
+
+First, we ensure our database knows about this new property.
+
+```js
+// data/contacts.js
+const contactSchema = new mongoose.Schema({
+  name: String,
+  email: String,
+  message: String,
+  postedDate: { type: Date, default: Date.now },
+  // The new field!
+  isRead: { type: Boolean, default: false },
+});
+```
+
+### 2. The Ops Layer (The Mutation)
+
+Next, we implement the **Load → Modify → Save** pattern we just learned.
+
+```js
+// data/contacts.js (inside ContactOps class)
+
+    // NEW: Toggle read status
+    async toggleContactRead(id) {
+        // 1. Load
+        const contact = await Contact.findById(id);
+
+        // Guard
+        if (!contact) return null;
+
+        // 2. Modify
+        contact.isRead = !contact.isRead;
+
+        // 3. Save
+        await contact.save();
+
+        return contact;
+    }
+```
+
+### 3. The Router
+
+Finally, we wire up a tiny form in our view and connect it to a route that triggers the Ops method. Because it's a standard form submission, we finish the route with a `res.redirect()` back to the inbox.
+
+```js
+// routers/adminRouter.js
+
+// Admin: toggle read status
+router.patch("/contacts/:id/read", async (req, res) => {
+  const { id } = req.params;
+
+  const updated = await _contactOps.toggleContactRead(id);
+
+  if (!updated) {
+    return res.status(404).json({ message: "Contact not found." });
+  }
+
+  res.json({ message: "Contact updated.", updated });
+});
+```
+
+### 4. The View
+
+Similar to the delete function, we'll use a client-side script to handle the update. In this case we'll send a patch request to the server to update the read status of the contact. We'll use a radio button pair to toggle the read status of the contact. The radio buttons will be grouped by the contact's ID to ensure that only one radio button is selected at a time.
+
+```html
+<!-- views/admin/contact/index.ejs -->
+<!-- Read/Unread toggle (radio pair) -->
+        <div
+          class="read-toggle"
+          style="display:flex; gap:.75rem; align-items:center; margin:.5rem 0;"
+        >
+          <label>
+            <input
+              type="radio"
+              name="readState-<%= c._id %>"
+              value="unread"
+              class="contact-toggle-read"
+              <%= !c.isRead ? "checked" : "" %>
+            />
+            Unread
+          </label>
+
+          <label>
+            <input
+              type="radio"
+              name="readState-<%= c._id %>"
+              value="read"
+              class="contact-toggle-read"
+              <%= c.isRead ? "checked" : "" %>
+            />
+            Read
+          </label>
+        </div>
+```
+
+### 5. The Client-Side Patch Request
+
+```js
+// /public/scripts/admin/contacts.js
+
+// existing code ...
+
+// READ/UNREAD (radio change)
+list.addEventListener("change", async (e) => {
+  const input = e.target.closest("input.contact-toggle-read");
+  if (!input) return;
+
+  const li = input.closest("li.js-contact");
+  const id = li?.dataset.id;
+  if (!id) return;
+
+  const isRead = input.value === "read";
+
+  try {
+    const res = await fetch(`/admin/contacts/${id}/read`, {
+      method: "PATCH",
+    });
+
+    const data = await res.json().catch(() => ({}));
+
+    if (!res.ok) {
+      alert(data?.message || "Update failed.");
+      window.location.reload();
+      return;
+    }
+
+    // Optional: update the pill in-row for instant UX feedback
+    const pill = li.querySelector(".js-read-pill");
+    if (pill) {
+      pill.textContent = isRead ? "Read" : "Unread";
+      pill.classList.toggle("pill-read", isRead);
+      pill.classList.toggle("pill-unread", !isRead);
+    }
+  } catch (err) {
+    alert("Network error. Update failed.");
+    window.location.reload();
+  }
+});
+```
+
+<NoteBox title="Professor Solo">
+  Another approach is to use a standard HTML form. If JavaScript breaks on the client, the `<form>` will still submit perfectly.
+  The trade-offs are that the page will reload after the update, which is not as smooth as the client-side update, and we also can't be as specific in the HTTP method used.
+</NoteBox>
+
+Here is a tiny form that could sit next to our delete button in the `admin/contacts/index.ejs` view:
+
+```html
+<!-- views/admin/contacts/index.ejs -->
+<!-- Notice we use form action to target the specific ID -->
+<form
+  action="/admin/contacts/<%= c._id %>/read"
+  method="POST"
+  style="display:inline;"
+>
+  <!-- The button text changes based on the current state -->
+  <button class="btn"><%= c.isRead ? "Read ✓" : "Mark Read" %></button>
+</form>
+```
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="/assets/resources/infographics/mongoose-crud/mongoose-update.png"
+  target="_blank"
+  variant="secondary"
+>
+  📘 Mongoose Update Infographic (PNG)
+</LinkButton>
+
+---
+
+### ⏭ Next: Dual-Purpose Forms
+
+We've mastered simple updates. Now it's time to tackle complex updates using forms that handle multiple inputs.

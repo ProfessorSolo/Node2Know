@@ -1,0 +1,48 @@
+---
+title: Admin Area Preparation
+sidebar:
+  order: 1
+  label: Admin Area Preparation
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+
+## Gating the Garage
+
+Before we start wiring up delete buttons and modifying documents, we need a dedicated space for these operations. We don't want our mutation logic scattered randomly across the application.
+
+By creating a dedicated **Admin Router**, we establish a clean, predictable convention. All administrative actions (like viewing raw submissions, editing projects, or deleting data) will live under the `/admin/*` path.
+
+### The Admin Router Setup
+
+Think of the `adminRouter.js` as the secure wing of our application. Later on, this is where we will drop an authentication gate (middleware) so that only authorized users can cross the threshold. For now, it simply keeps our code organized.
+
+```js
+// routers/adminRouter.js
+const express = require("express");
+const router = express.Router();
+const _contactOps = require("../data/contacts");
+
+// Admin: contacts inbox page
+router.get("/contacts", async (req, res) => {
+  const contacts = await _contactOps.getAllContactsAdmin();
+  res.render("admin-contacts", { contacts });
+});
+
+// Future mutation routes (delete/update) will go here!
+
+module.exports = router;
+```
+
+<NoteBox title="Professor Solo">
+  By isolating these routes early, we foreshadow authentication. When the time
+  comes to secure the app, we only have to lock one door (the `/admin` prefix)
+  instead of fifty individual routes.
+</NoteBox>
+
+---
+
+### ⏭ Next: The Admin Dashboard
+
+Now that we have a secure route, let's build the view to see what we're working with.

@@ -1,0 +1,190 @@
+---
+title: Projects by Category
+sidebar:
+  order: 9
+  label: Projects by Category
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+import CautionBox from "../../../components/CautionBox.astro";
+
+## The Populate() Pipeline
+
+When we retrieve a project from MongoDB, its `categoryId` field is just an `ObjectId`. It looks like: `"5f7d8f9b9a6d..."`
+
+If we want the _actual_ category details (its name, slug, description) combined with the Project details, we don't need to manually run a second lookup. We simply chain `.populate()`!
+
+Add the following new method to our `ProjectOps` class:
+
+```javascript
+// data/projects.js
+async getProjectsByCategory(categoryId) {
+  // Returns projects filtered by the category, AND populates the actual Category object
+  return await Project.find({ categoryId, isActive: true }).populate("categoryId");
+}
+```
+
+Now, instead of `project.categoryId` returning a primitive ID string, it becomes a nested object:
+
+```javascript
+// Accessing populated data in our EJS views
+console.log(project.categoryId.name); // Ex: "Full-Stack Development"
+```
+
+<CautionBox title="T.A. Watts">
+  Populate() isn't magic. Under the hood, MongoDB is still doing a subsequent
+  query to fetch those details. It costs performance. Only `populate()` when we
+  actually intend to render or use the related data inside that view!
+</CautionBox>
+
+## 1. Updating Project Views
+
+Before we build the category page itself, let's update our project queries and views to take advantage of this new populated data!
+
+First, let's update our `getProjectBySlug`, `getProjectList`, and `getAllProjects` methods in our data layer to `populate()` the category details so they are available to our views:
+
+`data/projects.js`
+
+```javascript
+
+// ... existing code ...
+
+// Get all active projects filtered by title or description (fuzzy search)
+    async getProjectList(searchTerm = null) {
+        let filter = { isActive: true };
+
+        if (searchTerm) {
+            // Check both fields using the $or operator and case-insensitive regex
+            filter.$or = [
+                { title: { $regex: searchTerm, $options: 'i' } },
+                { description: { $regex: searchTerm, $options: 'i' } }
+            ];
+        }
+
+        return await Project.find(filter).populate("categoryId");
+    }
+
+
+    async getProjectBySlug(slug) {
+        // We use findOne because we are searching by a custom field (slug)
+        return await Project.findOne({ slug: slug, isActive: true }).populate("categoryId");
+    }
+
+    async getProjectsByTag(tagName) {
+        // MongoDB knows to look inside the 'tags' array for any object whose 'name' property matches!
+        return await Project.find({ "tags.name": tagName, isActive: true }).populate("categoryId");
+    }
+
+    async getProjectsByCategory(categoryId) {
+        return await Project.find({ categoryId, isActive: true }).populate("categoryId");
+    }
+
+    // Admin methods
+
+    async getAllProjects() {
+        return await Project.find().populate("categoryId");
+    }
+
+    // ... more existing methods ...
+```
+
+Next, let's update our project detail view to render the link if a category exists for that project:
+
+```html
+{{/* views/projects/project.ejs */}}
+<div class="project-meta">
+  <% if (project.categoryId) { %>
+  <span class="pill">
+    Category:
+    <a href="/projects/category/<%= project.categoryId.slug %>"
+      ><%= project.categoryId.name %></a
+    >
+  </span>
+  <% } %>
+</div>
+```
+
+## 2. Category Routing
+
+Because we modeled our architecture with an independent Category collection, we can now easily support a dynamic `/projects/category/:slug` route on the front-end to view all projects belonging to a specific category.
+
+Before we write the route, ensure our `CategoryOps` class has a method to find a category by its slug, since the URL will use the readable slug, not the database ID. Let's add this method to our `CategoryOps` class:
+
+```javascript
+// data/categories.js
+async getCategoryBySlug(slug) {
+    return await Category.findOne({ slug });
+}
+```
+
+Next, let's add a dedicated route for this in our existing project router. Be sure to place this **above** our catch-all `/:slug` route, otherwise Express will think the word "category" is a project slug!
+
+We will also need to require our `_categoryOps` at the top of the file.
+
+```javascript
+// routers/projectRouter.js
+const express = require("express");
+const router = express.Router();
+const _projectOps = require("../data/projects");
+const _categoryOps = require("../data/categories"); // NEW
+
+// ... existing GET / route ...
+
+// NEW: Category Filter Route
+router.get("/category/:slug", async (req, res) => {
+  // 1. Find the Category by its slug
+  const category = await _categoryOps.getCategoryBySlug(req.params.slug);
+
+  if (!category) {
+    return res.status(404).render("404");
+  }
+
+  // 2. Fetch all active projects belonging to this category
+  const projects = await _projectOps.getProjectsByCategory(category._id);
+
+  // 3. Render the view, passing both the category and the projects array
+  res.render("project-by-category", { category, projects });
+});
+
+// ... existing GET /:slug route ...
+```
+
+## 3. Building the Custom Category View
+
+Finally, we need the `project-by-category.ejs` template to display the fetched data:
+
+```html
+{{/* views/project-by-category.ejs */}}
+<section class="category-header wrapper">
+  <h2>Projects in: <%= category.name %></h2>
+
+  <% if (category.description) { %>
+  <p class="category-description"><%= category.description %></p>
+  <% } %>
+
+  <p>
+    <a href="/projects" class="btn btn-secondary btn-small"
+      >← Back to All Projects</a
+    >
+  </p>
+</section>
+
+<section class="category-projects wrapper">
+  <% if (projects.length === 0) { %>
+  <p>No projects found in this category yet.</p>
+  <% } else { %>
+  <ul>
+    <% projects.forEach(project => { %>
+    <li>
+      <a href="/projects/<%= project.slug %>"><%= project.title %></a>
+    </li>
+    <% }) %>
+  </ul>
+  <% } %>
+</section>
+```
+
+### ⏭ Next: Lesson Wrap-Up
+
+Let's review the architectural decisions we made and wrap up the NoSQL Relationships module!

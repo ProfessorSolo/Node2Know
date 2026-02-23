@@ -1,0 +1,98 @@
+---
+title: The Pit Stop Challenge
+sidebar:
+  order: 98
+  label: 98 - Lab (NoSQL Relationships)
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+
+## Lab Configuration
+
+> Focus: Embedded Arrays, Data Populations, Relational Design
+
+In this lab section, you will be expanding your current Express application using the architecture methods learned in Chapter 8.
+
+Choose the track that fits your current confidence level:
+
+- **Maintenance:** Connect relationships on paper and implement a basic `.populate()` pipeline.
+- **Custom Job:** Implement a new embedded array of subdocuments for project milestones with full CRUD.
+- **Solo's Garage:** Refactor your project architecture to handle bidirectionally referencing data, mapping projects to clients and clients back to projects.
+
+---
+
+### Maintenance Track
+
+**Goal:** Modify your existing project data to include a hard-coded Array of Tags, and implement `populate()` to load a separate Author collection onto the main page.
+
+**Step-by-Step:**
+
+1. Update your schema to include `tags: [{ type: String }]`. Update existing entries manually via MongoDB Atlas to include sample tags.
+2. Render those tags via a comma-separated join within your EJS Detail view.
+3. Build an `Author` model. Create two entries via Atlas.
+4. Update your main schema to track `authorId`. Map the IDs inside Atlas.
+5. In your router, run `.populate('authorId')` and verify the author name logs.
+
+<NoteBox title="T.A. Watts">
+  <p>
+    <strong>Student-to-AI Prompt for the Maintenance Track:</strong>
+  </p>
+  <p>
+    "Review my attached schemas. I've added an `authorId` referencing an
+    `Author` collection, and an array for `tags`. I also attached my router.
+    Please check how I am utilizing `.populate('authorId')`—is this the correct
+    implementation to expose `authorId.name` in my EJS?"
+  </p>
+</NoteBox>
+
+---
+
+### Custom Job Track
+
+**Goal:** Fully implement an embedded array of subdocuments to track "Milestones" for each project (e.g., Phase 1, Phase 2, Launch), bypassing simple strings for complex nested objects.
+
+**Step-by-Step:**
+
+1. Establish `milestoneSchema` on your main model with `title`, `date`, and `isCompleted` fields.
+2. Embed this schema into your `Project` model as an array: `milestones: [milestoneSchema]`.
+3. Create a new form panel on your project admin view to add a new Milestone.
+4. Hook your admin router to capture the milestone form data and `push()` it into the project's embedded array and `save()`.
+5. Use an EJS loop to display all tracked milestones and their completion status tightly coupled to the project screen.
+
+<NoteBox title="T.A. Watts">
+  <p>
+    <strong>Student-to-AI Prompt for the Custom Job:</strong>
+  </p>
+  <p>
+    "Review my attached Project schema and admin form for adding Milestones. I
+    am attempting to create an embedded array of subdocuments. Please verify if
+    my data is passing cleanly into my Mongoose save function and if my
+    subdocument structure is valid."
+  </p>
+</NoteBox>
+
+---
+
+### Solo's Garage Track
+
+**Goal:** Build an advanced double-referenced relationship. Allow a `Client` to have many `Projects`, while a `Project` belongs to a single `Client`.
+
+**Step-by-Step:**
+
+1. Create a distinct `Client` model collection (`name`, `industry`, `projects: [{ type: ObjectId, ref: 'Project' }]`).
+2. Give the `Project` model a `clientId: { type: ObjectId, ref: 'Client' }`.
+3. When saving a new Project and assigning it a Client from a dropdown, you must not only save the Project, but run a query to find the assigned Client and push the new Project's ID into the Client's `projects` array.
+4. Write a script to handle what happens when a Project is deleted. It must be cleanly removed from the Client's array to prevent orphaned references.
+
+<NoteBox title="Professor Solo">
+  <p>
+    <strong>Student-to-AI Prompt for Solo's Garage:</strong>
+  </p>
+  <p>
+    "Review my route handler for managing two-way data references between
+    Projects and Clients. I am attempting to update both collections when a new
+    project is created or assigned. Can you provide feedback on the efficiency
+    of my logic, and ensure I haven't created a scenario for orphaned data?"
+  </p>
+</NoteBox>
