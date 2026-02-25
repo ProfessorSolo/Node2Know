@@ -1,0 +1,120 @@
+---
+title: Editing Image Metadata
+sidebar:
+  order: 8
+  label: Editing Image Metadata
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+
+## Connecting the Uploads to the UI
+
+Our backend is successfully capturing the image file, tossing it onto the local disk, and saving the subdocument metadata cleanly inside our MongoDB array.
+
+Now we need to provide a UI to the administrator. They need to see the images they have uploaded, add critical accessibility text (`altText`), configure display captions (`caption`), and determine which image should represent the project as its thumbnail (`isFeatured`).
+
+### Displaying the Images
+
+If an array of `project.projectImages` exists, we can map over it immediately after our upload form. Rather than writing a massive block of EJS logic inside `project-image-form.ejs`, let's create a partial specifically for rendering an individual image's edit controls.
+
+Create `views/admin/projects/partials/image-edit-card.ejs`:
+
+```html
+<div class="image-edit-card" data-image-id="<%= image._id %>">
+
+  <img src="/uploads/<%= project.slug %>/<%= image.filename %>" alt="<%= image.altText || '' %>" width="200" />
+
+  <div class="image-metadata-form">
+    <label>
+      Alt Text
+      <input type="text" name="altText" value="<%= image.altText || '' %>" placeholder="Descriptive text..." />
+    </label>
+
+    <label>
+      Caption
+      <input type="text" name="caption" value="<%= image.caption || '' %>" placeholder="Image caption..." />
+    </label>
+
+    <label>
+      Featured Image
+      <input type="radio" name="isFeatured" value="<%= image._id %>" <%= image.isFeatured ? 'checked' : '' %> />
+    </label>
+
+    <button type="button" class="btn btn-save" onclick="updateImageMetadata('<%= project._id %>', '<%= image._id %>')">Save Metadata</button>
+  </div>
+</div>
+```
+
+Now, below your upload form inside `views/admin/projects/project-image-form.ejs`, render this partial inside a grid:
+
+```html
+<% if (project_id && project.projectImages && project.projectImages.length > 0)
+{ %>
+<hr />
+<h3>Project Images Gallery</h3>
+
+<div class="image-gallery-grid">
+  <% project.projectImages.forEach(image => { %> <%-
+  include('partials/image-edit-card', { project, image }) %> <% }); %>
+</div>
+<% } %>
+```
+
+### The Client-Side Fetch (PATCH)
+
+Because the user might have dozens of images, updating an image's `alt` tag shouldn't require refreshing the entire page. We can use the asynchronous `fetch` API to silently send a `<method="PATCH">` request with our modified data!
+
+Add this script to the bottom of your `project-image-form.ejs`:
+
+```html
+<script>
+  async function updateImageMetadata(projectId, imageId) {
+    // 1. Find the specific card
+    const card = document.querySelector(
+      `.image-edit-card[data-image-id="${imageId}"]`,
+    );
+
+    // 2. Extract values
+    const altText = card.querySelector('input[name="altText"]').value;
+    const caption = card.querySelector('input[name="caption"]').value;
+    const isFeatured = card.querySelector('input[name="isFeatured"]').checked;
+
+    // 3. Fire the asynchronous request
+    try {
+      const response = await fetch(
+        `/admin/projects/${projectId}/images/${imageId}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ altText, caption, isFeatured }),
+        },
+      );
+
+      const data = await response.json();
+
+      if (data.success) {
+        alert("Image metadata saved successfully!");
+      } else {
+        alert("Failed to save image metadata.");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("An unexpected error occurred.");
+    }
+  }
+</script>
+```
+
+<NoteBox title="Professor Solo">
+  Notice that our "isFeatured" input is a `radio` button, not a checkbox!
+  Because all the radio buttons share the identical name parameter
+  `name="isFeatured"`, the browser natively enforces that only *one* image can
+  ever be selected as the featured image at a time!
+</NoteBox>
+
+### ⏭ Next: Patching Project Images
+
+We have the client-side UI firing asynchronous PATCH payloads directly to `/admin/projects/:projectId/images/:imageId`. Now we must build the backend Router endpoint and the Mongoose query to accept this data and perform the update.

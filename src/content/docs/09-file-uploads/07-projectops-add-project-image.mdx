@@ -1,0 +1,62 @@
+---
+title: Project Image Subdocs
+sidebar:
+  order: 7
+  label: Project Image Subdocs
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+
+## Persisting File Metadata
+
+While Multer successfully saved the physical file to the local disk, we are responsible for saving a record of that file inside MongoDB. The file's binary data is on the disk; its identity is tracked in the database array.
+
+When Multer finishes processing the image, it populates `req.file`. We also have access to `req.body` which contains any textual inputs submitted alongside the file (like our alt text and caption). We must merge all this information to create our subdocument.
+
+### The Specific Method Implementation
+
+Update your database operations in `data/projects.js` to create the new injection method:
+
+```javascript
+// data/projects.js
+
+// data/projects.js
+
+async addProjectImageToProject(projectId, file, metadata) {
+  try {
+    const project = await Project.findById(projectId);
+    if (!project) return { success: false, errorMessage: "Project not found." };
+
+    // If a file was uploaded, embed its metadata!
+    if (file) {
+      project.projectImages.push({
+        originalName: file.originalname,
+        filename: file.filename,
+        mimeType: file.mimetype,
+        size: file.size,
+        altText: metadata.altText,
+        caption: metadata.caption,
+        isFeatured: metadata.isFeatured === "true", // Checkbox cast to boolean
+      });
+    }
+
+    await project.save();
+    return { success: true, project };
+  } catch (error) {
+    return { success: false, error, errorMessage: "Failed to add projectImage." };
+  }
+}
+```
+
+<NoteBox title="Professor Solo">
+  Because `projectImages` is mapped as an array of subdocuments in our Mongoose
+  schema, we can safely `.push()` an object directly into it, and Mongoose will
+  handle casting the properties specifically. Since we decoupled this from
+  standard project updates, replacing or deleting this specific image later just
+  requires targeting its specific subdocument ID!
+</NoteBox>
+
+### ⏭ Next: Editing Image Metadata
+
+The physical files are safely housed on the disk, and MongoDB knows their individual names in the array. Now we can let users modify the metadata (like alt text) for each individual image!

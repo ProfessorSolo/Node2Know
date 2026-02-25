@@ -50,11 +50,11 @@ const COURSE_MODULES = [
     directory: '08-nosql-relationships',
     released: true,
   },
-  //   {
-  //     label: 'Annie Mation',
-  //     directory: '08-annie-mation',
-  //     released: true,
-  //   },
+  {
+    label: 'File Uploads',
+    directory: '09-file-uploads',
+    released: false,
+  },
   //   {
   //     label: 'CSS Variable Wizardry',
   //     directory: '09-css-variable-wizardry',

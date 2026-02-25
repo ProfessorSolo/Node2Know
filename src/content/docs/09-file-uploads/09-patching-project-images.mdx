@@ -1,0 +1,106 @@
+---
+title: Patching Project Images
+sidebar:
+  order: 9
+  label: Patching Project Images
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import CautionBox from "../../../components/CautionBox.astro";
+import NoteBox from "../../../components/NoteBox.astro";
+
+## Handling Asynchronous Updates
+
+Our frontend is now firing a `PATCH` request containing the updated `altText`, `caption`, and `isFeatured` flags.
+
+We need to build two components to handle this payload:
+
+1. The Admin Router endpoint to catch the `PATCH` request.
+2. The Database Operation to carefully update exactly _one_ object nested inside an array.
+
+### 1. The Database Operation
+
+Because our image data is an array of objects (subdocuments) embedded inside the Project, we can't just slap a blanket update on the project. We must target the specific image inside the array.
+
+Mongoose makes this very straightforward using the specific index identifier `$` or by utilizing `findOneAndUpdate` targeting the subdocument `_id`. Alternatively, because Mongoose treats subdocuments magically, if we `.id()` the subdocument from the array, we can mutate it and save the parent.
+
+Add this new method to your `data/projects.js` file:
+
+```javascript
+// data/projects.js
+async updateProjectImageMetadata(projectId, imageId, updates) {
+  try {
+    const project = await Project.findById(projectId);
+    if (!project) return { success: false, errorMessage: "Project not found." };
+
+    // Mongoose subdocument arrays give us a special .id() method!
+    const image = project.projectImages.id(imageId);
+
+    if (!image) return { success: false, errorMessage: "Image not found." };
+
+    // Update the properties
+    if (updates.altText !== undefined) image.altText = updates.altText;
+    if (updates.caption !== undefined) image.caption = updates.caption;
+    if (updates.isFeatured !== undefined) {
+      // If we are featuring this image, we logically must un-feature all others!
+      if (updates.isFeatured === true || updates.isFeatured === 'true') {
+         project.projectImages.forEach(img => img.isFeatured = false);
+      }
+      image.isFeatured = updates.isFeatured === true || updates.isFeatured === 'true';
+    }
+
+    // Saving the parent project automatically saves the modified subdocuments
+    await project.save();
+    return { success: true, project };
+  } catch (error) {
+    return { success: false, error, errorMessage: "Failed to update image." };
+  }
+}
+```
+
+<NoteBox title="Professor Solo">
+  Notice the `forEach` loop! If the administrator checks the "Featured" box for
+  this image, we simply loop through the `projectImages` array and set
+  `isFeatured` to `false` on everything *before* applying `true` to the target
+  image. It's a very simple and effective way to guarantee only one image is
+  featured at a time!
+</NoteBox>
+
+### 2. The Router Endpoint
+
+Now that our database can handle the mutation, we need to wire up the router to catch the `/admin/projects/:projectId/images/:imageId` endpoint.
+
+Because we are expecting a JSON payload from `fetch` rather than a standard form redirect, we need to respond with `res.json()`.
+
+```javascript
+// routers/adminRouter.js
+
+// PATCH: Update Image Metadata
+router.patch("/projects/:projectId/images/:imageId", async (req, res) => {
+  const { projectId, imageId } = req.params;
+  const updates = {
+    altText: req.body.altText,
+    caption: req.body.caption,
+    isFeatured: req.body.isFeatured,
+  };
+
+  const result = await _projectOps.updateProjectImageMetadata(
+    projectId,
+    imageId,
+    updates,
+  );
+
+  if (!result.success) {
+    return res
+      .status(400)
+      .json({ success: false, errorMessage: result.errorMessage });
+  }
+
+  // Respond with JSON instead of a redirect!
+  res.json({ success: true, message: "Metadata updated successfully!" });
+});
+```
+
+### ⏭ Next: Deleting Project Images
+
+Our images are firmly attached with flawless metadata. The final piece of the CRUD puzzle is allowing the user to seamlessly delete these images to free up space!

@@ -1,0 +1,149 @@
+---
+title: Project Image Form
+sidebar:
+  order: 5
+  label: Project Image Form
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import CautionBox from "../../../components/CautionBox.astro";
+import NoteBox from "../../../components/NoteBox.astro";
+
+## A Dedicated Image Gallery
+
+While we _could_ adjust our main Project Form to handle file uploads, uploading binary data alters how the server parses standard form fields. A cleaner, safer, and more user-friendly approach is to create a completely independent view strictly for managing a project's media gallery.
+
+By decoupling the image form from the primary text data form, we eliminate the risk of accidentally overwriting or deleting images when a user updates basic fields like the project title.
+
+### 1. The Gateway Button
+
+First, we need a way for administrators to access this dedicated gallery. Open your `views/admin/projects/projects-list.ejs` file and add a "Manage Images" link next to the "Edit" button for each project:
+
+```html
+<a href="/admin/projects/<%= project._id %>/images">Manage Images</a>
+<a href="/admin/projects/<%= project._id %>/edit">Edit</a>
+```
+
+### 2. The Image Management View
+
+Create a new file called `project-image-form.ejs` inside your `views/admin/projects/` directory.
+
+We will split this new view into two sections:
+
+1. The Upload Form (for adding new images)
+2. The Gallery (for viewing, modifying, or deleting existing images)
+
+```html
+<!-- views/admin/projects/project-image-form.ejs -->
+
+<div class="header">
+  <h2>Image Gallery: <%= project.title %></h2>
+  <a href="/admin/projects">Back to Projects</a>
+</div>
+
+<hr />
+
+<!-- SECTION 1: THE UPLOAD FORM -->
+<h3>Upload New Image</h3>
+
+<form
+  action="/admin/projects/<%= project.id %>/images?slug=<%= project.slug %>"
+  method="POST"
+  enctype="multipart/form-data"
+>
+  <label>
+    Image File
+    <input type="file" name="projectImage" accept="image/*" required />
+  </label>
+
+  <label>
+    Alt Text
+    <input
+      type="text"
+      name="altText"
+      placeholder="Descriptive text for screen readers"
+    />
+  </label>
+
+  <label>
+    Caption
+    <input type="text" name="caption" placeholder="Displayed under the image" />
+  </label>
+
+  <label>
+    Featured Image
+    <input type="checkbox" name="isFeatured" value="true" />
+  </label>
+
+  <button type="submit">Upload</button>
+</form>
+
+<hr />
+
+<!-- SECTION 2: THE EXISTING GALLERY -->
+<h3>Existing Images</h3>
+
+<div class="image-gallery">
+  <% project.projectImages.forEach((img, index) => { %>
+  <div
+    class="image-card"
+    style="display: flex; gap: 1rem; margin-bottom: 2rem; border: 1px solid #ccc; padding: 1rem;"
+  >
+    <!-- Thumbnail display -->
+    <div class="image-preview" style="width: 200px;">
+      <img
+        src="/uploads/<%= project.slug %>/<%= img.filename %>"
+        alt="<%= img.altText || 'Project Image' %>"
+        style="max-width: 100%; height: auto;"
+      />
+      <% if (img.isFeatured) { %>
+      <span
+        style="background: gold; color: black; padding: 2px 8px; border-radius: 4px; display: inline-block; margin-top: 5px;"
+      >
+        Featured
+      </span>
+      <% } %>
+    </div>
+
+    <!-- Metadata & Controls (Placeholder for now) -->
+    <div class="image-meta" style="flex-grow: 1;">
+      <p><strong>Filename:</strong> <%= img.filename %></p>
+      <p><strong>Alt Text:</strong> <%= img.altText || 'none' %></p>
+      <p><strong>Caption:</strong> <%= img.caption || 'none' %></p>
+
+      <div class="controls" style="margin-top: 1rem; display: flex; gap: 10px;">
+        <button disabled>Edit Metadata</button>
+        <button disabled>Delete Image</button>
+      </div>
+    </div>
+  </div>
+  <% }) %> <% if (project.projectImages.length === 0) { %>
+  <p>No images uploaded yet.</p>
+  <% } %>
+</div>
+```
+
+<CautionBox title="T.A. Watts" type="warning">
+  If you forget `enctype="multipart/form-data"` on the upload form, the binary
+  data will be ignored entirely. The request will reach the server, but Multer
+  won't be triggered, and your image will vanish into the ether!
+</CautionBox>
+
+<NoteBox title="Professor Solo">
+  **Why pass the slug in the query string?**
+
+When using `multipart/form-data`, Multer parses the incoming data sequentially
+from top to bottom. If you rely on a hidden `<input>`, Multer might not
+process it fast enough before the file upload stream begins. This causes a
+"race condition" where `req.body.slug` is `undefined` when Multer's
+`destination` function needs to know where to save the file!
+
+Passing identifiers via the Query String (`?slug=...`) ensures they are
+available instantly in `req.query`, guaranteeing Multer always has the correct
+folder path ready before it even looks at the file stream.
+
+</NoteBox>
+
+### ⏭ Next: The Admin Upload Endpoint
+
+Our gallery view sends a multipart payload to `/admin/projects/:projectId/images`. Next, we need to create this dedicated endpoint in `adminRouter.js`, bind our Multer middleware, and set up a `GET` route to render this new page!

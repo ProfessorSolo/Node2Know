@@ -1,7 +1,7 @@
 ---
 title: Uploads Game Plan
 sidebar:
-  order: 9
+  order: 1
   label: Uploads Game Plan
 ---
 
@@ -13,25 +13,26 @@ import CautionBox from "../../../components/CautionBox.astro";
 
 File uploads in Node.js change the nature of how form data is submitted and processed over standard text parsing. Instead of just sending form URL encoded text, we are moving binary blobs of data alongside text inputs.
 
-To handle a robust 1-to-many relationship (one project, many configurable screenshots), our goal is to build a decoupled file processing handler:
+To handle a robust 1-to-many relationship (one project, many configurable projectImages), our goal is to build a decoupled file processing handler:
 
 ### 1. The File Processor
 
-Instead of uploading a file _while saving_ all other text inputs, we will handle file uploads as an independent API `fetch` request on the project page.
+Instead of uploading a file _while saving_ all other text inputs, we will handle file uploads as an independent operation on a dedicated "Manage Images" page.
 
-- You select the physical file.
-- The API streams it to the `/public/uploads` disk storage immediately.
-- The backend replies specifically with the new disk filename.
-- The UI confirms the upload visually.
+- You navigate away from the main project form to a specialized media gallery view.
+- You select the physical file and submit a standalone `<form>`.
+- The backend streams it to disk storage, organizing it into a project-specific folder like `/public/uploads/my-cool-project`.
+- The backend replies with a redirect back to the gallery.
+- Later on, when we want to modify metadata (like accessibility tags) or delete an image, we can use asynchronous `fetch` requests without needing to re-upload the file!
 
 ### 2. The Relationship Mapping
 
 With the image stored safely on the disk, our `Project` object needs the metadata mapped. Our administrative interface will support:
 
 - **Alt Tags & Captions:** T.A. Watts insists on full accessibility markers.
-- **1-N Scale:** Permitting multiple objects within the `screens` subdoc array.
+- **1-N Scale:** Permitting multiple objects within the `projectImages` subdoc array.
 - **The Featured Flag:** Enabling users to mark exactly _one_ of the subdocuments as the thumbnail cover image for the project list page.
-- **Sorting Flags:** Using an `order` integer field to manually sort how the other non-featured screenshots appear on the Detail view.
+- **Sorting Flags:** Using an `order` integer field to manually sort how the other non-featured projectImages appear on the Detail view.
 
 <CautionBox title="T.A. Watts" type="warning">
   We can't rely on `body-parser` to handle these heavy binary image chunks. You
@@ -43,6 +44,6 @@ With the image stored safely on the disk, our `Project` object needs the metadat
 
 {{/* Placeholder for understanding multipart encodings */}}
 
-### ⏭ Next: Install Multer
+### ⏭ Next: Project Images As Embeds
 
-Let's meet `multer`, the middleman responsible for catching these massive binary blobs.
+Let's look closely at how we will structure the Mongoose Schema to properly embed our new file metadata.

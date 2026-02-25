@@ -1,0 +1,63 @@
+---
+title: Show Featured Project Image
+sidebar:
+  order: 11
+  label: Project List View
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+
+## Reading Metadata on the Front End
+
+Because we saved our files inside public folders (`/public/uploads`), the Express static middleware automatically exposes these images as directly loadable URLs!
+
+All we have to do inside our EJS views is construct an `<img>` tag that references `/uploads/` + the MongoDB metadata filename.
+
+### The Project List Page
+
+On `projects-list.ejs`, where we map across every project dynamically in a loop, we want to show a single projectImage (perhaps grabbing the very first one, or looping through). Let's see how our view can leverage the array of projectImages.
+
+```html
+{{/* views/projects-list.ejs */}}
+
+<article style="border: 1px solid #ddd; padding: 1rem; margin-bottom: 1rem;">
+  <h2><%= project.title %></h2>
+
+  <% // Find the single featured image (if any exist) const featuredImage =
+  project.projectImages?.find(img => img.isFeatured); %> <% if (featuredImage) {
+  %>
+  <img
+    src="/uploads/<%= project.slug %>/<%= featuredImage.filename %>"
+    alt="<%= featuredImage.altText || project.title %>"
+    style="width: 150px; height: 150px; object-fit: cover; border-radius: 8px; float: left; margin: 0 1rem 1rem 0;"
+  />
+  <% } %>
+
+  <p><%= project.description %></p>
+
+  <% if (project.categoryId) { %>
+  <p>
+    <strong>Category:</strong> <%= project.categoryId.name ?
+    project.categoryId.name : project.categoryId %>
+  </p>
+  <% } %> <% if (project.tags && project.tags.length) { %>
+  <p><strong>Tags:</strong> <%= project.tags.map(t => t.name).join(", ") %></p>
+  <% } %>
+
+  <div style="clear: both;"></div>
+
+  <a href="/projects/<%= project.slug %>">View Details →</a>
+</article>
+```
+
+<NoteBox title="Professor Solo">
+  Because we used Embedded documents, you did not need to run a secondary
+  `populate()` or `.find()` to get the images. We retrieved the project, and the
+  image array simply came along with it naturally. This is the massive speed
+  advantage of NoSQL embedding!
+</NoteBox>
+
+### ⏭ Next: The Detail View
+
+Let's apply the same logic to rendering the Project Detail page.

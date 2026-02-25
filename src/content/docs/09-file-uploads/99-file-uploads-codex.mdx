@@ -1,0 +1,105 @@
+---
+title: File Uploads Codex
+sidebar:
+  order: 99
+  label: Codex
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+
+## File Upload Reference Map
+
+This codex catalogs the mechanics of handling `multipart/form-data` uploads with Multer and mapping file metadata in Mongoose.
+
+### The Multipart Form
+
+To send binary data over standard HTTP requests, the form must explicitly declare its encoding.
+
+```html
+<form action="/upload" method="POST" enctype="multipart/form-data">
+  <!-- Accepts all image formats -->
+  <input type="file" name="attachment" accept="image/*" />
+  <button type="submit">Upload</button>
+</form>
+```
+
+<NoteBox title="Professor Solo">
+  Without `enctype="multipart/form-data"`, the server receives only the filename
+  as a text string, the file payload is completely dropped.
+</NoteBox>
+
+### Multer Configuration
+
+Multer intercepts the stream, saves it to disk, and applies filters.
+
+```javascript
+const multer = require("multer");
+const path = require("path");
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, "public/uploads"),
+  filename: (req, file, cb) => {
+    // Generate safe, unique name
+    const unique = Date.now();
+    const ext = path.extname(file.originalname);
+    cb(null, `file-${unique}${ext}`);
+  },
+});
+
+const fileFilter = (req, file, cb) => {
+  // Only accept PDF or Images
+  const allowed =
+    file.mimetype.startsWith("image/") || file.mimetype === "application/pdf";
+  cb(null, allowed);
+};
+
+// Instantiate middleware with limits
+const upload = multer({
+  storage,
+  fileFilter,
+  limits: { fileSize: 2 * 1024 * 1024 }, // 2MB Max
+});
+
+module.exports = upload;
+```
+
+### Route Integration
+
+The previously constructed `upload` instance acts as standard middleware.
+
+```javascript
+const upload = require("../middleware/upload");
+
+// SINGLE File Upload
+router.post("/items", upload.single("attachment"), (req, res) => {
+  const meta = req.file; // The file metadata Object
+  const textFields = req.body; // All other form inputs
+});
+
+// MULTIPLE File Uploads
+router.post("/gallery", upload.array("photos", 5), (req, res) => {
+  const metaArray = req.files; // Array of file metadata Objects
+});
+```
+
+### The Subdocument Mongoose Map
+
+To store `req.file` metadata alongside related parents, build an explicitly modeled Array of Objects.
+
+```javascript
+const fileSchema = new mongoose.Schema(
+  {
+    filename: String,
+    originalName: String,
+    size: Number,
+    mimeType: String,
+  },
+  { _id: false },
+); // Prevents nested IDs from cluttering the data
+
+const parentSchema = new mongoose.Schema({
+  title: String,
+  assets: [fileSchema], // The embedded subdocument mapping
+});
+```

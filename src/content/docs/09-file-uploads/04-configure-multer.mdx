@@ -1,0 +1,80 @@
+---
+title: Configure Multer
+sidebar:
+  order: 4
+  label: Configure Multer
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import CautionBox from "../../../components/CautionBox.astro";
+import NoteBox from "../../../components/NoteBox.astro";
+
+## Writing the Middleware configuration
+
+We want to intercept inbound file traffic explicitly, test its type to ensure it is an image, and deposit it into our `/public/uploads` directory.
+
+Create the `middleware/upload.js` file:
+
+```javascript
+// middleware/upload.js
+const fs = require("fs");
+const path = require("path");
+const multer = require("multer");
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    // 1. Grab the slug from the query string (or fallback)
+    const slug = req.query.slug || "uncategorized";
+
+    // 2. Define the project-specific path
+    const dir = `./public/uploads/${slug}`;
+
+    // 3. Create the directory if it doesn't exist yet
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+
+    // 4. Tell Multer to save the file here
+    cb(null, dir);
+  },
+  filename: (req, file, cb) => {
+    const safeBase = path
+      .basename(file.originalname, path.extname(file.originalname))
+      .toLowerCase()
+      .replace(/[^a-z0-9\-]+/g, "-")
+      .replace(/-+/g, "-")
+      .replace(/^-|-$/g, "");
+
+    const unique = Date.now();
+    cb(null, `${safeBase}-${unique}${path.extname(file.originalname)}`);
+  },
+});
+
+function fileFilter(req, file, cb) {
+  // Keep it simple: images only
+  if (!file.mimetype.startsWith("image/")) return cb(null, false);
+  cb(null, true);
+}
+
+const upload = multer({ storage, fileFilter });
+
+module.exports = upload;
+```
+
+<NoteBox title="Professor Solo">
+  Notice the `fileFilter` checks for `image/`. We are silently rejecting
+  non-images like `.pdf` or `.exe` files. Also, our `filename` logic strips out
+  dangerous characters. Never blindly trust user input or file names!
+</NoteBox>
+
+<CautionBox title="T.A. Watts" type="warning">
+  By organizing our uploads into folders based on the project `slug`, we
+  introduce **coupling**. If a project's slug is ever edited later, the existing
+  images remain stranded in the old folder! You'll either need to write logic to
+  rename the folder when a slug changes or lock down the slug field after
+  creation.
+</CautionBox>
+
+### ⏭ Next: Updating the Form
+
+With our middleware prepared, we can turn our attention to the administrative user interface to securely transmit the file.

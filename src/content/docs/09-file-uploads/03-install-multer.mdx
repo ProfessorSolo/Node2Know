@@ -1,0 +1,38 @@
+---
+title: Prep & Install Multer
+sidebar:
+  order: 3
+  label: Prep & Install Multer
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+
+## Folder Structure
+
+We need a dedicated location on our local machine to store these physical files. Create the target `/public/uploads/` directory where Multer will automatically write our uploaded files.
+
+```txt
+public/
+  uploads/
+```
+
+We also need to create a middleware file to configure Multer to intercept the files. Let's create a directory `middleware/` and the file `middleware/uploads.js`.
+
+```txt
+middleware/
+  uploads.js
+```
+
+## Install Dependencies
+
+Multer is a Node.js middleware for handling `multipart/form-data`, which is primarily used for uploading files. The Express framework cannot natively digest file attachments on its own.
+
+Run the installation script in your app's root directory:
+
+```bash
+npm install multer
+```
+
+### ⏭ Next: Configure Multer
+
+With the package installed and our folders ready, let's configure Multer to receive, store, and process the files.

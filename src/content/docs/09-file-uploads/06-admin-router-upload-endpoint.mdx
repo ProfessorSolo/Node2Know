@@ -1,0 +1,81 @@
+---
+title: The Upload Endpoint
+sidebar:
+  order: 6
+  label: Upload Endpoint
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+
+## Creating Dedicated Routes
+
+In our Admin Router, we need to create two specific routes for our media gallery to function:
+
+1. `GET /admin/projects/:projectId/images` to render the new gallery view.
+2. `POST /admin/projects/:projectId/images` to handle the actual file upload submission.
+
+We will use a **single** file upload named `"projectImage"` (matching the name attribute in our new form). We attach `upload.single("projectImage")` as middleware directly to the POST route.
+
+### The Implementation
+
+```javascript
+// routers/adminRouter.js
+const express = require("express");
+const router = express.Router();
+
+const upload = require("../middleware/upload");
+const _projectOps = require("../data/projects");
+
+// ... existing standard create/update routes remain unchanged ...
+
+// GET: Render the Image Gallery View
+router.get("/projects/:projectId/images", async (req, res) => {
+  const { projectId } = req.params;
+  const project = await _projectOps.getProjectById(projectId);
+
+  if (!project) {
+    return res.redirect("/admin/projects");
+  }
+
+  res.render("admin/projects/project-image-form", { project });
+});
+
+// POST: Add Project Image to an Existing Project
+router.post(
+  "/projects/:projectId/images",
+  upload.single("projectImage"),
+  async (req, res) => {
+    const { projectId } = req.params;
+    const { altText, caption, isFeatured } = req.body;
+
+    // The file is automatically placed on req.file by multer
+    if (!req.file) {
+      // If no file was sent, simply redirect back to the gallery
+      return res.redirect(`/admin/projects/${projectId}/images`);
+    }
+
+    const result = await _projectOps.addProjectImageToProject(
+      projectId,
+      req.file,
+      { altText, caption, isFeatured }, // Pass the metadata
+    );
+
+    if (!result.success) {
+      console.log("Error saving projectImage metadata: ", result.error);
+    }
+
+    // Redirect back to the gallery to see the new image
+    res.redirect(`/admin/projects/${projectId}/images`);
+  },
+);
+```
+
+<NoteBox title="Professor Solo">
+  Because we have isolated this to a dedicated page and endpoint, our primary
+  `POST /projects` edit form remains blissfully unaware that files exist at all!
+</NoteBox>
+
+### ⏭ Next: ProjectOps: Add Project Image
+
+Multer caught the physical file perfectly. Now we need to create the new `addProject ImageToProject` method to save the metadata to our database.

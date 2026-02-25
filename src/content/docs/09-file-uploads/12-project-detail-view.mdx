@@ -1,0 +1,88 @@
+---
+title: Project Detail View
+sidebar:
+  order: 12
+  label: Project Detail View
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import CautionBox from "../../../components/CautionBox.astro";
+
+## The Full Project Gallery
+
+On `project-detail.ejs`, we are looking at the specific project. Now we naturally want to iterate over _all_ the projectImages and render the gallery layout.
+
+### The Implementation
+
+```html
+{{/* views/project-detail.ejs */}}
+
+<article>
+  <h2><%= project.title %></h2>
+
+  <% // Find the featured image (hero banner) const featuredImage =
+  project.projectImages?.find(img => img.isFeatured); // Filter out the featured
+  image to get the remaining gallery images const galleryImages =
+  project.projectImages?.filter(img => !img.isFeatured); %> <% if
+  (featuredImage) { %>
+  <img
+    src="/uploads/<%= project.slug %>/<%= featuredImage.filename %>"
+    alt="<%= featuredImage.altText || project.title %>"
+    style="width: 100%; max-height: 400px; object-fit: cover; border-radius: 8px; margin-bottom: 1.5rem;"
+  />
+  <% if (featuredImage.caption) { %>
+  <p
+    style="text-align: center; font-style: italic; color: #666; margin-top: -1rem;"
+  >
+    <%= featuredImage.caption %>
+  </p>
+  <% } %> <% } %>
+
+  <p><%= project.description %></p>
+
+  <% if (project.categoryId) { %>
+  <p>
+    <strong>Category:</strong> <%= project.categoryId.name ?
+    project.categoryId.name : project.categoryId %>
+  </p>
+  <% } %> <% if (project.tags && project.tags.length) { %>
+  <p><strong>Tags:</strong> <%= project.tags.map(t => t.name).join(", ") %></p>
+  <% } %> <% if (galleryImages && galleryImages.length > 0) { %>
+  <hr style="margin: 2rem 0;" />
+  <h3>Project Gallery</h3>
+  <div
+    class="gallery"
+    style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem;"
+  >
+    <% galleryImages.forEach(img => { %>
+    <figure style="margin: 0;">
+      <img
+        src="/uploads/<%= project.slug %>/<%= img.filename %>"
+        alt="<%= img.altText || project.title %>"
+        style="width: 100%; height: 200px; object-fit: cover; border-radius: 4px;"
+      />
+      <% if (img.caption) { %>
+      <figcaption style="font-size: 0.85rem; color: #555; margin-top: 0.5rem;">
+        <%= img.caption %>
+      </figcaption>
+      <% } %>
+    </figure>
+    <% }) %>
+  </div>
+  <% } %>
+
+  <a href="/projects" style="display: inline-block; margin-top: 2rem;"
+    >← Back to Projects</a
+  >
+</article>
+```
+
+<CautionBox title="T.A. Watts" type="warning">
+  If you mapped the Category to pass its label up to the EJS template, make sure
+  your router route loads the data with `.populate("categoryId")`. Otherwise the
+  view will print the MongoDB ObjectId hash string instead!
+</CautionBox>
+
+### ⏭ Next: Wrapping it Up
+
+You've successfully built a relational database mapper and navigated the complexities of processing binary document streams!

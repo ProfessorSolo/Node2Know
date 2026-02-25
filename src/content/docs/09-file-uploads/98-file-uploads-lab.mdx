@@ -1,0 +1,55 @@
+---
+title: File Uploads Lab
+sidebar:
+  order: 98
+  label: Lab
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import CautionBox from "../../../components/CautionBox.astro";
+
+## The Garage Setup
+
+You've learned how to haul parts from the browser to the backend using `multer`. But right now, our garage doors are wide open. In this lab, we're going to tighten the security, upgrade our storage engine limits, and build a better dashboard for our mechanics.
+
+Get your grease rags ready.
+
+---
+
+### Tier 1: Routine Maintenance
+
+Our Multer configuration is currently open to any image size. Let's fix that.
+
+1. **Size Limits:** Update `middleware/upload.js` so that `multer()` accepts a `limits` object restricting the file size to 2 MB (2 _ 1024 _ 1024 bytes).
+2. **Error Handling:** If someone uploads a 5 MB file, Multer will throw an error. Add a try/catch or an error-handling middleware block inside `adminRouter.js` to catch the `LIMIT_FILE_SIZE` error and redirect the user back to the form with a gentle warning.
+
+**Student-to-AI Prompt:**
+
+> "How do I configure a `limits.fileSize` property inside my Multer middleware, and how should I catch that specific error in an Express route if the file is too big?"
+
+---
+
+### Tier 2: Custom Job
+
+Your shop manager wants to support PDF specifications alongside image projectImages.
+
+1. **Multi-Format Filter:** Expand your `fileFilter` in `upload.js` to accept `image/jpeg`, `image/png`, AND `application/pdf`.
+2. **Dynamic UI Rendering:** On the Project Detail view, use an `if` statement to check the `mimeType` of the projectImage. If it's an image, render the standard `<img>` tag. If it's a PDF, render a `<a href="/uploads/...">Download PDF Spec</a>` link instead!
+
+**Student-to-AI Prompt:**
+
+> "How do I modify a Multer `fileFilter` to accept both standard image mimetypes and application/pdf? How can I use EJS templating to check a string's mimetype and render an image tag vs. an anchor link conditionally?"
+
+---
+
+### Tier 3: The Solo Special
+
+We only built a single-file upload. Let's upgrade our shop to handle bulk deliveries.
+
+1. **Multiple Uploads:** Change `<input type="file" name="projectImage">` to `<input type="file" name="projectImages" multiple>`.
+2. **Router Update:** Change the middleware in `adminRouter.js` from `upload.single('projectImage')` to `upload.array('projectImages', 5)`.
+3. **Array Mapping:** Inside the route handlers, iteratate over `req.files` (it's plural now!) and `.push()` _every_ uploaded file into the Project's metadata subdocument array before saving.
+
+**Student-to-AI Prompt:**
+
+> "Walk me through refactoring a single-file Multer setup to use `upload.array`. Explain the difference between `req.file` and `req.files`, and show me how to map an array of uploaded files into a Mongoose subdocument array."
