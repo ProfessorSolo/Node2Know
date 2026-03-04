@@ -1,0 +1,89 @@
+---
+title: "Modeling Roles in MongoDB"
+description: "Upgrading the User Schema to support role enumeration"
+sidebar:
+  order: 4
+  label: DB Modeling
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+import CautionBox from "../../../components/CautionBox.astro";
+
+### Stamping the Wristband
+
+For our authorization logic to function, the assigned role must be persistently tracked inside the database. When a user successfully executes the login validation cycle, Passport fetches the entire User document and attaches it directly to the `req.user` object payload.
+
+By adding the role directly into the document layout, the authorization validation effortlessly occurs entirely in memory by instantly referencing `req.user.role`.
+
+### Refining the User Schema
+
+We implement this utilizing a native Mongoose `String` definition, heavily restricted by an explicit `enum` array mapping to our three target application roles.
+
+```javascript
+// data/users.js
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
+
+const UserSchema = new Schema(
+  {
+    email: { type: String, required: true, unique: true },
+    passwordHash: { type: String, required: true },
+
+    // NEW ADDITION: The Role Enum
+    role: {
+      type: String,
+      // The enum restricts the allowed values exclusively to this specific array
+      enum: ["USER", "MODERATOR", "ADMIN"],
+      // We default new registrations to the safest, lowest tier
+      default: "USER",
+    },
+  },
+  { timestamps: true },
+);
+
+const User = mongoose.model("User", UserSchema);
+
+class UserOps {
+  // ... existing auth methods ...
+}
+
+module.exports = new UserOps();
+```
+
+<NoteBox>
+  **Professor Solo:** The `enum` acts essentially as a rigid database-level
+  spellchecker. If you attempt executing a query modifying a user's role string
+  to `"administrater"` or `"EDITOR"`, Mongoose will violently throw a
+  `ValidationError` exception, blocking the operation entirely.
+</NoteBox>
+
+#### Single Role vs Array of Roles
+
+For 99% of straightforward web applications, assigning a singular, explicit role string (`role: 'MODERATOR'`) exclusively manages the operational requirement impeccably.
+
+If your requirements aggressively expand, requiring intersecting segmented responsibilities (e.g. they need to be a "Forum Moderator" AND a "Finance Admin"), the architecture easily transitions toward utilizing an explicit String array. However, we do not need that complexity here.
+
+<CautionBox>
+  **T.A. Watts Note:** Do not over-engineer an array of roles before you
+  demonstrably require them. Start small and simple. A single string is vastly
+  easier to evaluate in middleware than iterating through an array.
+</CautionBox>
+
+With the data structurally ready to support our matrix, we will construct the protective middleware defending the actual Express routes.
+
+## Extra Bits & Bytes
+
+_Placeholder for future links and resources_
+
+### ⏭ Next: The RBAC Middleware
+
+The database knows who is who. Now let's build the bouncers.
+
+## Extra Bits & Bytes
+
+_Placeholder for future links and resources_
+
+### ⏭ Next: The RBAC Middleware
+
+The database knows who is who. Now let's build the bouncers.

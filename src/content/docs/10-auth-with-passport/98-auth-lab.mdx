@@ -1,0 +1,92 @@
+---
+title: "Lab: The Admin Door"
+description: "Reinforcement exercises for Auth with Passport"
+sidebar:
+  order: 17
+  label: Lab - The Admin Door
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+import CautionBox from "../../../components/CautionBox.astro";
+
+## Step into the Dojo
+
+Alright, we've installed the deadbolts, hired the bouncers, and established a strict VIP list for the Projects Portfolio. Now it's time to test the locks. Authentication is one of those systems where "almost correct" usually means "completely vulnerable," so the best way to understand the machinery is to push it until it breaks.
+
+Here are three tiers of challenges to solidify your grasp on Passport, sessions, and authorization middleware.
+
+---
+
+### Tier 1: Maintenance (Easy)
+
+**The Objective:** Successfully block an unauthorized user from viewing a specific, isolated route.
+
+Right now, our `requireAuth` middleware is likely guarding the entire `/admin` area. Let's practice applying it on a granular level.
+
+1. Create a brand new "secret" route in your app, perhaps `/projects/easter-egg`.
+2. Add a simple EJS view that just renders _"You found the secret stash!"_
+3. Apply the `requireAuth` middleware _only_ to this specific Easter egg route, while leaving the rest of the public `/projects` area wide open.
+4. Try to access it while logged out. You should be bounced to `/login`.
+5. Log in, and verify you can view the secret stash.
+
+<NoteBox>
+  **Student-to-AI Prompt:** *Hey AI, I'm trying to protect a single Express
+  route (`/projects/easter-egg`) using a custom middleware function called
+  `requireAuth`. Can you show me the exact syntax for injecting middleware
+  directly into a single `app.get()` definition?*
+</NoteBox>
+
+---
+
+### Tier 2: The Custom Job (Medium)
+
+**The Objective:** Customize the Login experience by adding dynamic flash messages using session data.
+
+Currently, if a user types the wrong password, Passport intercepts the failure and redirects them. But the user experience is terrible—they are just dumped back to the `/login` page with no explanation. Let's fix that.
+
+1. Review how your Passport Local Strategy Verify Callback handles errors (e.g. `return done(null, false, { message: 'Invalid credentials.' })`).
+2. Integrate the `connect-flash` package (or simply utilize `req.session` manually) to store that failure message temporarily.
+3. On the `GET /login` controller, check if a flash message exists. If it does, pass it into the rendered EJS view.
+4. Update your `login.ejs` template to render the error message in bright, obnoxious red.
+
+<NoteBox>
+  **Student-to-AI Prompt:** *I am using Passport.js Local Strategy. When
+  `passport.authenticate('local')` fails, I want it to display the 'message'
+  from my verify callback on the login page. Explain how `connect-flash` works
+  with Passport to achieve this, or how I can do it manually with
+  `req.session`.*
+</NoteBox>
+
+---
+
+### Tier 3: The Solo Special (Hard)
+
+**The Objective:** Implement a primitive "Lockout" mechanism to deter brute-force credential stuffing.
+
+We aren't building a bank, but we _are_ building secure habits. If a bot tries to log in to `admin@example.com` with 50 different passwords in 10 seconds, we should probably stop them.
+
+1. Modify your `User` MongoDB Schema to include two new fields: `failedLoginAttempts` (Number, default `0`) and `lockoutUntil` (Date).
+2. Inside your Passport Verify Callback:
+   - _Before_ checking the password, check if `lockoutUntil` is in the future. If it is, immediately return a failure message: _"Account temporarily locked."_
+   - If the password comparison _fails_, increment `failedLoginAttempts`.
+   - If `failedLoginAttempts` reaches `5`, set `lockoutUntil` to 15 minutes from now.
+   - If the password comparison _succeeds_, reset `failedLoginAttempts` to `0` and clear `lockoutUntil`.
+3. Test the mechanism by intentionally failing to log in 5 times in a row.
+
+<CautionBox>
+  **Student-to-AI Prompt:** *I am trying to implement a failed login lockout in
+  my Passport Verify Callback. Given my User schema has `failedLoginAttempts`
+  and `lockoutUntil`, how can I update these fields in MongoDB and correctly
+  reject the login attempt using the `return done()` callback?*
+</CautionBox>
+
+---
+
+## Extra Bits & Bytes
+
+_Placeholder for future links and resources_
+
+### ⏭ Next: Codex: The Admin Door
+
+Done experimenting? Grab your syntax reference guide.

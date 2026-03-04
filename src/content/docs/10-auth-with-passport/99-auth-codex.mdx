@@ -1,0 +1,83 @@
+---
+title: "Authentication Codex"
+description: "Reference guide and syntax for Auth with Passport"
+sidebar:
+  order: 18
+  label: Authentication Codex
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+import CautionBox from "../../../components/CautionBox.astro";
+
+## The Keycard Scanner (Syntax HUD)
+
+| Syntax                         | Purpose                                                                                | Example                                                 |
+| :----------------------------- | :------------------------------------------------------------------------------------- | :------------------------------------------------------ |
+| `bcrypt.hash(pwd, saltRounds)` | Promisified function generating a salted hash from plain text.                         | `const hash = await bcrypt.hash(password, 10);`         |
+| `bcrypt.compare(pwd, hash)`    | Promisified function comparing plain text to a stored hash securely.                   | `const isMatch = await bcrypt.compare(pwd, user.hash);` |
+| `passport.use(strategy)`       | Mounts a specific authentication strategy into the Passport instance.                  | `passport.use(new LocalStrategy(...));`                 |
+| `passport.initialize()`        | Express middleware initializing Passport context on the request.                       | `app.use(passport.initialize());`                       |
+| `passport.session()`           | Express middleware managing persistent login sessions (MUST follow `express-session`). | `app.use(passport.session());`                          |
+| `req.isAuthenticated()`        | Passport-injected method attached to the request explicitly checking auth state.       | `if (req.isAuthenticated()) { ... }`                    |
+| `req.user`                     | Passport-injected object referencing the actively authenticated user document.         | `console.log(req.user.email);`                          |
+| `req.logout(cb)`               | Asynchronous Express method completely stripping the active Passport session.          | `req.logout((err) => { ... });`                         |
+| `req.session.destroy(cb)`      | Node method physically wiping the server-side session object memory.                   | `req.session.destroy((err) => { ... });`                |
+
+---
+
+## The Locksmith's Installation (Configuration List)
+
+1. **Required Packages:**
+   - `npm install express-session`
+   - `npm install passport`
+   - `npm install passport-local`
+   - `npm install bcrypt`
+   - `npm install connect-mongo` (For production persistance)
+
+2. **Core `app.js` Architecture Order (CRITICAL):**
+
+   ```javascript
+   const session = require("express-session");
+   const passport = require("passport");
+
+   // 1. Session Storage Must Precede Passport
+   app.use(
+     session({
+       secret: process.env.SESSION_SECRET,
+       resave: false,
+       saveUninitialized: false,
+       // store: MongoStore.create(...) in production
+     }),
+   );
+
+   // 2. Passport Context Initialization
+   app.use(passport.initialize());
+   app.use(passport.session());
+   ```
+
+---
+
+## The Hazard Map (Common Errors)
+
+| Hazard                           | Symptom                                                                                                         | Immediate Fix                                                                                                                                                     |
+| :------------------------------- | :-------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Missing `await` on bcrypt**    | Users can instantly "log in" using completely arbitrary, invalid passwords.                                     | Prepend `await` explicitly against `bcrypt.compare()` in the Verify callback.                                                                                     |
+| **Middleware Order Inversion**   | Authentication technically succeeds, but `req.user` instantly vanishes on the very next route.                  | Physically elevate `express-session` directly above `passport.session()` inside `app.js`.                                                                         |
+| **Serialization Mismatch**       | Valid sessions aggressively crash the server returning HTTP `500` failures upon reload.                         | Strictly mirror the lookup parameter. If serializing utilizing `user._id`, specifically query utilizing `_id` against `User.findById(id)` during deserialization. |
+| **The Redirect Loop Gap**        | Navigating to `/login` infinitely bounces the browser dynamically violently returning to `/login`.              | Explicitly isolate the `/login` route outside the protective boundaries deployed by your `requireAuth` barrier middleware.                                        |
+| **Development Cookies Sticking** | Sessions continually silently fail operating flawlessly despite absolutely identical production configurations. | Temporarily explicitly configure `cookie: { secure: false }` operating natively inside HTTP local contexts lacking active SSL/TLS certificates.                   |
+
+---
+
+## Solo's Security Pro-Notes
+
+- **Never Log the Payload:** Never intentionally permanently log raw incoming POST payloads containing plaintext passwords globally console tracing application requests dynamically.
+- **Ambiguous Failures Are Good Failures:** Returning explicitly distinct errors denoting "User not found" dynamically allows active attackers mechanically identifying explicitly exact registered emails. Always universally return "Invalid credentials."
+- **Data Model Minimization:** `password` fields emphatically inherently explicitly logically exist exclusively inside the temporary memory block processing the active request payload inherently terminating before explicit database insertion saving only `passwordHash`.
+
+## Extra Bits & Bytes
+
+_Placeholder for future links and resources_
+
+_End of Module._

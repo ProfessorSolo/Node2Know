@@ -1,0 +1,71 @@
+---
+title: "The Logout Flow"
+description: "Destroying Sessions and Clearing Cookies"
+sidebar:
+  order: 11
+  label: Logout Flow
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+import CautionBox from "../../../components/CautionBox.astro";
+
+### Giving Back the Wristband
+
+Authentication is a temporary state, not a permanent condition. Users must retain the ability to securely definitively revoke their active session—especially if accessing the CMS from a shared machine or public network.
+
+The Logout flow is blessedly simple. It requires three distinct actions executed in rapid succession by the Express application over the active HTTP request context.
+
+1. **Session Invalidation:** Instruct Passport to immediately strip the authenticated state inherently tied to the current `req.user` object.
+2. **Cookie Annihilation:** Instruct the underlying `express-session` instance to proactively physically destroy the server-side session data entirely and clear the associated client cookie from the user's browser storage.
+3. **Public Diversion:** Redirect the newly anonymous client directly back into standard Public territory (typically the root `/` Home Page or the `/login` prompt).
+
+<NoteBox>
+  **Professor Solo:** Passport version 0.6.0 implemented a major architectural
+  change making `req.logout()` an asynchronous function. It structurally demands
+  a mandatory callback to ensure session memory cleanup completes *before*
+  shifting the client.
+</NoteBox>
+
+### A High-Level Controller View
+
+When mapped to an Express controller action, the physical logic generally reflects this sequence:
+
+```javascript
+// routers/adminRouter.js
+const express = require("express");
+const adminRouter = express.Router();
+
+adminRouter.get("/logout", (req, res, next) => {
+  // 1. Invalidate Passport authentication context
+  req.logout((err) => {
+    if (err) return next(err);
+
+    // 2. Destroy the underlying structural session entirely
+    req.session.destroy((err) => {
+      // Clear cookie explicitly via its specific assigned configuration name.
+      res.clearCookie("connect.sid");
+
+      // 3. Diversion
+      res.redirect("/admin/login");
+    });
+  });
+});
+```
+
+<CautionBox>
+  **T.A. Watts Note:** The `res.clearCookie()` name must exactly match whatever
+  primary string configuration you assigned during the `express-session`
+  middleware initialization block. If you customized it to `portfolio.sid`, you
+  definitively must clear `portfolio.sid`.
+</CautionBox>
+
+Now that we can successfully issue stateful entry and execute stateful exits, we must finally deploy the Authorization guards actually demanding that initial presentation of valid credentials across our target restricted routes.
+
+## Extra Bits & Bytes
+
+_Placeholder for future links and resources_
+
+### ⏭ Next: Authorization Middleware
+
+We can log in and out. Now let's actually secure the vault.

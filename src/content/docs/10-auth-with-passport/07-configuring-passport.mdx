@@ -1,0 +1,126 @@
+---
+title: "Configuring Passport"
+description: "Setting up the express-session and passport middleware"
+sidebar:
+  order: 8
+  label: Configuring Passport
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+import CautionBox from "../../../components/CautionBox.astro";
+
+### Wiring the Framework
+
+Now that we have our `User` data model prepared and our dependencies installed, it's time to actually configure the middleware sequence in `app.js`. This is where all the disparate parts—Express, sessions, and Passport—are glued together.
+
+There are three primary components to complete before we can authenticate anyone:
+
+1. Initialize the `express-session` storage.
+2. Initialize `passport` to tap into that session.
+3. Define the **Serialization** and **Deserialization** rules so Passport knows exactly how to pack and unpack our `User` objects into the session cookie.
+
+<CautionBox>
+  **T.A. Watts Note:** Middleware order in your `app.js` file is **critical**.
+  The session middleware *must* be mounted before the passport session
+  middleware, and all of this must occur *before* your routers.
+</CautionBox>
+
+### 1. The Session and Passport Initialization
+
+In your root `server.js` file, require the necessary packages and integrate them into the middleware stack.
+
+```javascript
+// server.js
+const express = require("express");
+const session = require("express-session");
+const passport = require("passport"); // We will change this to our custom file shortly!
+const app = express();
+
+// ... (other middleware like body-parsers and static files) ...
+
+// 1. Configure the Session Middleware
+app.use(
+  session({
+    secret: "super_secret_dev_key", // In production, this must be an environment variable!
+    resave: false,
+    saveUninitialized: false,
+  }),
+);
+
+// 2. Initialize Passport and its Session tie-in
+app.use(passport.initialize());
+app.use(passport.session());
+
+// ... (your routers go here) ...
+```
+
+<NoteBox>
+  **Professor Solo:** The `secret` parameter is what Express uses to
+  cryptographically sign the session ID cookie. This prevents malicious users
+  from simply faking a cookie string and hijacking someone else's session.
+</NoteBox>
+
+### 2. The Identity Transformer (Serialization)
+
+When a user successfully logs in, Passport needs to store a reference to that user in the newly created session. But storing the _entire_ user document (including the hashed password) in the session memory is wasteful and potentially dangerous.
+
+**Serialization** is the process of extracting the smallest possible unique identifier (usually the Mongo `_id`) and packing that into the session object.
+
+Let's create a dedicated file for all of our Passport logic so `app.js` doesn't get cluttered.
+
+```javascript
+// middleware/passport.js
+const passport = require("passport");
+const _userOps = require("../data/users"); // Assuming we added operations here
+
+// Serialize: What should we put IN the session cookie?
+passport.serializeUser((user, done) => {
+  // We only store the user's stringified _id
+  done(null, user._id.toString());
+});
+```
+
+### 3. Rehydrating the User (Deserialization)
+
+On every subsequent request from the browser, Express reads the incoming cookie and finds the corresponding session object in memory. Passport then takes over and sees the `_id` string we serialized earlier.
+
+**Deserialization** is the process of taking that `_id` from the session, querying the database to find the full User document, and attaching it to `req.user` for the remainder of the request lifecycle.
+
+```javascript
+// middleware/passport.js (continued)
+// ...
+
+// Deserialize: How do we unpack the cookie and get the whole User back?
+passport.deserializeUser(async (id, done) => {
+  try {
+    // We haven't written this data method yet, but we will!
+    const user = await _userOps.getUserById(id);
+    done(null, user);
+    // ^ This user object is now globally available at req.user
+  } catch (err) {
+    done(err);
+  }
+});
+
+module.exports = passport;
+```
+
+### 4. Injecting the Configuration
+
+Now that our local Passport file knows how to handle serialization, we need to instruct `server.js` to use _this_ customized configuration instead of the raw, unconfigured package.
+
+Head back to `server.js` and firmly replace the original `passport` import.
+
+```javascript
+// server.js
+
+// const passport = require("passport"); // <--- REMOVE THIS
+const passport = require("./middleware/passport"); // <--- ADD THIS
+```
+
+With the infrastructure pipeline connected and injected, the bouncer now knows _where_ to stand and _how_ to handle the VIP wristbands. Next, we need to actually start letting people sign up to be on the list.
+
+### ⏭ Next: The Registration Flow
+
+Let's build the sign-up mechanism.

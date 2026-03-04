@@ -1,0 +1,46 @@
+---
+title: "The Integration Checklist"
+description: "A mental model and step-by-step checklist for the portfolio app"
+sidebar:
+  order: 14
+  label: Integration Checklist
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+import CautionBox from "../../../components/CautionBox.astro";
+
+### Wiring It All Together
+
+Implementing fully robust authentication architectures correctly inherently demands executing numerous extremely specific tightly coupled steps sequentially bridging varying disparate operational files encompassing controllers, models, routes, and core `app.js` configurations.
+
+Use this explicit tracking baseline maintaining focus mentally organizing the operational layout dynamically throughout your physical integration timeline:
+
+- [ ] Add the explicit `User` model (`email`, `passwordHash`, `roles`) into the MongoDB schema collections.
+- [ ] Add the functional `register` and `login` route handlers mapping controllers explicitly managing the GET renders visually coupled rendering the associated Pug/EJS POST form views.
+- [ ] Install and configure the core `express-session` architecture utilizing `.env` secrets establishing persistent state securely tracking the client connection parameters.
+- [ ] Install, import, and configure the primary Passport instances utilizing `passport-local` executing the customized Verify Callback handling the `bcrypt.compare()` architecture securely parsing the password variables successfully.
+- [ ] Implement the `serializeUser` configuration explicitly mapping tracking identifiers physically placing the reference IDs securely into the provisioned `session`.
+- [ ] Implement the `deserializeUser` configuration dynamically orchestrating resolving corresponding complete user objects dynamically attaching universally populating the `req.user` contexts securely.
+- [ ] Write the customized `requireAuth` barrier middleware explicitly guarding the targeted routes conditionally effectively blocking anonymous traffic structurally redirecting clients consistently natively to the login boundary.
+- [ ] Mount the newly finalized `requireAuth` protective guard strictly across every single relevant `/admin/*` application sequence route explicitly shielding the CRUD controllers dynamically.
+- [ ] Update the global layout navigation conditionally specifically validating authentication conditionally dynamically rendering the Admin Link explicitly uniquely when successfully authenticated contexts resolve inherently.
+- [ ] Construct the `logout` controller route handling correctly orchestrating clearing the internal application `req.session.destroy()` tracking variables alongside clearing the client `connect.sid` cookie explicitly resetting authentication correctly dynamically inherently closing the lifecycle loop completely.
+
+<NoteBox>
+  **Professor Solo:** The exact structural progression matters uniquely. Never
+  configure routes demanding context utilizing `req.user` explicitly before
+  meticulously configuring and effectively mounting the base middleware
+  architecture generating manipulating the sessions structurally supplying the
+  context inherently dynamically.
+</NoteBox>
+
+This effectively represents a secure completely operational administrative authentication layer definitively anchoring our core portfolio CMS structure securely.
+
+## Extra Bits & Bytes
+
+_Placeholder for future links and resources_
+
+### ⏭ Next: Where We Go Next
+
+The core is secure. What's the next evolution?

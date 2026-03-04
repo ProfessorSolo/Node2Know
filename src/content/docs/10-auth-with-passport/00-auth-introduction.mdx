@@ -1,0 +1,60 @@
+---
+title: "Introduction to Authentication"
+description: "Understanding Identity and Security in Web Applications"
+sidebar:
+  order: 1
+  label: Intro to Authentication
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+import CautionBox from "../../../components/CautionBox.astro";
+
+## ID Will Be Checked at the Door
+
+At its core, a web application is just a server handing out resources and data to anyone who asks for them. By default, if someone knows the exact URL, they can ask the server for anything it has.
+
+Imagine building a stunning gallery, taking the time to curate every exhibit, and then leaving the back loading-dock door wide open with a giant neon sign reading: _“Management Office – Please feel free to re-arrange the exhibits.”_ That’s fine if it’s an empty warehouse, but real applications need both **identity** and **access control**.
+
+In this chapter, we are going completely focus on **authentication** (verifying _who_ you are). We cannot begin to enforce **authorization** (verifying _what_ you’re allowed to do) until we have definitively established the identity of the person knocking at the door. We’ll cover authorization in the next module.
+
+For now, we’ll use **Passport.js** as our bouncer, implementing a **Local Strategy** (using good old-fashioned email and password) paired with **server-side sessions** to keep you comfortably logged in between page loads.
+
+<img
+  src="/assets/lessons/10-auth-with-passport/auth-introduction.png"
+  alt="Neo-Retro isometric conceptual diagram illustrating Authentication vs. Authorization"
+/>
+
+_Fig 1: Authentication (ID Scanner) vs. Authorization (VIP List)_
+
+<NoteBox>
+  **T.A. Watts Note:** Before we dive deep into the code, we need to sort out
+  exactly *how* a stateless protocol like HTTP manages to remember that you're
+  securely logged in.
+</NoteBox>
+
+### Learning Goals
+
+By the end of this chapter, you should be perfectly capable of:
+
+- Explaining the critical difference between **authentication** and **authorization**—and understanding why mixing them up is a recipe for disaster.
+- Describing the inner workings of **session-based auth** within an Express application.
+- Grasping exactly what Passport.js does (and, more importantly, what it _doesn’t_ do for you).
+- Storing user passwords safely and securely using **hashing + salting** (because storing them in plain text is a fast track to ruin).
+- Putting up velvet ropes to protect sensitive application routes strictly behind an authentication check.
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="https://github.com/ProfessorSolo/Node2Know-06-01-File-Uploads.git"
+  variant="primary"
+  icon="external"
+  iconPlacement="start"
+  target="_blank"
+>
+  Starting point repo (continued from File Uploads repo)
+</LinkButton>
+
+### ⏭ Next: Authentication vs Authorization
+
+We understand why we need doors. Now let's learn how to check IDs versus checking VIP passes.

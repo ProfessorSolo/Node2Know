@@ -1,0 +1,77 @@
+---
+title: "Data Model: User Schema"
+description: "Setting up the minimal required User model for MongoDB"
+sidebar:
+  order: 7
+  label: User Schema
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+import CautionBox from "../../../components/CautionBox.astro";
+
+### Designing the Resident
+
+We need a minimalist, yet entirely realistic, MongoDB `User` document to facilitate the login process. The goal for our course app is absolute correctness and clarity, free from bloated, unnecessary attributes.
+
+A sufficient `User` mapping requires:
+
+- `email` (Must be strictly unique)
+- `passwordHash` (The bcrypt output discussed earlier)
+- `createdAt` and `updatedAt` (Because time is linear)
+
+<NoteBox>
+  **Professor Solo:** In larger production applications, we'd likely expand this
+  document significantly. We might include properties like `displayName`,
+  `lastLoginAt`, or an `isActive` flag allowing us to "soft disable" disruptive
+  accounts without physically deleting them.
+</NoteBox>
+
+### Sticking to the Essentials
+
+In keeping with our simplified architecture (avoiding full MVC overhead), we will place this schema and all related database operations inside a single `/data/users.js` file.
+
+For now, keeping the document lean ensures we don't trip over schema validations while wiring up the complex passport functionality. We will cover adding administrative `roles` entirely in the next module, showcasing the phenomenal flexibility of MongoDB's document-oriented structure.
+
+```javascript
+// data/users.js
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
+
+const UserSchema = new Schema(
+  {
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+    },
+    passwordHash: {
+      type: String,
+      required: true,
+    },
+  },
+  { timestamps: true },
+);
+
+const User = mongoose.model("User", UserSchema);
+
+class UserOps {
+  // We will add authentication data methods here in the coming lessons
+}
+
+module.exports = new UserOps();
+```
+
+<CautionBox>
+  **T.A. Watts Note:** Notice the distinct lack of a regular `password` field
+  here. This is exactly what we warned you about earlier. The plain text
+  password is used *only* in-memory during transit to generate the
+  `passwordHash` and is then instantly discarded.
+</CautionBox>
+
+With the entity constructed, we can finally map out the lifecycle of a user attempting to verify their credentials.
+
+### ⏭ Next: Configuring Passport
+
+The list is empty. But before we start letting people sign up, let's configure the bouncer.

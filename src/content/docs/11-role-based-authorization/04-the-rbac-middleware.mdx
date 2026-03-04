@@ -1,0 +1,80 @@
+---
+title: "The RBAC Middleware"
+description: "Creating the requireRole bouncer middleware"
+sidebar:
+  order: 5
+  label: RBAC Middleware
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+import CautionBox from "../../../components/CautionBox.astro";
+
+### The Two-Layer Security Guard
+
+In the previous module, we constructed the robust `requireAuth` middleware, which explicitly validates incoming session cookies, fundamentally blocking anonymous access to the administrative dashboard layout.
+
+Role-Based Authorization introduces a foundational "Two-Layer" defensive architecture, seamlessly augmenting our existing security perimeter:
+
+1. **Authentication Layer:** Are you logged into the application? (Handled by `requireAuth`).
+2. **Authorization Layer:** Do your capabilities align with the requested action? (Handled by our new `requireRole`).
+
+### Constructing `requireRole`
+
+To apply this correctly, we dynamically construct completely reusable, centralized middleware. This generic function accepts an array of allowed roles and fundamentally evaluates the incoming `req.user` against that array before passing control to the final controller.
+
+```javascript
+// middleware/auth.js
+
+// Layer 1: The standard Authentication Guard
+function requireAuth(req, res, next) {
+  if (req.isAuthenticated?.() && req.user) return next();
+  return res.redirect("/admin/login");
+}
+
+// Layer 2: The dynamic Role Authorization Guard
+function requireRole(...allowedRoles) {
+  return (req, res, next) => {
+    // Failsafe: If no user context exists, bounce them
+    if (!req.user) return res.redirect("/admin/login");
+
+    // Evaluate if the user's role string actively matches the allowed array
+    if (allowedRoles.includes(req.user.role)) {
+      return next();
+    }
+
+    // Explicit Authorization Failure
+    return res
+      .status(403)
+      .send("Access Denied: You do not possess the required capabilities.");
+  };
+}
+
+module.exports = { requireAuth, requireRole };
+```
+
+<NoteBox>
+  **Professor Solo:** The incredible power of `requireRole(...allowedRoles)` is
+  the spread operator. It allows you to dynamically configure the middleware
+  right at the router level by passing in an array of strings (e.g.
+  `requireRole("ADMIN", "MODERATOR")`), creating a modular, reusable security
+  barrier.
+</NoteBox>
+
+Once this centralized function acts as the gatekeeper, we can explicitly secure every administrative endpoint smoothly. Checking the role in one centralized place drastically reduces security breaches.
+
+<CautionBox>
+  **T.A. Watts Note:** Checking `req.user.role` natively inside specific
+  individual route handlers creates sprawling authorization "spaghetti".
+  Consistently prioritize deploying your centralized generic middleware over
+  every administrative route. It is vastly safer to secure an endpoint centrally
+  than scattering `if(role === 'ADMIN')` throughout 50 controllers.
+</CautionBox>
+
+## Extra Bits & Bytes
+
+_Placeholder for future links and resources_
+
+### ⏭ Next: Enforcing Capabilities
+
+The bouncers are ready. Let's tell them which Express router doors to guard.

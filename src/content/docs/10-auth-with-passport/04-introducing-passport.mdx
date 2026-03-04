@@ -1,0 +1,86 @@
+---
+title: "What Passport.js Actually Does"
+description: "Understanding the role of Passport in your Express stack"
+sidebar:
+  order: 5
+  label: Intro to Passport
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+import CautionBox from "../../../components/CautionBox.astro";
+
+### The Bouncer at the Door
+
+Passport.js is extremely popular Express middleware that connects the tedious process of credential-checking to the Express request-response flow. It handles the mundane heavy lifting of maintaining logged-in states.
+
+At a high conceptual level, Passport.js operates in three distinct phases:
+
+1. **Strategy:** The specific method of authentication (e.g., local username/password, Google OAuth, GitHub, etc.).
+2. **Verify Callback:** The custom function you write that checks those incoming credentials against your database and returns a user object.
+3. **Session Management:** The mechanism of serializing that user out to a cookie session, and then deserializing it back into `req.user` on future requests.
+
+<img
+  src="/assets/lessons/10-auth-with-passport/passport-introduction.png"
+  alt="Neo-Retro isometric conceptual diagram of a robot bouncer protecting a server rack."
+/>
+
+_Fig 1: The Bouncer (Passport), the Clipboard (Strategy), and the Club (Server)_
+
+<NoteBox>
+  **Professor Solo:** Think of Passport as the framework's bouncer. It stands at
+  the door with a clipboard (the **Strategy**) and asks for ID. If you check out
+  (the **Verify** phase), it slaps a shiny wristband on you (the **Session**)
+  cookie, so you can wander around freely without being carded at every single
+  room.
+</NoteBox>
+
+### What Passport DOES NOT Do
+
+It's equally important to understand where Passport's responsibilities end. Many beginners assume Passport is a magic bullet, only to realize it requires significant manual configuration.
+
+Passport **does not**:
+
+- Create your database `User` model or schema.
+- Hash your passwords before saving them (you rely on `bcrypt` for that).
+- Create your session store infrastructure (you rely on `express-session` for that).
+- Decide _which_ specific routes are “admin-only” (that’s Authorization, which is your job to define with middleware).
+
+<CautionBox>
+  **T.A. Watts Note:** The most common point of failure is misunderstanding
+  **Serialize** and **Deserialize**. Serializing is Passport stuffing a tiny
+  reference ID into the session cookie. Deserializing is Passport taking that
+  ID, searching the database for the matching User on subsequent requests, and
+  attaching it to `req.user`.
+</CautionBox>
+
+With the theory out of the way, let's install the actual dependencies.
+
+### Installation and Setup
+
+Before we start wiring up the routes, let's install the fundamental packages required for this stack. Run the following command in your terminal:
+
+```bash
+npm install passport passport-local express-session bcrypt
+```
+
+- **`passport`**: The core authentication framework.
+- **`passport-local`**: The specific strategy for authenticating with a username (or email) and password.
+- **`express-session`**: Exposes the session object and manages the cookie exchange.
+- **`bcrypt`**: The encryption library we'll use to securely hash user passwords.
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="https://www.passportjs.org"
+  variant="secondary"
+  icon="external"
+  iconPlacement="start"
+  target="_blank"
+>
+  Passport.js
+</LinkButton>
+
+### ⏭ Next: Target Auth Behavior
+
+Passport is hired, but what exactly do we expect it to do?

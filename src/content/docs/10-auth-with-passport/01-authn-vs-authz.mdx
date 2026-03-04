@@ -1,0 +1,55 @@
+---
+title: "Authentication vs Authorization"
+description: "Understanding the difference between AuthN and AuthZ"
+sidebar:
+  order: 2
+  label: Authentication vs AuthZ
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+import CautionBox from "../../../components/CautionBox.astro";
+
+### What's the Difference?
+
+Before writing a single line of security logic, we need to clearly separate two concepts that regularly trip up developers: **Authentication (AuthN)** and **Authorization (AuthZ)**.
+
+Let’s keep it straightforward.
+
+#### Authentication (AuthN) = Who are you?
+
+This is the **identity check**. You claim to be `admin@example.com`, and you provide a password to prove it.
+
+Typical authentication actions include:
+
+- Registering a brand new account
+- Logging in
+- Staying logged in (via a session or cookie or JWT)
+- Logging out
+
+#### Authorization (AuthZ) = What can you do?
+
+Once we absolutely know _who_ you are, we have to decide what you’re allowed to touch. Just because you have a key to the building doesn't mean you can open the vault.
+
+Examples of authorization in the Projects Portfolio:
+
+- **Public:** Anyone on the internet can view `/projects`.
+- **Protected:** Only a logged-in administrator can access `/admin/projects`.
+- **Privileged:** Only administrators can create, edit, or delete categories.
+- **Privileged:** Only administrators can mark contact submissions as “read.”
+
+<CautionBox>
+  **T.A. Watts Note:** Mixing these two up will break your application. Checking
+  if a user exists (AuthN) is useless if you don't then verify they have the
+  rights to drop a database table (AuthZ).
+</CautionBox>
+
+Now that we know what we're looking for, we have to find a way to maintain this state across an inherently stateless web protocol.
+
+## Extra Bits & Bytes
+
+_Placeholder for future links and resources_
+
+### ⏭ Next: Session-based Auth & Cookies
+
+HTTP forgets everything. Let's force it to remember who we are.

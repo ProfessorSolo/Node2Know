@@ -1,0 +1,60 @@
+---
+title: "Codex: The Capability Matrix"
+description: "Reference guide for configuring Role-Based Authorization"
+sidebar:
+  order: 9
+  label: Codex 11
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+import CautionBox from "../../../components/CautionBox.astro";
+
+## The Blueprint (Configuration & Setup)
+
+1. **Schema Modifications:**
+   - Define a `role` field on the `User` Mongoose schema.
+   - Utilize explicit `enum` arrays restricting valid inputs (e.g., `enum: ['admin', 'editor']`).
+   - Assign a safe `default` fallback (e.g., `default: 'editor'`).
+
+2. **Middleware Pattern Sequence:**
+   - Layer 1: Validate session explicitly (`requireAuth`).
+   - Layer 2: Validate capabilities conditionally (`requireRole(...allowed)`).
+
+---
+
+## The Access Control List (Syntax HUD)
+
+| Syntax              | Purpose                                                                                          | Example                                                  |
+| :------------------ | :----------------------------------------------------------------------------------------------- | :------------------------------------------------------- |
+| `enum: ['a', 'b']`  | Mongoose schema property restricting a string exactly to predefined array values.                | `role: { type: String, enum: ['admin', 'editor'] }`      |
+| `...allowedRoles`   | JavaScript spread operator allowing middleware to accept variable argument arrays.               | `function requireRole(...allowedRoles) { ... }`          |
+| `.includes()`       | Native JS array method checking if a specific string exists within the array.                    | `if (allowedRoles.includes(req.user.role))`              |
+| `res.status(403)`   | Express method setting an HTTP 403 Forbidden status for rejected authorization.                  | `res.status(403).render('errors/403');`                  |
+| `res.locals.key`    | Express property attaching global variables specifically scoped to the active EJS rendered view. | `res.locals.canDelete = true;`                           |
+| `<% if(boolean) %>` | EJS tag evaluating server-passed conditions to conditionally render HTML.                        | `<% if (canDelete) { %> <button>Delete</button> <% } %>` |
+
+---
+
+## The Hazard Map (Common Errors)
+
+| Hazard                                     | Symptom                                                                                                       | Immediate Fix                                                                                                                                                            |
+| :----------------------------------------- | :------------------------------------------------------------------------------------------------------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Authentication/Authorization Confusion** | Logged in users inadvertently gain root admin access inherently.                                              | Strictly enforce the "two-layer" middleware configuration; never evaluate `req.isAuthenticated()` without subsequently evaluating `req.user.role` on destructive routes. |
+| **Scattered Logic (Spaghetti)**            | Difficult to audit; roles evaluated randomly across 50 individual controllers.                                | Refactor `if (role === 'admin')` from controllers directly into centralized `requireRole` middleware mapped at the `adminRouter` level.                                  |
+| **Incomplete UI Gating**                   | 403 Forbidden errors triggered consistently when the interface clearly renders restricted capability buttons. | Ensure `res.locals` booleans perfectly match the deployed `requireRole` arrays routing the views. Determine capabilities server-side.                                    |
+| **Unprotected Endpoints**                  | Users manually executing POST requests successfully against actions hidden from the UI.                       | Understand that hiding an EJS button is not security. Always protect the ultimate destination `/endpoint/target` completely independently.                               |
+
+---
+
+## Solo's Security Pro-Notes
+
+- **The Principle of Least Privilege:** Never assign administrative access simply because it is convenient for testing or "just in case." Only grant the absolute minimum required permissions necessary to execute the explicit job function.
+- **Auditing Matrices:** Before writing middleware, map your exact Application Domains (Projects, Categories, Contacts) vertically and your precise Roles (Admin, Editor) horizontally. Mark an explicit 'X' where capabilities organically overlap. If you cannot draw the matrix, do not write the middleware.
+- **Resource Ownership (Advanced):** Standard RBAC validates user types (`editors` can edit). Resource Ownership logically validates unique users (`editor 1` can only edit resources authored explicitly by `editor 1`). This inherently requires mapping `User._id` to specific `Document.author` metadata properties.
+
+## Extra Bits & Bytes
+
+_Placeholder for future links and resources_
+
+*End of Module.*

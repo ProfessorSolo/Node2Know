@@ -1,0 +1,64 @@
+---
+title: "Role-Based Access Control"
+description: "The conceptual industry standard for scalable authorization."
+sidebar:
+  order: 2
+  label: RBAC Overview
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+import CautionBox from "../../../components/CautionBox.astro";
+
+### The Scaling Problem: Access Control Lists (ACL)
+
+When developers first approach authorization, the instinct is often to assign specific permissions directly to individual users. This is functionally an **Access Control List (ACL)**.
+
+Imagine your database has a user record for `alice@example.com`. To control her access, you might add a dozen boolean fields directly to her document:
+
+- `canCreateProjects: true`
+- `canEditProjects: true`
+- `canDeleteProjects: false`
+- `canDeleteContacts: false`
+- `canReadContacts: true`
+
+This works perfectly... if you only have a team of three people.
+
+But what happens when you have a company of 500 employees? If management decides that all "Content Writers" should suddenly be allowed to delete projects, you would have to write a database migration script to locate hundreds of specific users and manually flip their `canDeleteProjects` flag from `false` to `true`.
+
+<CautionBox>
+  **T.A. Watts Note:** Directly assigning massive arrays of discrete permissions
+  to individual users is a fast track to unmanageable code. Your database models
+  become bloated with toggle switches, and onboarding a new employee becomes an
+  endless, error-prone checklist of checkboxes.
+</CautionBox>
+
+### The Solution: Role-Based Access Control (RBAC)
+
+The software industry solved this scaling dilemma decades ago with **Role-Based Access Control (RBAC)**.
+
+Instead of asking, _"What specific micro-tasks is Alice allowed to perform today?"_, RBAC introduces an abstraction layer.
+
+1. **Define the Roles:** First, you define generic containers of capability (e.g., `ADMIN`, `MODERATOR`, `USER`).
+2. **Assign Permissions to the Roles:** You dictate that the `MODERATOR` role can inherently read and update, but never delete. You dictate that the `ADMIN` role can inherently do everything.
+3. **Assign Users to the Roles:** Finally, when `alice@example.com` joins the team, you don't give her 50 scattered permission flags. You simply assign her a single string: `role: 'MODERATOR'`.
+
+Now, if company policy changes and all Moderators suddenly need the ability to delete records, you don't touch Alice's profile at all. You make a single change to the `MODERATOR` capability rule in your middleware, and Alice—along with 500 other Moderators—instantly inherits the new capability.
+
+<NoteBox>
+  **Professor Solo:** This abstraction is the secret to enterprise scalability.
+  By decoupling the *user* from the specific *permissions*, you create a
+  dynamic, frictionless organization system. People move between departments
+  constantly; their permissions should update by simply changing their job
+  title.
+</NoteBox>
+
+RBAC is the gold standard for standard web applications. Let's look at how we can concretely map this abstract concept directly onto our Node2Know portfolio project.
+
+## Extra Bits & Bytes
+
+_Placeholder for future links and resources_
+
+### ⏭ Next: Defining Our Approach
+
+We know the theory. Now it's time to build the blueprint for our application.

@@ -1,0 +1,73 @@
+---
+title: "Enforcing Capabilities"
+description: "Applying route-level role protection boundaries to the CMS"
+sidebar:
+  order: 6
+  label: Enforcing Capabilities
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+import CautionBox from "../../../components/CautionBox.astro";
+
+### The Dual-Wall Architecture
+
+With our `requireAuth` and `requireRole` middleware constructed, we can systematically map our exact functional endpoints.
+
+In the previous authorization lesson, we learned the "Order of Operations" pattern for protecting the entire `adminRouter` by utilizing `adminRouter.use(requireAuth)`.
+
+There is a problem, however. If our baseline `USER` default role creates an account and logs in, they will possess a valid session. They will successfully pass the `requireAuth` check and gain access to the dashboard! We must deploy a second wall.
+
+### Deploying the Guards
+
+```javascript
+// routes/adminRouter.js
+const { requireAuth, requireRole } = require("../middleware/auth");
+
+// 1. PUBLIC ADMIN ROUTES
+adminRouter.get("/login", renderLoginView);
+adminRouter.post("/login", handlePassportLogin);
+
+// ==========================================
+// THE FIRST WALL: Are you logged in?
+adminRouter.use(requireAuth);
+
+// THE SECOND WALL: Are you staff? (Block basic USERs)
+adminRouter.use(requireRole("MODERATOR", "ADMIN"));
+// ==========================================
+
+// 2. DASHBOARD & MODERATION
+// Only Moderators and Admins make it past the double wall to see this.
+adminRouter.get("/", renderDashboard);
+adminRouter.get("/contacts", renderContactList);
+adminRouter.post("/contacts/:id/read", toggleContactReadStatus);
+
+// 3. DESTRUCTIVE ACTIONS
+// We inject a targeted requireRole check overriding the wall just for this specific route.
+adminRouter.post("/contacts/:id/delete", requireRole("ADMIN"), deleteContact);
+```
+
+<NoteBox>
+  **Professor Solo:** This cascading middleware pattern is incredibly powerful.
+  The global `.use()` wall ensures that a standard `USER` can never accidentally
+  stumble into the backend architecture. Then, the specific route-level
+  `requireRole('ADMIN')` guarantees that even if a `MODERATOR` tries to hit the
+  delete endpoint, they are immediately forcefully rejected before the
+  controller ever executes.
+</NoteBox>
+
+<CautionBox>
+  **T.A. Watts Note:** The most dangerous vulnerability you can introduce is
+  protecting the `GET` route that visually displays the "Delete" button, but
+  forgetting to actually protect the `POST` route that performs the targeted
+  deletion in the database. Always prioritize protecting the destination logic
+  endpoints, not just the visible UI pathways.
+</CautionBox>
+
+## Extra Bits & Bytes
+
+_Placeholder for future links and resources_
+
+### ⏭ Next: View-Level Gating
+
+The backend is mathematically locked down. Now let's make the EJS frontend politely reflect that reality.

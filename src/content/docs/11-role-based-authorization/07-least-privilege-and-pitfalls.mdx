@@ -1,0 +1,46 @@
+---
+title: "Least Privilege & Pitfalls"
+description: "The core principle of security and common RBAC mistakes"
+sidebar:
+  order: 8
+  label: Least Privilege
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+import CautionBox from "../../../components/CautionBox.astro";
+
+### The Principle of Least Privilege
+
+The most crucial, overarching architectural philosophy governing all cybersecurity disciplines is fundamentally referred to as **The Principle of Least Privilege**.
+
+This doctrine mathematically states: **Every user, program, or system should be granted only the absolute minimum permissions strictly necessary to execute its function.**
+
+If a user purely requires access to read and update contact forms, assigning them universal `ADMIN` access is a severe architectural vulnerability waiting to fail catastrophically.
+
+You are not being paranoid by assigning the `MODERATOR` role exclusively to your newly hired assistant; you are functionally and mechanically architecting a predictable, stable, and secure backend ecosystem.
+
+### Testing Authorization Boundaries
+
+Never assume authorization natively functions correctly. You must rigorously and mathematically prove it.
+
+Every single time a new protected feature is introduced into the `/admin` ecosystem, mechanically run this specific miniature checklist to verify your boundaries:
+
+1. **Anonymous Test:** Attempt to access the protected route while completely logged out. Does the system immediately bounce you to `/admin/login`?
+2. **Standard User Test:** Log in as a baseline `USER`. Attempt to navigate to the `/admin` URL manually. You should be blocked by the second-layer middleware wall.
+3. **Moderator Test:** Log in as a `MODERATOR`. Verify you can access the read/write routes permitted for your role (like viewing contacts). Then, actively attempt to trigger a forbidden POST route utilizing an API tool or a hidden form (like deleting a contact). You should receive a strict 403 Forbidden.
+4. **Admin Test:** Log in as an `ADMIN`. Verify you have unrestricted access to all endpoints, including the destructive actions denied to the moderator.
+
+<CautionBox>
+  **T.A. Watts Note:** The most dangerous assumption you can make is assuming
+  that hiding a button in the UI automatically secures the underlying endpoint
+  against direct REST requests from malicious actors.
+</CautionBox>
+
+## Extra Bits & Bytes
+
+_Placeholder for future links and resources_
+
+### ⏭ Next: Lab: Capability Testing
+
+You've read the theory. Now it's time to test your authorization skills.

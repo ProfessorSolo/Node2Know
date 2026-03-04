@@ -1,0 +1,143 @@
+---
+title: "User Registration"
+description: "Validation, Hashing, and User Creation flows"
+sidebar:
+  order: 9
+  label: User Registration
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+import CautionBox from "../../../components/CautionBox.astro";
+
+### Welcome to the Club
+
+The Registration flow is the very first step in establishing an authenticated session. Before a user can log in, they must exist. But we can't just throw raw input directly into the database.
+
+Registration involves five distinct hurdles the incoming data must clear:
+
+1. **Validation:** Ensure the input has required fields and a valid email format.
+2. **Uniqueness:** Check the database to strictly confirm whether a user with this email _already exists_. (We don't want duplicates).
+3. **Hashing:** Take the raw, plain-text password from the form payload and run it through `bcrypt` to generate the `passwordHash`.
+4. **Insertion:** Execute the MongoDB `insert` command to actually save the newly minted user record.
+5. **Auto-Login (Optional but friendly):** Once inserted, immediately provision a new session for the user so they don't have to manually log right back in.
+
+<NoteBox>
+  **Professor Solo:** The "Check if user already exists" step is crucial. If you
+  attempt an insert operation that violates a MongoDB unique constraint (like
+  our unique `email` index), MongoDB will throw a harsh Exception. We want to
+  catch that early and return a polite validation error to the user instead.
+</NoteBox>
+
+### Data Access: Encapsulating the Logic
+
+Instead of throwing Mongoose logic directly into our routers, we will encapsulate the uniqueness check, the BCrypt hashing, and the actual document creation into our `/data/users.js` file alongside the schema.
+
+```javascript
+// data/users.js
+const bcrypt = require("bcrypt");
+// ... (User Schema defined above) ...
+
+class UserOps {
+  async createUser(email, password) {
+    // 1. Uniqueness Check
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      throw new Error("Email_In_Use");
+    }
+
+    // 2. Hash the raw password
+    const saltRounds = 10;
+    const passwordHash = await bcrypt.hash(password, saltRounds);
+
+    // 3. Insert Record
+    const user = new User({ email, passwordHash });
+    await user.save();
+    return user;
+  }
+}
+
+module.exports = new UserOps();
+```
+
+### The Router View
+
+When mapped over to our Express router, the logic becomes significantly cleaner. The Router simply parses the payload, calls our data module, and handles the HTTP response.
+
+```javascript
+// routers/adminRouter.js
+const express = require("express");
+const router = express.Router();
+const _userOps = require("../data/users");
+
+// Render the visual EJS Form
+router.get("/register", (req, res) => {
+  res.render("admin/register", { error: null });
+});
+
+// Handle the Form POST submission
+router.post("/register", async (req, res) => {
+  const { email, password } = req.body;
+
+  // 1. Validation basics
+  if (!email || !password) return res.status(400).send("Bad Payload");
+
+  try {
+    // 2. Execute Data Operation
+    await _userOps.createUser(email, password);
+
+    // 3. Divert to Login
+    res.redirect("/admin/login");
+  } catch (error) {
+    if (error.message === "Email_In_Use") {
+      return res
+        .status(409)
+        .render("admin/register", { error: "Email already in use." });
+    }
+    return res.status(500).send("Internal Error");
+  }
+});
+
+module.exports = adminRouter;
+```
+
+### The EJS View
+
+Finally, we need the actual HTML form for the user to interact with. Since we are using EJS layouts, we only need to write the specific content for the `<main>` block, making sure to explicitly display the `error` string passed down from our router if validation fails.
+
+```html
+<!-- views/admin/register.ejs -->
+<h2>Create an Admin Account</h2>
+
+<% if (error) { %>
+<div class="alert alert-danger"><%= error %></div>
+<% } %>
+
+<form action="/admin/register" method="POST">
+  <label for="email">Email Address</label>
+  <input type="email" id="email" name="email" required />
+
+  <label for="password">Strong Password</label>
+  <input type="password" id="password" name="password" required />
+
+  <button type="submit">Register Account</button>
+</form>
+```
+
+<CautionBox>
+  **T.A. Watts Note:** A common pitfall is forgetting the `await` keyword before
+  `bcrypt.hash()`. The hashing operation is mathematically intense and therefore
+  asynchronous. Failing to `await` it will result in saving an unresolved
+  Promise object to your database instead of a string hash. That user is never
+  logging in.
+</CautionBox>
+
+Once a user is safely sequestered into the database, it's time to build the machinery that lets them back through the door.
+
+## Extra Bits & Bytes
+
+_Placeholder for future links and resources_
+
+### ⏭ Next: The Login Flow
+
+They exist in the database. Now let's actually let them inside.

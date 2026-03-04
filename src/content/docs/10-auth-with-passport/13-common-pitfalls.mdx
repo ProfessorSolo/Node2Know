@@ -1,0 +1,76 @@
+---
+title: "The Bug Farm"
+description: "Common Passport and Session Configuration Pitfalls"
+sidebar:
+  order: 13
+  label: Common Pitfalls
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+import CautionBox from "../../../components/CautionBox.astro";
+
+### When Authentication "Sort Of" Works
+
+Authentication debugging is notoriously frustrating because a single misconfigured line of boilerplate can silently derail the entire request lifecycle. The browser gets the cookie, but `req.user` miraculously vanishes on the very next page load.
+
+Welcome to the Bug Farm. Prepare to encounter these extremely common integration pitfalls.
+
+#### The Middleware Order Violation
+
+Express evaluates incoming HTTP requests sequentially against your mounted middleware array strictly from top to bottom. Order is paramount.
+
+If Passport executes its internal session processing sequences _before_ `express-session` has physically provisioned the core server memory structure, Passport fundamentally possesses nowhere to securely embed the active user data.
+
+```javascript
+// WRONG! passport.session() has nowhere to live.
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(
+  session({ secret: "keyboard cat", resave: false, saveUninitialized: false }),
+);
+
+// CORRECT
+app.use(
+  session({ secret: "keyboard cat", resave: false, saveUninitialized: false }),
+);
+app.use(passport.initialize());
+app.use(passport.session());
+```
+
+<NoteBox>
+  **Professor Solo:** The `express-session` middleware must emphatically precede
+  `passport.session()`. It structurally lays the essential foundational
+  groundwork inherently permitting Passport to successfully persist the identity
+  context correctly.
+</NoteBox>
+
+#### Serialization Mismatches
+
+The `serializeUser` string value you intentionally stuff down into the explicit session cookie absolutely, definitively must perfectly correspond structurally with the database lookup query mechanically executing inside the `deserializeUser` configuration block.
+
+If you enthusiastically push `user._id` inside `serializeUser`, but accidentally query explicitly matching against `email` universally across `deserializeUser`, every single subsequent authenticated request context will violently crash violently crashing the server instance directly returning a harsh `500 Internal Server Error`.
+
+#### Forgetful Promises
+
+We briefly covered this earlier, but it warrants repeating. Forgetting to physically prepend the `await` keyword explicitly against the `bcrypt.compare()` sequence inside your custom Strategy Verify Callback will disastrously inherently evaluate the returned pending `Promise` object continuously as notoriously "truthy".
+
+This specific failure uniquely results in an incredibly severe architectural vulnerability specifically inadvertently accepting every single arbitrarily generated invalid password universally executing a permanently "successful" authentication bypass inherently compromising the application structure.
+
+<CautionBox>
+  **T.A. Watts Note:** Cookies not "sticking" across local development
+  environments frequently trace inherently directly back exclusively explicitly
+  configuring `secure: true` explicitly across HTTP contexts lacking active
+  TLS/SSL local certificates. Set it explicitly to `false` during local
+  development without a certificate.
+</CautionBox>
+
+With the primary traps successfully mechanically documented explicitly across the integration timeline, let's assemble an explicit implementation checklist tracking the functional requirements specifically necessary integrating these components effectively.
+
+## Extra Bits & Bytes
+
+_Placeholder for future links and resources_
+
+### ⏭ Next: The Integration Checklist
+
+We survived the bug farm. Time for the final integration checklist.

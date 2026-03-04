@@ -1,0 +1,62 @@
+---
+title: "Defining Our Approach"
+description: "Establishing the specific RBAC capability map for our Node2Know application."
+sidebar:
+  order: 3
+  label: Defining Our Roles
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+import CautionBox from "../../../components/CautionBox.astro";
+
+### Mapping Capabilities
+
+Before we write code, we must architect the exact boundaries we are defending. The Node2Know Projects Portfolio has a distinct administrative dashboard (`/admin`), where destructive actions can take place.
+
+A frequent mistake in RBAC system design is immediately over-engineering a highly complex matrix of seventeen specific, fictional business titles. Do not create a "Senior Content Vice President" role. Keep it simple.
+
+We will establish three core structural roles mapped against specific functional capabilities:
+
+#### 1. The `USER` (The Default)
+
+This is the baseline role automatically assigned to anyone who successfully registers an account.
+
+- **Capabilities:** A `USER` has successfully authenticated, meaning they have a valid session and a `req.user` object. However, they hold no administrative privileges. They are effectively restricted to the public-facing aspects of the application.
+
+#### 2. The `MODERATOR` (The Helper)
+
+The Moderator is a trusted team member tasked with helping manage the influx of data, specifically handling public inquiries.
+
+- **Capabilities:** A `MODERATOR` is allowed past the `/admin` velvet rope. They can view the Contact Submissions dashboard and toggle the "Read/Unread" status of individual messages.
+- **Restrictions:** They are strictly prohibited from _deleting_ contact submissions.
+
+#### 3. The `ADMIN` (Root Access)
+
+The Admin is the owner of the application.
+
+- **Capabilities:** Unrestricted, universal access. An `ADMIN` can traverse the entire administrative structure, create projects, and inherently bypass the restrictions placed on Moderators (meaning they possess full destructive delete capabilities over Contact Submissions).
+
+<NoteBox>
+  **Professor Solo:** By mapping users strictly into discrete roles (rather than
+  tracking individual, granular "per-user" permissions), auditing becomes
+  instantly manageable. You never have to ask, "Did we remember to revoke Dave's
+  delete capability?" You only ask, "Is Dave an Admin or a Moderator?"
+</NoteBox>
+
+<CautionBox>
+  **T.A. Watts Note:** The `USER` role might seem useless right now if they
+  can't access `/admin`, but establishing it as the default prevents a
+  catastrophic failure where a new registration accidentally defaults to
+  `ADMIN`. Always default to minimum privilege.
+</CautionBox>
+
+With our access rules clearly defined, we must mutate our existing MongoDB schema to physically track the assignment of these roles against our active User records.
+
+## Extra Bits & Bytes
+
+_Placeholder for future links and resources_
+
+### ⏭ Next: Modeling Roles in MongoDB
+
+We know the titles. Time to engrave them into the database.

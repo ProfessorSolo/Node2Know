@@ -1,0 +1,57 @@
+---
+title: "Practical Security Posture"
+description: "Understanding threats and establishing functional security basics"
+sidebar:
+  order: 12
+  label: Security Posture
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+import CautionBox from "../../../components/CautionBox.astro";
+
+### We're Not Building a Bank, But...
+
+While the immediate portfolio application doesn't currently handle sensitive credit card data or healthcare records, we are meticulously instilling excellent, enterprise-grade habits entirely from scratch. Hardening your administrative boundaries demands acknowledging realistic, practical attack vectors.
+
+Establishing a robust architectural security posture means configuring standard infrastructure explicitly intended to mitigate typical vulnerabilities. Let's outline the absolute minimum baseline targeting critical defensive postures.
+
+#### The Minimum Baseline
+
+1. **Hash Passwords (Always):** Executed reliably with `bcrypt`. We don't negotiate this.
+2. **Environment Variables for Secrets:** The `sessionSecret` driving your cookie encryption absolutely _must_ utilize `.env` configuration. Hardcoding "supersecretkey" into your source repository exposes your entire application to forged session attacks if the code is ever leaked or publicly exposed on GitHub.
+3. **HTTP-Only Cookies:** Modern security configurations mandate that the specific session identifier cookie is strictly tagged as `httpOnly: true`. This prevents rogue JavaScript from silently accessing `document.cookie` and exfiltrating active session authentications out of the user's browser.
+4. **Persistent Session Storage:** The default `MemoryStore` utilized by `express-session` is explicitly engineered exclusively for local development contexts. It aggressively leaks memory during sustained operations and physically destroys all active user logged-in sessions every single time the Node.js server merely recycles or pushes a fresh deployment instance. A production environment inherently demands coupling `connect-mongo` directly into the existing MongoDB cluster specifically for session persistency architecture.
+
+<img
+  src="/assets/lessons/10-auth-with-passport/security-posture-shield.png"
+  alt="Isometric illustration of a server rack surrounded by a blue hexagonal energy shield deflecting red pixelated bugs."
+/>
+
+_Fig 3: Mitigating attacks against the administrative core._
+
+### Conceptual Threats to Monitor
+
+While a full mitigation strategy is complex, understanding the vocabulary describing architectural threats is paramount:
+
+- **Brute Force / Credential Stuffing:** Bots aggressively bombarding the `/login` route utilizing extensive compromised password dictionaries. You mitigate this architecture specifically applying aggressive **rate limiting** middleware uniquely positioned over the authentication endpoints.
+- **Session Fixation:** An attacker forcibly setting a pre-determined session ID and tricking a victim into logging in utilizing that hijacked ID. Passport architectures structurally mitigate this inherently regenerating new randomized session IDs directly immediately proceeding successful authentication.
+- **XSS (Cross-Site Scripting):** An attacker maliciously injecting arbitrary rogue JavaScript mechanically executing inside a victim's active browser context. This immediately leverages the aforementioned non-HTTP-only cookies.
+- **CSRF (Cross-Site Request Forgery):** A malicious actor silently tricking a logged-in user's browser inadvertently mechanically executing a state-changing POST or DELETE request actively targeting the `/admin` application structure without knowledge or consent. This mandates specific explicit CSRF token verification middleware.
+
+<CautionBox>
+  **T.A. Watts Note:** The "Invalid Credentials" message ambiguity discussed
+  earlier physically anchors the application baseline directly combating
+  malicious enumeration enumeration specifically identifying which users
+  explicitly exist within the structure.
+</CautionBox>
+
+Because authentication configuration merges vastly complex variables spanning disparate middleware systems operating under incredibly specific sequences, it commonly produces severe headaches. Let's explore exactly what happens structurally when authentication merely “sort of works”.
+
+## Extra Bits & Bytes
+
+_Placeholder for future links and resources_
+
+### ⏭ Next: The Bug Farm
+
+Security is tight, but integration is tricky. Let's look at where things usually break.

@@ -1,0 +1,94 @@
+---
+title: "Lab: Capability Testing"
+description: "Reinforcement exercises for Role-Based Authorization"
+sidebar:
+  order: 8
+  label: Lab 11
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+import CautionBox from "../../../components/CautionBox.astro";
+
+## Security Auditing
+
+We've wired up the specific roles governing the VIP lists. But the golden rule of authorization is to _never_ assume it works until you've successfully tested boundaries. Here are three tiers of challenges to ensure your architectural protections are flawless.
+
+---
+
+### Tier 1: Maintenance (Easy)
+
+**The Objective:** Expand the role array to add a completely passive `reader` role across the application.
+
+Currently, we rely primarily on `admin` and `editor`. We need a user who can view administrative dashboards without changing anything.
+
+1. Modify your explicit `User` schema definition array to officially append the `"reader"` string to the role enum.
+2. In your `adminRouter.js`, explicitly add the `"reader"` string to every single `GET` route mapping to a list or dashboard overview.
+3. Completely exclude `"reader"` from all generative or destructive `POST` routes.
+4. Register a new user, manually update their database record to assign the `"reader"` role, and attempt to delete a project. You should receive a 403 Forbidden.
+
+<NoteBox>
+  **Student-to-AI Prompt:** *I am attempting to modify a Mongoose schema string
+  enum to include an additional authorized role format called "reader". If a
+  current user already exists in the database with the "editor" role, will
+  updating this array schema break their existing records?*
+</NoteBox>
+
+---
+
+### Tier 2: The Custom Job (Medium)
+
+**The Objective:** Implement UI-level gating for the "Create New Project" button exclusively inside EJS.
+
+Your `editor` and `admin` roles can both successfully execute create operations. However, if our new `reader` role legitimately navigates to the Projects Dashboard, they should not see the "Create" button teasing them.
+
+1. Navigate to your primary `ProjectOps` administrative controller.
+2. Formulate a boolean `canPublish` exclusively evaluating if `req.user.role` strictly equals `"admin"` or `"editor"`.
+3. Sequentially pass that exact `canPublish` boolean out to the response rendering variables.
+4. Inside `admin/project-list.ejs`, dynamically wrap the "Create New Project" link specifically inside a conditionally executing standard EJS `<% if (canPublish) { %>` evaluation block.
+
+<NoteBox>
+  **Student-to-AI Prompt:** *I need to write an EJS condition that checks a
+  variable called `canPublish`. Assuming I already passed it in via
+  `res.locals.canPublish`, what is the exact syntax to wrap an HTML anchor tag
+  button inside an EJS boolean check?*
+</NoteBox>
+
+---
+
+### Tier 3: The Solo Special (Hard)
+
+**The Objective:** Architect "Resource Ownership" logic.
+
+Role-Based Authorization specifically asks, "Is an Editor allowed to delete?" However, **Resource Ownership** (or Attribute-Based Access Control) asks a structurally harder question: _"Is this specific Editor allowed to delete a project created by a DIFFERENT Editor?"_
+
+1. Mutate the base `Project` schema to include an `author` field explicitly mapping deeply specifically resolving exactly referencing a `User` ObjectId.
+2. When creating a project, purposefully strictly automatically inject the active `req.user._id` securely directly to that specific field payload.
+3. Write a brand new custom middleware function called `requireOwnership`. It must:
+
+- Find the target project by ID.
+- Check if the incoming `req.user.role` equals `'admin'` (Admins bypass ownership rules universally).
+- If not an Admin, strictly compare if the `project.author.toString()` equals identically to `req.user._id.toString()`.
+- If identical, `next()`. If disparate, `res.status(403)`.
+
+4. Apply this new middleware sequentially directly onto the specific `POST /projects/:id/edit` endpoint.
+
+<CautionBox>
+  **Student-to-AI Prompt:** *I am building a custom Express middleware
+  attempting to check resource ownership. I have an awaited `project` document
+  with an `author` ObjectId field. I need to dynamically compare it cleanly
+  against the active `req.user._id`. Why does standard equality (`===`)
+  routinely universally completely cleanly fail when physically directly mapping
+  JavaScript Mongoose ObjectIds, and how should I effectively parse them
+  cleanly?*
+</CautionBox>
+
+---
+
+## Extra Bits & Bytes
+
+_Placeholder for future links and resources_
+
+### ⏭ Next: Codex: The Capability Matrix
+
+Survive the lab? Grab your capability matrix reference guide.

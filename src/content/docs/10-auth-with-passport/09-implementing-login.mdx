@@ -1,0 +1,157 @@
+---
+title: "The Login Flow"
+description: "Verifying Credentials and Creating the Session"
+sidebar:
+  order: 10
+  label: Login Flow
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+import CautionBox from "../../../components/CautionBox.astro";
+
+### Handing the Bouncer your ID
+
+The Registration sequence placed a user in the database. Now, they've returned to the front door, seeking entry to the VIP Administration area.
+
+The Login flow involves another rigorous set of five steps:
+
+1.  **Validation:** Again, ensuring basic criteria (email and password inputs) are present in the HTTP request payload.
+2.  **Lookup:** Querying MongoDB to find an existing user strictly by their provided email object.
+3.  **Comparison:** Taking the provided raw password, hashing it through `bcrypt.compare()`, and analyzing if the resulting sequence perfectly matches the exact `passwordHash` stored for that user.
+4.  **Session Provisioning (If Valid):** Instructing Passport to dynamically inject a new, authenticated session referencing this user's specific `ObjectId`, automatically attaching it to standard Express variable `req.user`.
+5.  **Redirection:** Funneling the successful user deep into the restricted `/admin` area.
+
+<NoteBox>
+  **Professor Solo:** The `bcrypt.compare(plaintext, hash)` function handles the
+  complex math behind the scenes. It knows inherently to extract the specific
+  salt originally used from the stored `passwordHash` string, mix it with the
+  incoming plaintext, and verify if the result is identical.
+</NoteBox>
+
+### Data Access: Finding the User
+
+Just like during registration, our database logic shouldn't live directly inside the router or the middleware. We'll add a simple lookup function to our `/data/users.js` file to support the login flow.
+
+```javascript
+// data/users.js (append method to the UserOps class)
+class UserOps {
+  // ... existing createUser method ...
+
+  async getUserByEmail(email) {
+    return await User.findOne({ email });
+  }
+}
+
+module.exports = new UserOps();
+```
+
+### The Verify Callback (Middleware)
+
+The Login flow fundamentally relies on Passport calling your customized **Verify Callback**. This function sits squarely inside your configured `passport-local` Strategy execution, which we will now add to our existing `/middleware/passport.js` configuration file.
+
+```javascript
+// middleware/passport.js
+
+// ... (keep existing imports) ...
+const LocalStrategy = require("passport-local").Strategy;
+const bcrypt = require("bcrypt");
+
+// ... (keep serializeUser and deserializeUser) ...
+
+// Define the Local Strategy
+passport.use(
+  "local",
+  new LocalStrategy(
+    { usernameField: "email" }, // We use email, not a 'username'
+    async (email, password, done) => {
+      try {
+        // 1 & 2. Validation and Lookup via Data Ops
+        const user = await _userOps.getUserByEmail(email);
+        if (!user) {
+          return done(null, false, { message: "Invalid credentials." });
+        }
+
+        // 3. Comparison
+        const isMatch = await bcrypt.compare(password, user.passwordHash);
+
+        // 4. Result
+        if (!isMatch) {
+          return done(null, false, { message: "Invalid credentials." });
+        }
+
+        // Everything is perfect. Passport, here is the verified User!
+        return done(null, user);
+      } catch (error) {
+        return done(error);
+      }
+    },
+  ),
+);
+
+// module.exports = passport; // (Keep this at the bottom)
+```
+
+### The Router View
+
+With the heavyweight cryptographic logic safely tucked away in middleware, our Express router is remarkably simple. We just tell it to `authenticate` the incoming request.
+
+```javascript
+// routers/adminRouter.js
+const passport = require("passport");
+
+// Render the visual EJS Login Form
+router.get("/login", (req, res) => {
+  res.render("admin/login", { error: null });
+});
+
+// Handle the Login submission
+router.post(
+  "/login",
+  passport.authenticate("local", {
+    successRedirect: "/admin", // 5. Redirection on Success
+    failureRedirect: "/admin/login",
+  }),
+);
+```
+
+### The EJS View
+
+The login form is structurally almost identical to our registration block. We are `POST`ing the payload directly to the local Passport authentication interceptor.
+
+```html
+<!-- views/admin/login.ejs -->
+<h2>Secured Admin Access</h2>
+
+<% if (error) { %>
+<div class="alert alert-danger"><%= error %></div>
+<% } %>
+
+<form action="/admin/login" method="POST">
+  <label for="email">Email Address</label>
+  <input type="email" id="email" name="email" required />
+
+  <label for="password">Password</label>
+  <input type="password" id="password" name="password" required />
+
+  <button type="submit">Authenticate</button>
+</form>
+```
+
+<CautionBox>
+  **T.A. Watts Note:** The error messages must precisely be `"Invalid
+  credentials."` in both scenarios (missing user vs. incorrect password). If you
+  send `"Email not found"`, you are inadvertently disclosing to malicious actors
+  exactly which email addresses exist in your database. Don't be "helpful" at
+  the stark expense of security.
+</CautionBox>
+
+If the user is verified, Passport immediately executes its serialization logic to physically generate the session cookie. And just like that, `req.user` miraculously appears. But nothing lasts forever. Our authenticated users need a mechanism to securely exit the VIP area.
+
+## Extra Bits & Bytes
+
+_Placeholder for future links and resources_
+
+### ⏭ Next: The Logout Flow
+
+What goes in, must come out. Let's build the exit.

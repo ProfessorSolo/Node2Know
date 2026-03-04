@@ -1,0 +1,80 @@
+---
+title: "View-Level Gating"
+description: "Hiding UI controls and templates dynamically based on role"
+sidebar:
+  order: 7
+  label: View-Level Gating
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+import CautionBox from "../../../components/CautionBox.astro";
+
+### Visual Alignment, Not Security
+
+Our server-side Express routes are now defensively secured with the `requireRole` middleware. But the resulting user experience for our `MODERATOR` users is currently frustrating. They navigate to the Contact Submissions dashboard, click a highly visible "Delete Entry" button... and are immediately slapped with a "403 Forbidden" error screen because the route rejected them.
+
+**UI Gating** is the practice of hiding controls and navigation elements that a user does not have permission to utilize.
+
+We must conceptually understand that hiding a button using CSS or EJS if/else blocks is fundamentally **not security**. It is purely user experience alignment. A malicious user can trigger the underlying POST request utilizing an API tool like Postman regardless of whether the button is rendered on screen. The Express middleware serves as the security. The EJS UI gating serves as the UX.
+
+### Passing Authorization Context to Views
+
+To conditionally hide interface elements dynamically, the EJS template requires awareness of exactly which capabilities the currently logged-in user possesses. We cleanly achieve this by deploying standard Express `res.locals` configuration directly inside our primary controller.
+
+```javascript
+// controllers/adminContactOps.js
+
+const renderContactList = async (req, res) => {
+  const allContacts = await Contact.find({});
+
+  // 1. Determine explicitly if the user possesses the pure ADMIN role
+  const isSuperAdmin = req.user.role === "ADMIN";
+
+  // 2. Attach that specific Boolean directly to the response locals
+  res.locals.canDeleteContacts = isSuperAdmin;
+
+  res.render("admin/contact-list", {
+    viewTitle: "Contact Submissions",
+    contacts: allContacts,
+  });
+};
+```
+
+### Applying the Gates in EJS
+
+Inside the physical template, we utilize simple condition checks evaluating our explicitly defined target boolean. Moderators will see the details, but only Admins will see the Delete form.
+
+```html
+<!-- views/admin/contact-list.ejs -->
+
+<div class="contact-card">
+  <h3>Message from: <%= contact.email %></h3>
+
+  <!-- The Read status toggle is visible to all dashboard roles (Moderator & Admin) -->
+  <form action="/admin/contacts/<%= contact._id %>/read" method="POST">
+    <button type="submit" class="btn">Mark as Read/Unread</button>
+  </form>
+
+  <!-- The Delete button renders strictly if the capability resolves to true -->
+  <% if (canDeleteContacts) { %>
+  <form action="/admin/contacts/<%= contact._id %>/delete" method="POST">
+    <button type="submit" class="btn btn-danger">Delete Submission</button>
+  </form>
+  <% } %>
+</div>
+```
+
+<CautionBox>
+**T.A. Watts Note:** Do not repeatedly evaluate complex logic deep within EJS templates (e.g. `<% if (user.role === 'ADMIN' || user.role === 'SUPER-ADMIN') { %>`). Offload that logic into the server-side controller explicitly mapping strict, legible booleans (e.g. `canDeleteContacts = true`) securely routing it directly into the template.
+</CautionBox>
+
+With our interface intelligently aligned seamlessly with our underlying permissions, we must review the overarching structural pitfalls that typically emerge when deploying RBAC ecosystems.
+
+## Extra Bits & Bytes
+
+_Placeholder for future links and resources_
+
+### ⏭ Next: Least Privilege & Pitfalls
+
+The UI looks great. Let's review the cardinal rule of security to ensure it stays that way.

@@ -1,0 +1,48 @@
+---
+title: "Target Auth Behavior"
+description: "Defining Public vs Protected routes in the Projects Portfolio"
+sidebar:
+  order: 6
+  label: Target Behavior
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+import CautionBox from "../../../components/CautionBox.astro";
+
+### The Action Plan
+
+Before writing code, we need to map out the "zones" of our application. Which paths should remain freely open to visitors, and which paths require checking the "wristband" at the door?
+
+We’ve decided on a strict **Public vs. Protected** boundary for the Projects Portfolio.
+
+#### Public (No Login Required)
+
+These routes are the face of your portfolio. They are optimized for visitors, viewers, and potential clients.
+
+- The overarching **Home Page**.
+- The standard **Projects Listing** view (`/projects`).
+- Individual **Project Details** view (`/projects/:slug`).
+- The **Public Contact Form** submission endpoints (`/contact`).
+
+#### Protected (Login Required)
+
+These routes operate behind the velvet rope. They belong strictly to the CMS / Admin environment.
+
+- The entire **Admin Dashboard** (`/admin`).
+- **CRUD operations** (Create, Read, Update, Delete) for Projects.
+- **CRUD operations** for Categories (and Tags, eventually).
+- Viewing and managing incoming **Contact Submissions**.
+
+<img
+  src="/assets/lessons/10-auth-with-passport/target-auth-behavior.png"
+  alt="Isometric diagram showing a Public path leading to a storefront and a Protected path leading through a secure gate to an admin dashboard."
+/>
+
+_Fig 2: Public vs Protected Flow architecture_
+
+With our access control boundaries clearly defined, our next immediate step is to actually design the entity capable of logging in: the User model.
+
+### ⏭ Next: Data Model: User Schema
+
+Before we log someone in, we need a place to put them.

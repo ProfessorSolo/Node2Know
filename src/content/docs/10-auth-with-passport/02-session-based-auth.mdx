@@ -1,0 +1,79 @@
+---
+title: "Session-based Auth & Cookies"
+description: "How your application remembers who you are"
+sidebar:
+  order: 3
+  label: Session-based Auth
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+import CautionBox from "../../../components/CautionBox.astro";
+
+### Memory in a Stateless Protocol
+
+The internet runs on HTTP, and HTTP is completely and utterly forgetful. Every time a browser asks for a page, the server has no idea who _or what_ asked for it three seconds ago.
+
+So how do we stay logged in while bouncing around a web application?
+
+There are a few ways to do this, but for our purposes we are going to use **Session-based Authentication**.
+
+<NoteBox>
+  **Professor Solo:** Why Server-Side Sessions and not JWTs (JSON Web Tokens)?
+  For a traditional, monolithic Express application generating HTML templates,
+  standard session cookies are significantly simpler, drastically more secure
+  out-of-the-box (no local storage vulnerabilities), and perfectly suited for
+  the task. We use the right tool for the job.
+</NoteBox>
+
+### How Session-based Auth Works
+
+Here is the core sequence we need to understand:
+
+1. A user logs in with their email and password.
+2. The server verifies these **credentials**.
+3. The server creates a **session** (a secure, server-side record declaring: “this particular user is logged in”).
+4. The server sends a tiny piece of identification text called a **session cookie** down to the browser.
+5. On every subsequent request, the browser eagerly hands that cookie right back to the server.
+6. The server takes that cookie, finds the matching session in its memory (or database), and “re-hydrates” the user. Suddenly, the server remembers who you are again!
+
+<NoteBox>
+  **T.A. Watts Note:** We’re server-rendering our application (using EJS/Pug
+  templates) and we need protected “admin pages.” Sessions are a fantastic fit
+  here because they keep the complex auth logic centralized on the server.
+</NoteBox>
+
+### Cookies vs Session (cookies) - decombobulated.
+
+This trips everyone up eventually. Let's make it explicitly clear:
+
+- A **Cookie** is the small slice of data stored in your browser.
+- Although cookies can be used for all sorts of things, in this context they are nothing more than a random `sessionId` string.
+- A **Session** is the actual **server-side data object** storing the user’s login state and identity.
+
+<NoteBox>
+  **Privacy Regulations:** Do laws like the GDPR require a cookie opt-in banner
+  for a session cookie? **No.** Privacy regulations typically exempt cookies
+  that are "strictly necessary" to provide a service the user explicitly
+  requested. Because the user explicitly asked to log in, the session cookie
+  required to maintain that authenticated state is exempt. You don't need a
+  frustrating cookie banner just for basic authentication!
+</NoteBox>
+
+Later in your career, if you find yourself building disjointed REST APIs for SPA or mobile clients, you’ll likely pivot to token-based authentication (like JWT). But for our tightly coupled portfolio CMS, session-auth is our absolute workhorse.
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="https://developer.mozilla.org/en-US/docs/Web/Security/Authentication/Session_management"
+  variant="secondary"
+  icon="external"
+  iconPlacement="start"
+  target="_blank"
+>
+  Session Management
+</LinkButton>
+
+### ⏭ Next: Passwords, Hashing, and Salts
+
+A locked door is useless if you leave the keys in plain text. Time to scramble.

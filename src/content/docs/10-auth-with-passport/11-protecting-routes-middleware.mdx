@@ -1,0 +1,112 @@
+---
+title: "Authorization Middleware"
+description: "Creating the requireAuth Middleware wrapper to guard CMS routes"
+sidebar:
+  order: 11
+  label: Auth Middleware
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+import CautionBox from "../../../components/CautionBox.astro";
+
+### Putting up the Velvet Rope
+
+We have designed a robust registration scheme and a working Passport login strategy. The server can physically issue session cookies and rehydrate identity context on subsequent requests.
+
+But what happens if a malicious (or curious) user mechanically types `/admin/projects/create` directly into their browser URL bar while possessing an actively unauthenticated, anonymous state?
+
+**Unless we explicitly stop them, Express will happily render the secret Project Edit form.**
+
+The entire foundation of route authorization in Express hinges on custom middleware interception sequences. We must proactively construct a standardized “Must be logged in” barrier function.
+
+<NoteBox>
+  **Professor Solo:** Because Passport connects so seamlessly with standard
+  Express architectures, it automatically inherently mounts the convenient
+  `req.isAuthenticated()` evaluation method onto every single inbound HTTP
+  request payload navigating the stack.
+</NoteBox>
+
+### Creating the Barrier (Middleware)
+
+Conceptually, creating the necessary protective barrier relies on one hyper-focused middleware function. This function intercepts the request, evaluates the Passport identity context, and conditionally routes traffic. We'll add this to a shared `/middleware/auth.js` helper file.
+
+```javascript
+// middleware/auth.js
+function requireAuth(req, res, next) {
+  // If Passport confirms identity, allow them to proceed to the controller
+  if (req.isAuthenticated?.() && req.user) {
+    return next();
+  }
+
+  // If anonymous, aggressively divert them to the public login gate
+  return res.redirect("/admin/login");
+}
+
+module.exports = { requireAuth };
+```
+
+### Applying the Guard (Order of Operations)
+
+We _could_ inject this `requireAuth` helper individually into every single protected route definition. But what happens when you create a new admin page six months from now and forget to include it?
+
+Instead, we can use an Express fundamental: **Order of Operations**. Because Express executes middleware sequentially from top to bottom, we can define our public admin routes, apply `router.use(requireAuth)` as a blanket wall, and then safely define our protected routes underneath.
+
+```javascript
+// routers/adminRouter.js
+const express = require("express");
+const router = express.Router();
+const { requireAuth } = require("../middleware/auth");
+
+// ==========================================
+// 1. PUBLIC ADMIN ROUTES (Must be defined first)
+// ==========================================
+router.get("/login", renderLoginView);
+router.post("/login", handlePassportLogin);
+router.get("/register", renderRegisterView);
+router.post("/register", handleRegistration);
+
+// ==========================================
+// 2. THE WALL (Applies to all routes defined BELOW this line)
+// ==========================================
+router.use(requireAuth);
+
+// ==========================================
+// 3. PROTECTED ADMIN ROUTES
+// ==========================================
+
+// Every single route down here is automatically protected!
+router.get("/", renderDashboardView);
+router.post("/projects", handleProjectCreation);
+router.get("/categories", renderCategoryView);
+
+module.exports = router;
+```
+
+<NoteBox>
+  **Professor Solo:** "Why not just move the Login and Register routes into a
+  completely separate `publicRouter`?" You absolutely could! However, keeping
+  them inside `adminRouter` guarantees semantic grouping. It ensures these
+  specific endpoints inherit the `/admin` prefix automatically when the router
+  is mounted in your server file (e.g., `app.use('/admin', adminRouter)`),
+  resulting in clean URLs like `/admin/login` rather than scattering auth
+  concerns across multiple logic trees.
+</NoteBox>
+
+<CautionBox>
+  **T.A. Watts Note:** The ultimate architectural footgun is a redirect loop.
+  Ensure you do not accidentally define your `/admin/login` route *below* the
+  `adminRouter.use(requireAuth)` wall. The server will aggressively, infinitely
+  bounce the client requesting login directly back to the login page demanding
+  they authenticate first to see the login page!
+</CautionBox>
+
+With our velvet rope successfully blocking anonymous access to administrative areas—and protecting every future admin route by default—we must transition to evaluating the broader architectural vulnerabilities surrounding our authentication integration.
+
+## Extra Bits & Bytes
+
+_Placeholder for future links and resources_
+
+### ⏭ Next: Practical Security Posture
+
+The routes are protected, but the perimeter requires reinforcement.

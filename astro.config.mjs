@@ -55,16 +55,16 @@ const COURSE_MODULES = [
     directory: '09-file-uploads',
     released: false,
   },
-  //   {
-  //     label: 'CSS Variable Wizardry',
-  //     directory: '09-css-variable-wizardry',
-  //     released: true,
-  //   },
-  //   {
-  //     label: 'CSS Selector Spells',
-  //     directory: '10-css-selector-spells',
-  //     released: true,
-  //   },
+  {
+    label: 'Authentication with Passport',
+    directory: '10-auth-with-passport',
+    released: false,
+  },
+  {
+    label: 'Role Based Authorization',
+    directory: '11-role-based-authorization',
+    released: false,
+  },
   //   {
   //     label: 'CSS Function Forge',
   //     directory: '11-css-function-forge',

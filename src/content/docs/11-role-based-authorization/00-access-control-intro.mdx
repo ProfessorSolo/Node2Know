@@ -1,0 +1,54 @@
+---
+title: "Introduction to Access Control"
+description: "Understanding the layered security models beyond authentication."
+sidebar:
+  order: 1
+  label: Intro to Access Control
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+import CautionBox from "../../../components/CautionBox.astro";
+
+## Beyond the Front Door
+
+In the previous module, we successfully deployed an "Admin Door" by implementing Authentication with Passport.js. We have a robust system that stands at the entrance, diligently checking credentials and handing out authenticated session wristbands.
+
+But right now, anyone holding a wristband is treated exactly the same. They can walk straight into the control room, unplug the servers, and remodel the database.
+
+This introduces the catastrophic difference between **Authentication (AuthN)** and **Authorization (AuthZ)**.
+
+### The Two Pillars of Identity
+
+- **Authentication (AuthN)** answers the question: _“Who are you, and can you prove it?”_ Our Passport strategy and bcrypt hashing handle this perfectly.
+- **Authorization (AuthZ)** answers a vastly different question: _“What are you allowed to do now that you are inside?”_
+
+Think of it like navigating an airport.
+Showing your passport and boarding pass to the TSA agent is **Authentication**. They verify you are who you claim to be, and they let you into the terminal.
+
+However, just because you are in the terminal does not mean you are allowed to walk onto the tarmac, enter the air traffic control tower, or sit in the pilot's seat. The badge scanners on those specific doors enforcing your capabilities represent **Authorization**.
+
+<NoteBox>
+  **Professor Solo:** If you configure authentication but forget authorization,
+  your architecture operates under the dangerous assumption that "Logged in"
+  automatically equals "Root Administrator." This is how entire databases get
+  mysteriously wiped by the new intern on a Friday afternoon.
+</NoteBox>
+
+### Learning Goals
+
+In this module, we will explore the theory and practical implementation of access control layers. By the end, you will be able to:
+
+- Articulate the critical architectural split between **AuthN** and **AuthZ**.
+- Understand the benefits of Role-Based architecture over localized Access Control Lists.
+- Define a strict, scalable set of roles tailored for a web application.
+- Architect granular middleware sequences enforcing access control across Express routes.
+- Hydrate UI templates with authorization context to intentionally hide sensitive controls from under-privileged users.
+
+## Extra Bits & Bytes
+
+_Placeholder for future links and resources_
+
+### ⏭ Next: The RBAC Paradigm
+
+Identity is established. Now let's figure out how the industry scales assigning permissions to those identities.
