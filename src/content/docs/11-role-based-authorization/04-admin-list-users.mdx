@@ -1,0 +1,119 @@
+---
+title: "Admin User Inventory"
+description: "Building a unified dashboard to manage system users"
+sidebar:
+  order: 5
+  label: User Inventory
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+import CautionBox from "../../../components/CautionBox.astro";
+
+### The Unified Interface
+
+Now that our User model physically tracks its assigned `role` within the database, we need to provide our Administrative users a clean, secure dashboard to manage this critical data.
+
+To maximize administrative efficiency, we are going to build a **Unified View**. Instead of bouncing the user across three different `<form>` pages for adding, editing, and deleting accounts, we will render the entire management suite cleanly on `admin/users/index.ejs`.
+
+### 1. The Database Logic
+
+Before we can render an inventory, we actually need to fetch it. Open `/data/users.js` and add a new query method dedicated exclusively to retrieving our complete user listing.
+
+```javascript
+// data/users.js
+class UserOps {
+  // ... existing methods (createUser, getUserByEmail, etc.)
+
+  async getAllUsers() {
+    // Sort alphabetically by email and retrieve plain JSON objects
+    return await User.find({}).sort({ email: 1 }).lean();
+  }
+}
+```
+
+### 2. The Root Router
+
+Over in our `adminRouter.js`, we need a new endpoint specifically to orchestrate this unified view.
+
+Notice that our `GET` controller explicitly provisions two variables to the EJS template: `users` (the complete array) and `editUser` (which is safely defaulted to `null` on the initial load).
+
+```javascript
+// routers/adminRouter.js
+const express = require("express");
+const router = express.Router();
+// Assuming _userOps is already imported:
+// const _userOps = require("../data/users");
+
+// ... existing routes ...
+
+// GET: show unified users admin dashboard
+router.get("/users", async (req, res) => {
+  const users = await _userOps.getAllUsers();
+
+  res.render("admin/users/index", {
+    users: users,
+    editUser: null, // No user is actively being edited on initial load
+    error: null,
+  });
+});
+```
+
+### 3. The Unified EJS Structure
+
+The underlying structure of our `index.ejs` file acts as the scaffolding for both the "Add" and "Edit" states. We loop across the `users` array, displaying their identity and role assignment.
+
+```html
+<!-- views/admin/users/index.ejs -->
+<h1>User Management</h1>
+
+<% if (error) { %>
+<div class="alert alert-danger"><%= error %></div>
+<% } %>
+
+<!-- The Add User form will eventually go right here at the top! -->
+
+<hr />
+
+<h3>Current Users</h3>
+
+<div class="user-list">
+  <% users.forEach(user => { %>
+  <div
+    class="user-card"
+    style="border: 1px solid #ccc; padding: 1rem; margin-bottom: 1rem;"
+  >
+    <p><strong>Email:</strong> <%= user.email %></p>
+    <p><strong>Role:</strong> <span class="badge"><%= user.role %></span></p>
+
+    <div class="actions">
+      <!-- Edit trigger -->
+      <a href="/admin/users/<%= user._id %>/edit" class="btn btn-secondary"
+        >Edit</a
+      >
+
+      <!-- Delete trigger form -->
+      <form
+        action="/admin/users/<%= user._id %>/delete"
+        method="POST"
+        style="display:inline;"
+      >
+        <button type="submit" class="btn btn-danger">Delete</button>
+      </form>
+    </div>
+
+    <!-- The dynamic Edit Form will inject right here if this user is selected -->
+  </div>
+  <% }) %>
+</div>
+```
+
+<NoteBox>
+  **Professor Solo:** The unified page approach drastically cuts down on the
+  sheer raw number of EJS files required to support standard administrative CRUD
+  operations. It's incredibly fast to use once built!
+</NoteBox>
+
+### ⏭ Next: Adding and Editing Users
+
+The inventory visualizes exactly who is currently in the database. Now let's physically inject the HTML `<form>` elements directly into this scaffold to actively add and modify those users.

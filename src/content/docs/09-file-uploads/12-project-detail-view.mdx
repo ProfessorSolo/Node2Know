@@ -71,18 +71,11 @@ On `project-detail.ejs`, we are looking at the specific project. Now we naturall
   </div>
   <% } %>
 
-  <a href="/projects" style="display: inline-block; margin-top: 2rem;"
-    >← Back to Projects</a
-  >
+  <a href="/projects"> ← Back to Projects</a>
 </article>
 ```
 
-<CautionBox title="T.A. Watts" type="warning">
-  If you mapped the Category to pass its label up to the EJS template, make sure
-  your router route loads the data with `.populate("categoryId")`. Otherwise the
-  view will print the MongoDB ObjectId hash string instead!
-</CautionBox>
+### ⏭ Next: Uploads Wrap-Up
 
-### ⏭ Next: Wrapping it Up
-
-You've successfully built a relational database mapper and navigated the complexities of processing binary document streams!
+We've successfully built a relational database mapper and navigated the complexities of processing binary document streams, splitting out metadata from the binary data, and rendering it all in the front end!
+Let's take a look back at what we've accomplished in this section.

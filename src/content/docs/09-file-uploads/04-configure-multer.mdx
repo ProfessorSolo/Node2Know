@@ -11,9 +11,13 @@ import NoteBox from "../../../components/NoteBox.astro";
 
 ## Writing the Middleware configuration
 
-We want to intercept inbound file traffic explicitly, test its type to ensure it is an image, and deposit it into our `/public/uploads` directory.
+We want to intercept inbound file traffic explicitly, test uploaded files to ensure they are images, deposit them into our `/public/uploads` directory, and then save the file metadata (as a projectImage subdocument) in the appropriate project document.
 
-Create the `middleware/upload.js` file:
+We'll use Multer's `diskStorage` to handle the file system operations. The `destination` function will create a project-specific folder, and the `filename` function will generate a unique filename for the uploaded file.
+
+We'll also add a `fileFilter` function to ensure that only images are uploaded.
+
+All of this logic is contained within the `middleware/upload.js` file.
 
 ```javascript
 // middleware/upload.js
@@ -60,6 +64,11 @@ const upload = multer({ storage, fileFilter });
 
 module.exports = upload;
 ```
+
+<img
+  src="/assets/lessons/09-file-uploads/multer-config.png"
+  alt="Neo-Retro isometric diagram showing Multer middleware filtering a file stream for images and organizing them into specific project folders."
+/>
 
 <NoteBox title="Professor Solo">
   Notice the `fileFilter` checks for `image/`. We are silently rejecting

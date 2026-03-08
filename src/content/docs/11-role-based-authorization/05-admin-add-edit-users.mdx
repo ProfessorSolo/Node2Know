@@ -1,0 +1,200 @@
+---
+title: "Adding and Editing Users"
+description: "Injecting forms dynamically into the unified interface"
+sidebar:
+  order: 6
+  label: Add & Edit Users
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+
+### Contextual Form Injection
+
+Our `admin/users/index` view is fundamentally designed to dynamically react based on the presence (or absence) of the `editUser` object context passed directly from our Express router.
+
+### Updating the Database Logic
+
+Before we can physically update an existing user's `role`, we must possess the explicit capability to execute that update structurally inside `data/users.js`. We also need the ability to add users. We already have `createUser` which creates a user with default `USER` role. Let's add an explicit `updateUserById` method.
+
+```javascript
+// data/users.js
+class UserOps {
+  // ... existing methods ...
+
+  async updateUserById(id, updates) {
+    // Utilize the `{ new: true }` parameter to return the newly updated document
+    const updatedUser = await User.findByIdAndUpdate(id, updates, {
+      new: true,
+    });
+
+    if (!updatedUser) {
+      return { success: false, errorMessage: "User not found." };
+    }
+
+    return { success: true, user: updatedUser };
+  }
+}
+```
+
+### Orchestrating the Routes
+
+We are going to define three new endpoints in our `adminRouter.js`:
+
+1. The **Create** POST endpoint (adding new staff directly).
+2. The **Edit Mode** GET endpoint (which strictly reloads the dashboard specifically populated with target user data).
+3. The **Update** POST endpoint (submitting the edit form changes and redirecting back to the clean dashboard).
+
+```javascript
+// routers/adminRouter.js
+
+// 1. POST: handle adding a completely new user
+router.post("/users", async (req, res) => {
+  const { email, password, role } = req.body;
+
+  if (!email || !password || !role) {
+    const users = await _userOps.getAllUsers();
+    return res.render("admin/users/index", {
+      users,
+      editUser: null,
+      error: "All fields required for new user.",
+    });
+  }
+
+  try {
+    // Note: this uses our existing Data layer createUser method!
+    const newUser = await _userOps.createUser(email, password);
+    // As an admin creating an account, we want to immediately apply their requested role
+    await _userOps.updateUserById(newUser._id, { role: role });
+
+    res.redirect("/admin/users");
+  } catch (err) {
+    const users = await _userOps.getAllUsers();
+    res.render("admin/users/index", {
+      users,
+      editUser: null,
+      error: "Failed to create user. Email may be in use.",
+    });
+  }
+});
+
+// 2. GET: Trigger the Edit Mode interface
+router.get("/users/:id/edit", async (req, res) => {
+  const { id } = req.params;
+
+  // Fetch everything needed for the unified dashboard...
+  const users = await _userOps.getAllUsers();
+  // ...plus specifically fetch the target user requested for modification
+  const editUser = await _userOps.getUserById(id);
+
+  if (!editUser) return res.redirect("/admin/users");
+
+  // Re-render the identical index view, but this time populate context
+  res.render("admin/users/index", { users, editUser, error: null });
+});
+
+// 3. POST: Handle submitting the Edit User form
+router.post("/users/:id", async (req, res) => {
+  const { id } = req.params;
+  const { role } = req.body;
+
+  // We are strictly explicitly only enabling the modification of the internal role hierarchy
+  const result = await _userOps.updateUserById(id, { role });
+
+  if (!result.success) {
+    const users = await _userOps.getAllUsers();
+    return res.render("admin/users/index", {
+      users,
+      editUser: null,
+      error: result.errorMessage,
+    });
+  }
+
+  res.redirect("/admin/users");
+});
+```
+
+### Implementing Dynamic EJS Rendering
+
+We must now physically update the `admin/users/index.ejs` file to securely parse and structurally react to the `editUser` object condition.
+
+```html
+<!-- views/admin/users/index.ejs -->
+<h1>User Management</h1>
+
+<% if (error) { %>
+  <div class="alert alert-danger"><%= error %></div>
+<% } %>
+
+<!-- 1. The ADD Form -->
+<!-- It uniquely visually renders EXCLUSIVELY if we are NOT in Edit Mode -->
+<% if (!editUser) { %>
+  <div class="add-user-panel" style="background:#f4f4f4; padding:1rem; margin-bottom: 2rem;">
+    <h3>Add New User</h3>
+    <form action="/admin/users" method="POST">
+      <label>Email: <input type="email" name="email" required></label>
+      <label>Password: <input type="password" name="password" required></label>
+      <label>Permissions Role:
+        <select name="role">
+          <option value="USER">Base User</option>
+          <option value="MODERATOR">Moderator</option>
+          <option value="ADMIN">Administrator</option>
+        </select>
+      </label>
+      <button type="submit" class="btn btn-primary">Create User Profile</button>
+    </form>
+  </div>
+<% } %>
+
+<hr>
+<h3>Current Users</h3>
+
+<div class="user-list">
+  <% users.forEach(user => { %>
+    <div class="user-card" style="border: 1px solid #ccc; padding: 1rem; margin-bottom: 1rem;">
+      <p><strong>Email:</strong> <%= user.email %></p>
+      <p><strong>Role:</strong> <span class="badge"><%= user.role %></span></p>
+
+      <div class="actions">
+        <a href="/admin/users/<%= user._id %>/edit" class="btn btn-secondary">Edit</a>
+
+        <form action="/admin/users/<%= user._id %>/delete" method="POST" style="display:inline;">
+          <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+      </div>
+
+      <!-- 2. The EDIT Form -->
+      <!-- We explicitly verify if the current loop object STRICTLY MATCHES the focused actively requested edit context -->
+      <% if (editUser && editUser._id.toString() === user._id.toString()) { %>
+        <div class="edit-panel" style="background: #e9ecef; border-left: 4px solid #007bff; padding: 1rem; margin-top: 1rem;">
+          <h4>Modify Role Assignment</h4>
+          <form action="/admin/users/<%= user._id %>" method="POST">
+            <p>Targeting: <strong><%= user.email %></strong></p>
+            <label>Promote/Demote To:
+              <select name="role">
+                <option value="USER" <%= user.role === 'USER' ? 'selected' : '' %>>Base User</option>
+                <option value="MODERATOR" <%= user.role === 'MODERATOR' ? 'selected' : '' %>>Moderator</option>
+                <option value="ADMIN" <%= user.role === 'ADMIN' ? 'selected' : '' %>>Administrator</option>
+              </select>
+            </label>
+            <button type="submit" class="btn btn-success">Save Assignments</button>
+            <a href="/admin/users" class="btn btn-secondary">Cancel</a>
+          </form>
+        </div>
+      <% } %>
+
+    </div>
+  <% }) %>
+</div>
+```
+
+<NoteBox>
+  **Professor Solo:** If you press the "Cancel" button, it fundamentally
+  triggers a standard `GET /admin/users` request explicitly dumping the
+  `editUser` object context! The page re-renders, the Add Form elegantly returns
+  to the top, and the nested specific Edit Panel instantly evaporates.
+</NoteBox>
+
+### ⏭ Next: Deleting Users
+
+The admin capability suite is almost fully operational. Let's wire strictly wire up that final specific Delete button to confidently terminate bad actors securely utilizing the API cleanly.

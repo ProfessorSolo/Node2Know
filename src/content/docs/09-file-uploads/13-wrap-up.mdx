@@ -6,15 +6,75 @@ sidebar:
 ---
 
 import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
 
 ## What We Actually Built
 
-You now have successfully navigated the complexities of processing binary document streams! In this chapter, we have built:
+You have successfully navigated one of the most infamously nuanced challenges in early full-stack development: processing binary document streams!
 
-- **Referenced relationships** (`categoryId` + `populate()`)
-- **Embedded data structures** (`tags` strings and `projectImages` objects)
-- **Uploads working end-to-end** (Form → Multer Middleware → Disk Storage → MongoDB Metadata → EJS Views)
+By completing this module, you didn't just learn how to "upload a file." You engineered a comprehensive media asset management system from scratch.
 
-### ⏭ Next: Auth + Admin Lockdown
+### The Milestones of this Module
 
-Because now your app has power tools... and we don't leave those lying around. Next up, we lock down our endpoints!
+<img
+  src="/assets/lessons/09-file-uploads/file-uploads-architecture.png"
+  alt="Neo-Retro isometric diagram showing an Express server processing a multipart form upload, storing the file on disk and the metadata in MongoDB."
+/>
+
+_The Complete File Upload Architecture_
+
+Let's review the architectural hurdles we overcame to get here:
+
+#### 1. Breaching the Binary Barrier
+
+Standard web forms simply do not speak "binary." By upgrading our HTML form to use `enctype="multipart/form-data"`, we instructed the browser to slice our images into transmittable binary chunks.
+
+We then introduced `multer`, a specialized Express middleware designed specifically to catch these incoming, multipart binary streams. It flawlessly intercepted the file, saved it safely to our local `/public/uploads/project-images` directory, and conveniently attached the resulting metadata to the `req.file` object for our controller to consume.
+
+#### 2. The Dual-Storage Strategy
+
+A common beginner mistake is attempting to stuff physical image data directly into a MongoDB database. We bypassed this anti-pattern entirely.
+
+Instead, we architected a professional **Dual-Storage Strategy**:
+
+- The **heavy, physical asset** (the `.jpg` or `.png`) lives exclusively on the server's local file system.
+- The **lightweight, contextual metadata** (the filename, alt text, and caption) lives cleanly inside our MongoDB database.
+
+#### 3. Data Modeling Mastery
+
+This chapter solidified your understanding of MongoDB's phenomenal flexibility. You successfully implemented two distinctly different relational models within the exact same project:
+
+- **Referential Integrity:** Linking external Category documents via `ObjectId` references and fetching them with Mongoose's powerful `populate()` method.
+- **Embedded Structures:** Utilizing arrays of explicitly shaped Subdocuments to firmly attach image metadata directly to its parent Project document.
+
+#### 4. Dedicated Administrative Views
+
+Finally, rather than cluttering up our primary "Edit Project" form with heavy file upload inputs, we engineered a dedicated "Image Gallery" administration interface. This cleanly separated the concerns of editing text content from managing a project's visual media.
+
+<NoteBox>
+  **Professor Solo:** We can now build a multipart form upload that saves files
+  to disk and logs the metadata to a NoSQL database. This is definitely a skill
+  that many junior developers struggle with. Excellent work!
+</NoteBox>
+
+---
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="https://github.com/ProfessorSolo/Node2Know-06-01-File-Uploads.git"
+  variant="primary"
+  icon="external"
+  iconPlacement="start"
+  target="_blank"
+>
+  Complete Code for this Module - Use as a reference
+</LinkButton>
+
+---
+
+### ⏭ Next: Authentication & Authorization
+
+We have just handed our application some serious power tools... and we shouldn't leave those lying around where just anybody can click them.
+
+Right now, anyone who knows the URL can create categories, delete projects, and aggressively upload images to our server! It's time to build a bouncer. Let's lock down our endpoints with Passport.js.

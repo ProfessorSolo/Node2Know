@@ -2,8 +2,8 @@
 title: "Codex: The Capability Matrix"
 description: "Reference guide for configuring Role-Based Authorization"
 sidebar:
-  order: 9
-  label: Codex 11
+  order: 13
+  label: AuthZ Codex
 ---
 
 import { LinkButton } from "@astrojs/starlight/components";
@@ -53,8 +53,14 @@ import CautionBox from "../../../components/CautionBox.astro";
 - **Auditing Matrices:** Before writing middleware, map your exact Application Domains (Projects, Categories, Contacts) vertically and your precise Roles (Admin, Editor) horizontally. Mark an explicit 'X' where capabilities organically overlap. If you cannot draw the matrix, do not write the middleware.
 - **Resource Ownership (Advanced):** Standard RBAC validates user types (`editors` can edit). Resource Ownership logically validates unique users (`editor 1` can only edit resources authored explicitly by `editor 1`). This inherently requires mapping `User._id` to specific `Document.author` metadata properties.
 
+---
+
 ## Extra Bits & Bytes
 
-_Placeholder for future links and resources_
-
-*End of Module.*
+<LinkButton
+  href="/assets/resources/slide-decks/11-rbac/Node_Authorization_Architecture.pdf"
+  target="_blank"
+  variant="secondary"
+>
+  📘 Node Authorization Architecture (PDF)
+</LinkButton>

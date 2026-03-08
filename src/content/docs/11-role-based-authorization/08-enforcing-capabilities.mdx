@@ -2,7 +2,7 @@
 title: "Enforcing Capabilities"
 description: "Applying route-level role protection boundaries to the CMS"
 sidebar:
-  order: 6
+  order: 9
   label: Enforcing Capabilities
 ---
 
@@ -64,9 +64,19 @@ adminRouter.post("/contacts/:id/delete", requireRole("ADMIN"), deleteContact);
   endpoints, not just the visible UI pathways.
 </CautionBox>
 
+---
+
 ## Extra Bits & Bytes
 
-_Placeholder for future links and resources_
+<LinkButton
+  href="/assets/resources/infographics/11-rbac/08-router-level-access-control.png"
+  target="_blank"
+  variant="secondary"
+>
+  📘 Router-Level Access Control Infographic (PNG)
+</LinkButton>
+
+---
 
 ### ⏭ Next: View-Level Gating
 

@@ -10,11 +10,16 @@ import NoteBox from "../../../components/NoteBox.astro";
 
 ## The Subdocument Model
 
-We decided tags should be embedded _simple documents_. What about media like projectImages?
+We previously stored project tags as embedded _sub-documents_. Let's do the same for projectImages.
 
-We know MongoDB cannot store the physical _file_, so we store the physical image locally in `/public/uploads`. But we _do_ need to store the image's meta information: the filename, alternative text, timestamps, captions, etc.
+Each project can have zero, one, or multiple projectImages, so we need an array.
 
-Since a Project can have zero, one, or multiple projectImages, we need an array. But since an `alt_text` needs to explicitly pair with its `filename`, a primitive array of Strings will not work. We need an array of **Objects**.
+<img
+  src="/assets/lessons/09-file-uploads/project-image-schema.png"
+  alt="Neo-Retro isometric diagram showing a MongoDB Project Document containing an array of embedded Project Image Subdocuments, with physical image files stored on a local server hard drive."
+/>
+
+_Fig 1: Document Structure vs Physical Storage_
 
 ### The Project Image Schema
 
@@ -54,9 +59,7 @@ const projectSchema = new mongoose.Schema({
   without expensive `populate()` joins.
 </NoteBox>
 
-## Extra Bits & Bytes
-
-{{/* Placeholder for Mongoose Subdocument references */}}
+---
 
 ### ⏭ Next: Install Multer
 

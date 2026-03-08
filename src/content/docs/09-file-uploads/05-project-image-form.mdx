@@ -9,15 +9,15 @@ import { LinkButton } from "@astrojs/starlight/components";
 import CautionBox from "../../../components/CautionBox.astro";
 import NoteBox from "../../../components/NoteBox.astro";
 
-## A Dedicated Image Gallery
+## A Dedicated Project Image Admin Page
 
-While we _could_ adjust our main Project Form to handle file uploads, uploading binary data alters how the server parses standard form fields. A cleaner, safer, and more user-friendly approach is to create a completely independent view strictly for managing a project's media gallery.
+While we _could_ adjust our main Project Form to handle file uploads, a cleaner, safer, and more user-friendly approach is to create a completely independent view strictly for managing a project's images.
 
 By decoupling the image form from the primary text data form, we eliminate the risk of accidentally overwriting or deleting images when a user updates basic fields like the project title.
 
 ### 1. The Gateway Button
 
-First, we need a way for administrators to access this dedicated gallery. Open your `views/admin/projects/projects-list.ejs` file and add a "Manage Images" link next to the "Edit" button for each project:
+First, we need a way for administrators to access this dedicated project image admin page. Open your `views/admin/projects/projects-list.ejs` file and add a "Manage Images" link next to the "Edit" button for each project:
 
 ```html
 <a href="/admin/projects/<%= project._id %>/images">Manage Images</a>
@@ -80,7 +80,7 @@ We will split this new view into two sections:
 
 <hr />
 
-<!-- SECTION 2: THE EXISTING GALLERY -->
+<!-- SECTION 2: THE EXISTING IMAGE LIST -->
 <h3>Existing Images</h3>
 
 <div class="image-gallery">
@@ -144,6 +144,18 @@ folder path ready before it even looks at the file stream.
 
 </NoteBox>
 
+---
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="/assets/resources/infographics/09-file-uploads/05-separation-of-concerns.png"
+  target="_blank"
+  variant="secondary"
+>
+  📘 Separation of Concerns (PNG)
+</LinkButton>
+
 ### ⏭ Next: The Admin Upload Endpoint
 
-Our gallery view sends a multipart payload to `/admin/projects/:projectId/images`. Next, we need to create this dedicated endpoint in `adminRouter.js`, bind our Multer middleware, and set up a `GET` route to render this new page!
+Our project image form will send a multipart payload to `/admin/projects/:projectId/images`. Next, we need to create this dedicated endpoint in `adminRouter.js`, bind our Multer middleware, and set up a `GET` route to render this new page!

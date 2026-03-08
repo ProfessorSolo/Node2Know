@@ -1,0 +1,99 @@
+---
+title: "Deleting Users"
+description: "Removing accounts utilizing the Ops layer and API endpoints"
+sidebar:
+  order: 7
+  label: Delete Users
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+import NoteBox from "../../../components/NoteBox.astro";
+
+### Constructing the Delete Button
+
+We have successfully rendered the UI elements to read, add, and modify user profiles. The final capability is the destructive deletion of a user account entirely.
+
+If you look at the `index.ejs` file from the previous step, you will notice our Delete button is already structurally a `<form>` pointing to `POST /admin/users/:id/delete`.
+
+We will simply add a quick Javascript confirmation prompt to prevent accidental misclicks, completing the EJS markup for the entire Unified view.
+
+```html
+<!-- views/admin/users/index.ejs -->
+<form
+  action="/admin/users/<%= user._id %>/delete"
+  method="POST"
+  style="display:inline;"
+  onsubmit="return confirm('Are you sure you want to permanently delete this user?');"
+>
+  <button type="submit" class="btn btn-danger">Delete</button>
+</form>
+```
+
+### The Database Operations
+
+Open your Data layer at `/data/users.js` and add the method precisely engineered to eradicate the document permanently by its MongoDB `_id` identifier.
+
+```javascript
+// data/users.js
+class UserOps {
+  // ... existing methods ...
+
+  async deleteUserById(id) {
+    const deletedUser = await User.findByIdAndDelete(id);
+    return deletedUser !== null;
+  }
+}
+```
+
+### The Router Endpoint
+
+Finally, we capture the destructive HTTP POST request directly inside our `adminRouter.js`. Following the same standard pattern as our edit endpoints, if the deletion successfully resolves, we immediately redirect the user aggressively back to the `admin/users` baseline page.
+
+```javascript
+// routers/adminRouter.js
+
+// 4. POST: Execute the destructive deletion capability
+router.post("/users/:id/delete", async (req, res) => {
+  const { id } = req.params;
+
+  // We actively restrict deletion if the user attempts to delete themselves!
+  if (req.user._id.toString() === id.toString()) {
+    const users = await _userOps.getAllUsers();
+    return res.render("admin/users/index", {
+      users,
+      editUser: null,
+      error: "You cannot delete your own active account.",
+    });
+  }
+
+  const success = await _userOps.deleteUserById(id);
+
+  if (!success) {
+    const users = await _userOps.getAllUsers();
+    return res.render("admin/users/index", {
+      users,
+      editUser: null,
+      error: "Failed to delete user.",
+    });
+  }
+
+  // Operation clean, navigate back home
+  res.redirect("/admin/users");
+});
+```
+
+<NoteBox>
+  **Professor Solo:** The safety guard preventing self-deletion is critical. If
+  a logged-in user dynamically deletes their own database record while their
+  session cookie is simultaneously still active, the Passport `deserializeUser`
+  function will crash spectacularly querying a structurally nonexistent user on
+  their immediately subsequent request!
+</NoteBox>
+
+At this point, the administrative user interface fundamentally functions! If you possess a session, you can manually navigate straight to `/admin/users` and manage your entire workforce seamlessly.
+
+But there remains a horrific design flaw. Right now, _any_ active user possessing a session can type `/admin/users` to get there, regardless of whether they are a basic `USER` or a highly trusted `ADMIN`. We must rapidly deploy the Role-Based authentication guards we logically planned earlier to physically block them.
+
+### ⏭ Next: The RBAC Middleware
+
+Our target functionality works. Let's permanently lock the door so only authorized personnel can twist the handle.

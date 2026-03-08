@@ -53,7 +53,7 @@ const COURSE_MODULES = [
   {
     label: 'File Uploads',
     directory: '09-file-uploads',
-    released: false,
+    released: true,
   },
   {
     label: 'Authentication with Passport',

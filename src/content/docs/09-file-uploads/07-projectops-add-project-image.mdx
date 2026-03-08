@@ -10,9 +10,16 @@ import NoteBox from "../../../components/NoteBox.astro";
 
 ## Persisting File Metadata
 
-While Multer successfully saved the physical file to the local disk, we are responsible for saving a record of that file inside MongoDB. The file's binary data is on the disk; its identity is tracked in the database array.
+While Multer saves the physical file to the local disk, we still need to save a record of that file in the projectImages array within the project document.
 
-When Multer finishes processing the image, it populates `req.file`. We also have access to `req.body` which contains any textual inputs submitted alongside the file (like our alt text and caption). We must merge all this information to create our subdocument.
+When Multer finishes processing the image, it will populate `req.file`. We also have access to `req.body` which contains the text inputs submitted alongside the file (like our alt text and caption). We'll merge all this information to create our subdocument.
+
+<img
+  src="/assets/lessons/09-file-uploads/project-image-subdoc.png"
+  alt="Neo-Retro isometric diagram showing an Express controller taking file metadata from Multer and text metadata from the user form, combining them to form a new subdocument object, and pushing that object into a project document's MongoDB array."
+/>
+
+_Fig 2: Assembling the Project Image Subdocument_
 
 ### The Specific Method Implementation
 

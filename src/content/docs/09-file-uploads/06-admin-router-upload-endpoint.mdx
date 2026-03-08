@@ -12,7 +12,7 @@ import NoteBox from "../../../components/NoteBox.astro";
 
 In our Admin Router, we need to create two specific routes for our media gallery to function:
 
-1. `GET /admin/projects/:projectId/images` to render the new gallery view.
+1. `GET /admin/projects/:projectId/images` to render the image upload form as well as the list of existing images for the given project.
 2. `POST /admin/projects/:projectId/images` to handle the actual file upload submission.
 
 We will use a **single** file upload named `"projectImage"` (matching the name attribute in our new form). We attach `upload.single("projectImage")` as middleware directly to the POST route.

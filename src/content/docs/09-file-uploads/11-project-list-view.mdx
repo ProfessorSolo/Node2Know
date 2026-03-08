@@ -14,6 +14,11 @@ Because we saved our files inside public folders (`/public/uploads`), the Expres
 
 All we have to do inside our EJS views is construct an `<img>` tag that references `/uploads/` + the MongoDB metadata filename.
 
+<img
+  src="/assets/lessons/09-file-uploads/project-list-view.png"
+  alt="Neo-Retro isometric diagram showing an EJS template iterating over Project Documents to find the featuredImage subdocument and construct a dynamic URL path."
+/>
+
 ### The Project List Page
 
 On `projects-list.ejs`, where we map across every project dynamically in a loop, we want to show a single projectImage (perhaps grabbing the very first one, or looping through). Let's see how our view can leverage the array of projectImages.

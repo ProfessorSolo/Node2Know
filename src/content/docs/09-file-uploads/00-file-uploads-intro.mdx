@@ -11,25 +11,56 @@ import CautionBox from "../../../components/CautionBox.astro";
 
 ## Handling File Uploads
 
-In real applications, data is rarely flat. While text strings and numbers make up the bulk of our databases, **relationships** and **assets** (like images and documents) are inevitable. This chapter covers the process of handling file uploads in a Node/Express application.
+In real applications, data is rarely flat. Although text strings, numbers, booleans and dates make up the bulk of our databases, **assets** (like images and documents) are inevitable.
+
+In this chapter, we'll cover the process of handling file uploads in a Node/Express application.
+
+<img
+  src="/assets/lessons/09-file-uploads/file-uploads-intro.png"
+  alt="Neo-Retro isometric conceptual illustration of a digital document dissolving into binary code and flowing into a server rack."
+/>
 
 ## The Upload Process
 
 When a user submits a file, two distinct operations must happen simultaneously:
 
-1. **File Storage:** The binary file itself must be saved somewhere. For this class, the simplest approach is saving it straight to the server's local disk.
-2. **Metadata Persistence:** We must save a record of the file—its metadata—inside the database.
+1. **File Storage:** The binary file itself must be saved somewhere. For this class, we'll keep it simple and save the files straight to the server's local disk. (_Other common options include cloud storage like AWS S3 or Google Cloud Storage._)
+2. **Metadata Persistence:** We need to save a record of the file, its metadata, in our database so we can reference it later.
 
 We will accomplish this by:
 
-- Storing the actual image files inside a public directory like `/public/uploads/`.
+- Storing the actual image files inside a publically accessible directory, `/public/uploads/`.
 - Storing the file's metadata (like the filename, size, and original name) alongside the resource it belongs to.
+
+<NoteBox>
+  <strong slot="title">Why public?</strong>
+  We store the files in the public directory so that they can be served directly
+  by the web server. If we stored them in a private directory, we would need to
+  create a separate route to serve them, which would add unnecessary complexity.
+  Also, we want to store these separately from our other public resources
+  (stylesheets and client-side scripts) since uploads are inherently
+  user-generated and thus represent a security risk.
+</NoteBox>
 
 ## Introducing Multer
 
-Express, by itself, does not know how to handle files sent from HTML forms. To process these binary payloads, we need a specialized tool.
+Express, by itself, does **not** know how to handle files sent from HTML forms. To process these binary payloads, we need a specialized tool.
 
-**Multer** is a Node.js middleware built specifically for handling `multipart/form-data`, which is the encoding type primarily used for uploading files. Multer acts as the interceptor: catching the file data streaming from the client, saving it to the disk, and then passing the metadata along to our route handlers.
+**Multer** is Node.js middleware built specifically for handling `multipart/form-data`, which is the encoding type primarily used for uploading files.
+
+Multer will act as the interceptor: catching the file data streaming from the client, saving it to the disk, and then passing the metadata along to our route handlers.
+
+## Extra Bits & Bytes
+
+<LinkButton
+  href="https://github.com/ProfessorSolo/Node2Know-04-02-Mongo-Relationships.git"
+  variant="primary"
+  icon="external"
+  iconPlacement="start"
+  target="_blank"
+>
+  Starting point repo (continued from Mongo Relationships demo)
+</LinkButton>
 
 ### ⏭ Next: Planning the Uploads
 

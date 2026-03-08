@@ -12,7 +12,7 @@ import CautionBox from "../../../components/CautionBox.astro";
 
 ### Wiring the Framework
 
-Now that we have our `User` data model prepared and our dependencies installed, it's time to actually configure the middleware sequence in `app.js`. This is where all the disparate parts—Express, sessions, and Passport—are glued together.
+Now that we have our `User` data model prepared and our dependencies installed, it's time to actually configure the middleware sequence in `server.js`. This is where all the disparate parts—Express, sessions, and Passport—are glued together.
 
 There are three primary components to complete before we can authenticate anyone:
 
@@ -21,9 +21,9 @@ There are three primary components to complete before we can authenticate anyone
 3. Define the **Serialization** and **Deserialization** rules so Passport knows exactly how to pack and unpack our `User` objects into the session cookie.
 
 <CautionBox>
-  **T.A. Watts Note:** Middleware order in your `app.js` file is **critical**.
-  The session middleware *must* be mounted before the passport session
-  middleware, and all of this must occur *before* your routers.
+  **T.A. Watts Note:** Middleware order in your `server.js` file is
+  **critical**. The session middleware *must* be mounted before the passport
+  session middleware, and all of this must occur *before* your routers.
 </CautionBox>
 
 ### 1. The Session and Passport Initialization
@@ -67,7 +67,7 @@ When a user successfully logs in, Passport needs to store a reference to that us
 
 **Serialization** is the process of extracting the smallest possible unique identifier (usually the Mongo `_id`) and packing that into the session object.
 
-Let's create a dedicated file for all of our Passport logic so `app.js` doesn't get cluttered.
+Let's create a dedicated file for all of our Passport logic so `server.js` doesn't get cluttered.
 
 ```javascript
 // middleware/passport.js

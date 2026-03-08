@@ -12,11 +12,11 @@ import CautionBox from "../../../components/CautionBox.astro";
 
 ### Wiring It All Together
 
-Implementing fully robust authentication architectures correctly inherently demands executing numerous extremely specific tightly coupled steps sequentially bridging varying disparate operational files encompassing controllers, models, routes, and core `app.js` configurations.
+Implementing fully robust authentication architectures correctly inherently demands executing numerous extremely specific tightly coupled steps sequentially bridging varying disparate operational files encompassing controllers, models, routes, and core `server.js` configurations.
 
 Use this explicit tracking baseline maintaining focus mentally organizing the operational layout dynamically throughout your physical integration timeline:
 
-- [ ] Add the explicit `User` model (`email`, `passwordHash`, `roles`) into the MongoDB schema collections.
+- [ ] Add the explicit `User` model (`email`, `passwordHash`) into the MongoDB schema collections.
 - [ ] Add the functional `register` and `login` route handlers mapping controllers explicitly managing the GET renders visually coupled rendering the associated Pug/EJS POST form views.
 - [ ] Install and configure the core `express-session` architecture utilizing `.env` secrets establishing persistent state securely tracking the client connection parameters.
 - [ ] Install, import, and configure the primary Passport instances utilizing `passport-local` executing the customized Verify Callback handling the `bcrypt.compare()` architecture securely parsing the password variables successfully.
@@ -39,8 +39,17 @@ This effectively represents a secure completely operational administrative authe
 
 ## Extra Bits & Bytes
 
-_Placeholder for future links and resources_
+<LinkButton
+  href="https://github.com/ProfessorSolo/Node2Know-06-02-authentication-passport.git"
+  variant="primary"
+  icon="external"
+  iconPlacement="start"
+  target="_blank"
+>
+  Basic Auth Demo Repo - Complete Reference
+</LinkButton>
 
-### ⏭ Next: Where We Go Next
+### ⏭ Next: Beyond Basic Authentication
 
-The core is secure. What's the next evolution?
+Now that we have a solid foundation, let's explore some advanced authentication concepts and best practices.
+We won't be implementing these in the portfolio app, but they are important to know for future reference.

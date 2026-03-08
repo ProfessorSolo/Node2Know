@@ -2,7 +2,7 @@
 title: "View-Level Gating"
 description: "Hiding UI controls and templates dynamically based on role"
 sidebar:
-  order: 7
+  order: 10
   label: View-Level Gating
 ---
 
@@ -20,60 +20,65 @@ We must conceptually understand that hiding a button using CSS or EJS if/else bl
 
 ### Passing Authorization Context to Views
 
-To conditionally hide interface elements dynamically, the EJS template requires awareness of exactly which capabilities the currently logged-in user possesses. We cleanly achieve this by deploying standard Express `res.locals` configuration directly inside our primary controller.
+To conditionally hide interface elements dynamically, the EJS template requires awareness of exactly which capabilities the currently logged-in user possesses. We cleanly achieve this by deploying standard Express `res.locals` configuration directly inside our primary router endpoint.
 
 ```javascript
-// controllers/adminContactOps.js
+// routers/adminRouter.js
 
-const renderContactList = async (req, res) => {
-  const allContacts = await Contact.find({});
+// Admin: contacts inbox page
+router.get("/contacts", async (req, res) => {
+  const contacts = await _contactOps.getAllContactsAdmin();
 
   // 1. Determine explicitly if the user possesses the pure ADMIN role
-  const isSuperAdmin = req.user.role === "ADMIN";
+  const isAdmin = req.user.role === "ADMIN";
 
   // 2. Attach that specific Boolean directly to the response locals
-  res.locals.canDeleteContacts = isSuperAdmin;
+  res.locals.canDeleteContacts = isAdmin;
 
-  res.render("admin/contact-list", {
-    viewTitle: "Contact Submissions",
-    contacts: allContacts,
-  });
-};
+  res.render("admin/contacts/index", { contacts });
+});
 ```
 
 ### Applying the Gates in EJS
 
-Inside the physical template, we utilize simple condition checks evaluating our explicitly defined target boolean. Moderators will see the details, but only Admins will see the Delete form.
+Inside the physical template, we utilize simple condition checks evaluating our explicitly defined target boolean. Moderators will see the submission details and a Read toggle, but only Admins will see the Delete button.
+
+Because we are utilizing client-side JavaScript (`fetch()`) to handle the deletion action asynchronously rather than a standard HTML form submission, we only need to secure the physical `<button>` element itself.
 
 ```html
-<!-- views/admin/contact-list.ejs -->
+<!-- views/admin/contacts/index.ejs -->
 
-<div class="contact-card">
-  <h3>Message from: <%= contact.email %></h3>
-
-  <!-- The Read status toggle is visible to all dashboard roles (Moderator & Admin) -->
-  <form action="/admin/contacts/<%= contact._id %>/read" method="POST">
-    <button type="submit" class="btn">Mark as Read/Unread</button>
-  </form>
+<!-- The Action Cluster -->
+<div class="admin-actions">
+  <!-- Visual Status Pill -->
+  <!-- ... existing Read/Unread radio logic ... -->
 
   <!-- The Delete button renders strictly if the capability resolves to true -->
   <% if (canDeleteContacts) { %>
-  <form action="/admin/contacts/<%= contact._id %>/delete" method="POST">
-    <button type="submit" class="btn btn-danger">Delete Submission</button>
-  </form>
+  <button class="btn btn-danger contact-delete">Delete</button>
   <% } %>
 </div>
 ```
 
 <CautionBox>
-**T.A. Watts Note:** Do not repeatedly evaluate complex logic deep within EJS templates (e.g. `<% if (user.role === 'ADMIN' || user.role === 'SUPER-ADMIN') { %>`). Offload that logic into the server-side controller explicitly mapping strict, legible booleans (e.g. `canDeleteContacts = true`) securely routing it directly into the template.
+**T.A. Watts Note:** Do not repeatedly evaluate complex logic deep within EJS templates (e.g. `<% if (user.role === 'ADMIN' || user.role === 'SUPER-ADMIN') { %>`). Offload that logic into the server-side router explicitly mapping strict, legible booleans (e.g. `canDeleteContacts = true`) securely routing it directly into the template.
 </CautionBox>
 
 With our interface intelligently aligned seamlessly with our underlying permissions, we must review the overarching structural pitfalls that typically emerge when deploying RBAC ecosystems.
 
+---
+
 ## Extra Bits & Bytes
 
-_Placeholder for future links and resources_
+<LinkButton
+  href="/assets/resources/infographics/11-rbac/09-view-level-gating.png"
+  target="_blank"
+  variant="secondary"
+>
+  📘 View-Level Gating Infographic (PNG)
+</LinkButton>
+
+---
 
 ### ⏭ Next: Least Privilege & Pitfalls
 

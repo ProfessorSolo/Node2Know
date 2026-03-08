@@ -13,36 +13,45 @@ import CautionBox from "../../../components/CautionBox.astro";
 
 File uploads in Node.js change the nature of how form data is submitted and processed over standard text parsing. Instead of just sending form URL encoded text, we are moving binary blobs of data alongside text inputs.
 
+<img
+  src="/assets/lessons/09-file-uploads/multipart-encoding-infographic.png"
+  alt="Neo-Retro isometric infographic explaining how multipart/form-data encoding breaks an HTTP POST request into distinct parts separated by a boundary string."
+/>
+
+_Fig 1: Multipart Form Data Encoding Explained_
+
 To handle a robust 1-to-many relationship (one project, many configurable projectImages), our goal is to build a decoupled file processing handler:
 
 ### 1. The File Processor
 
-Instead of uploading a file _while saving_ all other text inputs, we will handle file uploads as an independent operation on a dedicated "Manage Images" page.
+Instead of uploading a file _while saving_ all other text inputs, we'll handle file uploads as an independent operation on a dedicated "Manage Images" page associated with each project.
 
-- You navigate away from the main project form to a specialized media gallery view.
-- You select the physical file and submit a standalone `<form>`.
-- The backend streams it to disk storage, organizing it into a project-specific folder like `/public/uploads/my-cool-project`.
-- The backend replies with a redirect back to the gallery.
-- Later on, when we want to modify metadata (like accessibility tags) or delete an image, we can use asynchronous `fetch` requests without needing to re-upload the file!
+- We'll separate the file upload process from the main project form to a specialized image upload form.
+- We'll select the physical file and submit it as a standalone form (to avoid the complexity of handling both file and text data in the same request).
+- The backend will stream the file to disk storage, organizing it into a project-specific folder like `/public/uploads/my-cool-project`.
+- The backend will reply with a redirect back to the same page with a success message and the image now displayed in the gallery.
+- Later on, when we want to modify metadata (like accessibility tags) or delete an image, we'll use asynchronous `fetch` requests without needing to re-upload the file!
 
 ### 2. The Relationship Mapping
 
 With the image stored safely on the disk, our `Project` object needs the metadata mapped. Our administrative interface will support:
 
-- **Alt Tags & Captions:** T.A. Watts insists on full accessibility markers.
-- **1-N Scale:** Permitting multiple objects within the `projectImages` subdoc array.
-- **The Featured Flag:** Enabling users to mark exactly _one_ of the subdocuments as the thumbnail cover image for the project list page.
-- **Sorting Flags:** Using an `order` integer field to manually sort how the other non-featured projectImages appear on the Detail view.
+- **Alt Tags:** T.A. Watts insists on full accessibility markers.
+- **Captions:** Optional text to display below the image.
+- **1-N Images per project:** Permitting multiple objects within the `projectImages` subdoc array.
+- **An isFeatured Flag:** Enabling users to mark exactly _one_ of the subdocuments as the thumbnail cover image for the project list page.
+- **The original filename:** We'll store the original filename so we can reference it later.
+- **A unique filename:** We'll store a unique filename so we never run into filename collisions.
+
+<NoteBox title="Sorting" type="info">
+  We _could_ also store fields for sorting gallery images, but the above list is
+  sufficient for our purposes.
+</NoteBox>
 
 <CautionBox title="T.A. Watts" type="warning">
-  We can't rely on `body-parser` to handle these heavy binary image chunks. You
-  must change your encoding to `multipart/form-data`, otherwise the data stream
-  collapses.
+  **REMEMBER:** We must change our encoding to `multipart/form-data` in the
+  form, otherwise the data stream collapses.
 </CautionBox>
-
-## Extra Bits & Bytes
-
-{{/* Placeholder for understanding multipart encodings */}}
 
 ### ⏭ Next: Project Images As Embeds
 
