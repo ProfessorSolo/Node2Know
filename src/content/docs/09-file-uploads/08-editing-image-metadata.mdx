@@ -112,7 +112,12 @@ Add this script to the bottom of your `project-image-form.ejs`:
   Notice that our "isFeatured" input is a `radio` button, not a checkbox!
   Because all the radio buttons share the identical name parameter
   `name="isFeatured"`, the browser natively enforces that only *one* image can
-  ever be selected as the featured image at a time!
+  ever be selected as the featured image at a time across the entire gallery!
+  However, because our `fetch` payload only fires individually when a specific
+  "Save Metadata" button is clicked, the server doesn't inherently know about
+  the other radio buttons being visually de-selected. We will still need to
+  manually handle the process of "un-featuring" the other images in our backend
+  Data layer!
 </NoteBox>
 
 ### ⏭ Next: Patching Project Images
