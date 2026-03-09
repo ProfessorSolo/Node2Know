@@ -28,7 +28,7 @@ There are three primary components to complete before we can authenticate anyone
 
 ### 1. The Session and Passport Initialization
 
-In your root `server.js` file, require the necessary packages and integrate them into the middleware stack.
+In our root `server.js` file, we need to require the necessary packages and integrate them into our middleware stack.
 
 ```javascript
 // server.js
@@ -64,6 +64,15 @@ app.use(passport.session());
 ### 2. The Identity Transformer (Serialization)
 
 When a user successfully logs in, Passport needs to store a reference to that user in the newly created session. But storing the _entire_ user document (including the hashed password) in the session memory is wasteful and potentially dangerous.
+
+<NoteBox>
+  **Professor Solo:** Why just the `_id`? If we stored the whole User object in
+  the session, any changes made to the user in the database (like updated
+  permissions) wouldn't be reflected until they logged out and back in! Although
+  this may seem less performant, security is our greater concern here. By only
+  storing the ID, we force Passport to fetch the freshest version of the User
+  from the database on every single request.
+</NoteBox>
 
 **Serialization** is the process of extracting the smallest possible unique identifier (usually the Mongo `_id`) and packing that into the session object.
 
@@ -110,7 +119,7 @@ module.exports = passport;
 
 Now that our local Passport file knows how to handle serialization, we need to instruct `server.js` to use _this_ customized configuration instead of the raw, unconfigured package.
 
-Head back to `server.js` and firmly replace the original `passport` import.
+Head back to `server.js` and replace the original `passport` import with our new custom passport middleware.
 
 ```javascript
 // server.js
@@ -118,6 +127,18 @@ Head back to `server.js` and firmly replace the original `passport` import.
 // const passport = require("passport"); // <--- REMOVE THIS
 const passport = require("./middleware/passport"); // <--- ADD THIS
 ```
+
+<NoteBox>
+  **Professor Solo:** You might be wondering why `server.js` can call
+  `passport.initialize()` and `passport.session()` when we never explicitly
+  wrote those methods inside our new custom `middleware/passport.js` file! This
+  works seamlessly because Node.js dynamically caches module `require`
+  statements. When our middleware file independently imports `passport`,
+  configures it, and then directly exports it utilizing `module.exports =
+  passport;`, we are passing back the genuine, fully authentic native Passport
+  object. Therefore, all of the powerful built-in library methods inherently
+  come along for the ride automatically!
+</NoteBox>
 
 With the infrastructure pipeline connected and injected, the bouncer now knows _where_ to stand and _how_ to handle the VIP wristbands. Next, we need to actually start letting people sign up to be on the list.
 

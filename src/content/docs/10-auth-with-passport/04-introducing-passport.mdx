@@ -18,7 +18,7 @@ At a high conceptual level, Passport.js operates in three distinct phases:
 
 1. **Strategy:** The specific method of authentication (e.g., local username/password, Google OAuth, GitHub, etc.).
 2. **Verify Callback:** The custom function you write that checks those incoming credentials against your database and returns a user object.
-3. **Session Management:** The mechanism of serializing that user out to a cookie session, and then deserializing it back into `req.user` on future requests.
+3. **Session Management:** The mechanism of serializing that user for storage in a session, and then deserializing it back into `req.user` on future requests.
 
 <img
   src="/assets/lessons/10-auth-with-passport/passport-introduction.png"
@@ -41,17 +41,18 @@ It's equally important to understand where Passport's responsibilities end. Many
 
 Passport **does not**:
 
-- Create your database `User` model or schema.
-- Hash your passwords before saving them (you rely on `bcrypt` for that).
-- Create your session store infrastructure (you rely on `express-session` for that).
-- Decide _which_ specific routes are “admin-only” (that’s Authorization, which is your job to define with middleware).
+- Create our database `User` model or schema.
+- Hash our passwords before saving them (we rely on `bcrypt` for that).
+- Create our session store infrastructure (we rely on `express-session` for that).
+- Decide _which_ specific routes are “admin-only” (that’s Authorization, which we'll define with middleware in the next lesson).
 
 <CautionBox>
   **T.A. Watts Note:** The most common point of failure is misunderstanding
-  **Serialize** and **Deserialize**. Serializing is Passport stuffing a tiny
-  reference ID into the session cookie. Deserializing is Passport taking that
-  ID, searching the database for the matching User on subsequent requests, and
-  attaching it to `req.user`.
+  **Serialize** and **Deserialize**. Serializing is Passport extracting a unique
+  identifier (like the user ID) from the authenticated user and storing it in
+  the active session. Deserializing is Passport taking that stored ID on
+  subsequent requests, retrieving the full User from the database, and attaching
+  it to `req.user`.
 </CautionBox>
 
 With the theory out of the way, let's install the actual dependencies.

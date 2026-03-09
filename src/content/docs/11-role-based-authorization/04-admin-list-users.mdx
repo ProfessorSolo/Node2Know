@@ -1,9 +1,9 @@
 ---
-title: "Admin User Inventory"
+title: "Admin User Dashboard"
 description: "Building a unified dashboard to manage system users"
 sidebar:
   order: 5
-  label: User Inventory
+  label: Admin User Dashboard
 ---
 
 import { LinkButton } from "@astrojs/starlight/components";
@@ -26,13 +26,13 @@ class UserOps {
   // ... existing methods (createUser, getUserByEmail, etc.)
 
   async getAllUsers() {
-    // Sort alphabetically by email and retrieve plain JSON objects
-    return await User.find({}).sort({ email: 1 }).lean();
+    // Sort chronologically by created date and retrieve plain JSON objects
+    return await User.find({}).sort({ createdAt: 1 }).lean();
   }
 }
 ```
 
-### 2. The Root Router
+### 2. Admin User Routes
 
 Over in our `adminRouter.js`, we need a new endpoint specifically to orchestrate this unified view.
 
@@ -83,6 +83,7 @@ The underlying structure of our `index.ejs` file acts as the scaffolding for bot
     class="user-card"
     style="border: 1px solid #ccc; padding: 1rem; margin-bottom: 1rem;"
   >
+    <p><strong>Name:</strong> <%= user.name %></p>
     <p><strong>Email:</strong> <%= user.email %></p>
     <p><strong>Role:</strong> <span class="badge"><%= user.role %></span></p>
 

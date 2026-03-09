@@ -17,14 +17,15 @@ We need a minimalist, yet entirely realistic, MongoDB `User` document to facilit
 A sufficient `User` mapping requires:
 
 - `email` (Must be strictly unique)
+- `name` (To display on the dashboard)
 - `passwordHash` (The bcrypt output discussed earlier)
 - `createdAt` and `updatedAt` (Because time is linear)
 
 <NoteBox>
   **Professor Solo:** In larger production applications, we'd likely expand this
-  document significantly. We might include properties like `displayName`,
-  `lastLoginAt`, or an `isActive` flag allowing us to "soft disable" disruptive
-  accounts without physically deleting them.
+  document significantly. We might include properties like `lastLoginAt`, or an
+  `isActive` flag allowing us to "soft disable" disruptive accounts without
+  physically deleting them.
 </NoteBox>
 
 ### Sticking to the Essentials
@@ -40,6 +41,11 @@ const Schema = mongoose.Schema;
 
 const UserSchema = new Schema(
   {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
     email: {
       type: String,
       required: true,

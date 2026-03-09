@@ -64,6 +64,42 @@ Because we are utilizing client-side JavaScript (`fetch()`) to handle the deleti
 **T.A. Watts Note:** Do not repeatedly evaluate complex logic deep within EJS templates (e.g. `<% if (user.role === 'ADMIN' || user.role === 'SUPER-ADMIN') { %>`). Offload that logic into the server-side router explicitly mapping strict, legible booleans (e.g. `canDeleteContacts = true`) securely routing it directly into the template.
 </CautionBox>
 
+### Public Interface Gating
+
+This gating concept isn't strictly reserved for the administrative backend either! We can deploy conditional rendering directly against our public `index.ejs` landing page simply by exposing the current `req.user` downward.
+
+```javascript
+// server.js
+
+// Public Home Route
+app.get("/", (req, res) => {
+  // We pass the currently active user directly to the home page renderer
+  res.render("index", { user: req.user });
+});
+```
+
+With `user` implicitly injected into the `locals` object provided to every EJS template, we can cleanly render targeted navigation.
+
+```html
+<!-- views/index.ejs -->
+<h1>Public Home Page</h1>
+
+<% if (locals.user) { %>
+<h2>Welcome back, <%= user.name || user.email %>!</h2>
+<p><a href="/admin/logout">Log Out</a></p>
+<% } else { %>
+<p>You are browsing as a guest.</p>
+<p>
+  <a href="/admin/login">Log In</a> |
+  <a href="/admin/register">Register</a>
+</p>
+<% } %>
+
+<hr />
+
+<!-- ... basic site navigation loop ... -->
+```
+
 With our interface intelligently aligned seamlessly with our underlying permissions, we must review the overarching structural pitfalls that typically emerge when deploying RBAC ecosystems.
 
 ---

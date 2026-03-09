@@ -12,9 +12,9 @@ import CautionBox from "../../../components/CautionBox.astro";
 
 ### The Two-Layer Security Guard
 
-In the previous module, we constructed the robust `requireAuth` middleware, which explicitly validates incoming session cookies, fundamentally blocking anonymous access to the administrative dashboard layout.
+In the previous lesson, we implemented the `requireAuth` middleware, which explicitly validates incoming session cookies and blocks anonymous access to the admin dashboard.
 
-Role-Based Authorization introduces a foundational "Two-Layer" defensive architecture, seamlessly augmenting our existing security perimeter:
+Role-Based Authorization introduces a "Two-Layer" defensive architecture, seamlessly augmenting our existing security perimeter:
 
 1. **Authentication Layer:** Are you logged into the application? (Handled by `requireAuth`).
 2. **Authorization Layer:** Do your capabilities align with the requested action? (Handled by our new `requireRole`).
@@ -55,13 +55,13 @@ module.exports = { requireAuth, requireRole };
 
 <NoteBox>
   **Professor Solo:** The incredible power of `requireRole(...allowedRoles)` is
-  the spread operator. It allows you to dynamically configure the middleware
+  the spread operator. It allows us to dynamically configure the middleware
   right at the router level by passing in an array of strings (e.g.
   `requireRole("ADMIN", "MODERATOR")`), creating a modular, reusable security
   barrier.
 </NoteBox>
 
-Once this centralized function acts as the gatekeeper, we can explicitly secure every administrative endpoint smoothly. Checking the role in one centralized place drastically reduces security breaches.
+Once this centralized function acts as the gatekeeper, we can secure every administrative endpoint. Checking the role in one centralized place drastically reduces security breaches.
 
 <CautionBox>
   **T.A. Watts Note:** Checking `req.user.role` natively inside specific
@@ -71,9 +71,16 @@ Once this centralized function acts as the gatekeeper, we can explicitly secure 
   than scattering `if(role === 'ADMIN')` throughout 50 controllers.
 </CautionBox>
 
-## Extra Bits & Bytes
+## The Security Perimeter
 
-_Placeholder for future links and resources_
+<img
+  src="/assets/lessons/11-role-based-authorization/rbac_two_layer_security.png"
+  alt="Neo-Retro isometric conceptual diagram illustrating a Two-Layer security architecture with Authentication and Authorization shields"
+/>
+
+_Fig 1: Layer 1 Authentication (Passport) vs. Layer 2 Authorization (RBAC)_
+
+---
 
 ### ⏭ Next: Enforcing Capabilities
 

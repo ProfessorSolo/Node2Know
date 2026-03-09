@@ -58,48 +58,13 @@ const COURSE_MODULES = [
   {
     label: 'Authentication with Passport',
     directory: '10-auth-with-passport',
-    released: false,
+    released: true,
   },
   {
     label: 'Role Based Authorization',
     directory: '11-role-based-authorization',
-    released: false,
+    released: true,
   },
-  //   {
-  //     label: 'CSS Function Forge',
-  //     directory: '11-css-function-forge',
-  //     released: true,
-  //   },
-  //   {
-  //     label: 'Flexbox Fluid Architecture',
-  //     directory: '12-flexbox-fluid-architecture',
-  //     released: true,
-  //   },
-  //   {
-  //     label: 'The Grid',
-  //     directory: '13-grid-the-second-dimension',
-  //     released: true,
-  //   },
-  //   {
-  //     label: 'Tooling - Pipelines to Platforms',
-  //     directory: '14-tooling-pipelines-to-platforms',
-  //     released: true,
-  //   },
-  //   {
-  //     label: 'Atomic UI - Tailwind CSS',
-  //     directory: '15-atomic-ui-tailwind-css',
-  //     released: true,
-  //   },
-  //   {
-  //     label: 'SASS with Style',
-  //     directory: '16-sass-with-style',
-  //     released: true,
-  //   },
-  //   {
-  //     label: 'Bits, Bytes, and Bobs: Course Resources, Guides, and Tips',
-  //     directory: '99-bits-bytes-and-bobs',
-  //     released: true,
-  //   },
 ];
 
 // SHOW_ALL_CONTENT is TRUE in non-production (local dev / preview).

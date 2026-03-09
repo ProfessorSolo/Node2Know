@@ -50,9 +50,9 @@ We are going to define three new endpoints in our `adminRouter.js`:
 
 // 1. POST: handle adding a completely new user
 router.post("/users", async (req, res) => {
-  const { email, password, role } = req.body;
+  const { name, email, password, role } = req.body;
 
-  if (!email || !password || !role) {
+  if (!name || !email || !password || !role) {
     const users = await _userOps.getAllUsers();
     return res.render("admin/users/index", {
       users,
@@ -63,7 +63,7 @@ router.post("/users", async (req, res) => {
 
   try {
     // Note: this uses our existing Data layer createUser method!
-    const newUser = await _userOps.createUser(email, password);
+    const newUser = await _userOps.createUser(name, email, password);
     // As an admin creating an account, we want to immediately apply their requested role
     await _userOps.updateUserById(newUser._id, { role: role });
 
@@ -96,10 +96,10 @@ router.get("/users/:id/edit", async (req, res) => {
 // 3. POST: Handle submitting the Edit User form
 router.post("/users/:id", async (req, res) => {
   const { id } = req.params;
-  const { role } = req.body;
+  const { name, role } = req.body;
 
-  // We are strictly explicitly only enabling the modification of the internal role hierarchy
-  const result = await _userOps.updateUserById(id, { role });
+  // We are enabling the modification of the internal role hierarchy and name
+  const result = await _userOps.updateUserById(id, { name, role });
 
   if (!result.success) {
     const users = await _userOps.getAllUsers();
@@ -132,6 +132,7 @@ We must now physically update the `admin/users/index.ejs` file to securely parse
   <div class="add-user-panel" style="background:#f4f4f4; padding:1rem; margin-bottom: 2rem;">
     <h3>Add New User</h3>
     <form action="/admin/users" method="POST">
+      <label>Display Name: <input type="text" name="name" required></label>
       <label>Email: <input type="email" name="email" required></label>
       <label>Password: <input type="password" name="password" required></label>
       <label>Permissions Role:
@@ -152,6 +153,7 @@ We must now physically update the `admin/users/index.ejs` file to securely parse
 <div class="user-list">
   <% users.forEach(user => { %>
     <div class="user-card" style="border: 1px solid #ccc; padding: 1rem; margin-bottom: 1rem;">
+      <p><strong>Name:</strong> <%= user.name %></p>
       <p><strong>Email:</strong> <%= user.email %></p>
       <p><strong>Role:</strong> <span class="badge"><%= user.role %></span></p>
 
@@ -170,6 +172,9 @@ We must now physically update the `admin/users/index.ejs` file to securely parse
           <h4>Modify Role Assignment</h4>
           <form action="/admin/users/<%= user._id %>" method="POST">
             <p>Targeting: <strong><%= user.email %></strong></p>
+            <label>Name: <input type="text" name="name" value="<%= user.name %>" required></label>
+            <br />
+            <br />
             <label>Promote/Demote To:
               <select name="role">
                 <option value="USER" <%= user.role === 'USER' ? 'selected' : '' %>>Base User</option>

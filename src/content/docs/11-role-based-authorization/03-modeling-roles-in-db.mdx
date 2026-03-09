@@ -27,6 +27,7 @@ const Schema = mongoose.Schema;
 
 const UserSchema = new Schema(
   {
+    name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     passwordHash: { type: String, required: true },
 
@@ -71,10 +72,6 @@ If your requirements aggressively expand, requiring intersecting segmented respo
 </CautionBox>
 
 With the data structurally ready to support our matrix, we will construct the protective middleware defending the actual Express routes.
-
-## Extra Bits & Bytes
-
-_Placeholder for future links and resources_
 
 ### ⏭ Next: Admin User Inventory
 
