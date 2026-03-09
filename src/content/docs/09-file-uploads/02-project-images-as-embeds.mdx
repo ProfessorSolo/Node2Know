@@ -5,8 +5,8 @@ sidebar:
   label: Project Image Embeds
 ---
 
-import { LinkButton } from "@astrojs/starlight/components";
-import NoteBox from "../../../components/NoteBox.astro";
+import { LinkButton } from '@astrojs/starlight/components';
+import NoteBox from '../../../components/NoteBox.astro';
 
 ## The Subdocument Model
 
@@ -27,7 +27,7 @@ In Mongoose, arrays of Objects are called **Subdocuments**. We can create a stan
 
 ```javascript
 // data/projects.js
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 // A sub-schema explicitly designed to shape items inside an array
 const projectImageSchema = new mongoose.Schema(
@@ -37,10 +37,9 @@ const projectImageSchema = new mongoose.Schema(
     altText: String, // Optional descriptive text
     caption: String, // Optional display string
     isFeatured: { type: Boolean, default: false },
-    order: { type: Number, default: 0 },
     uploadedAt: { type: Date, default: Date.now },
   },
-  { _id: false }, // Avoid MongoDB generating unique nested IDs inside this embedded array unless specifically needed!
+  { _id: false } // Avoid MongoDB generating unique nested IDs inside this embedded array unless specifically needed!
 );
 
 const projectSchema = new mongoose.Schema({
