@@ -1,14 +1,14 @@
 ---
-title: "Authentication Codex"
-description: "Reference guide and syntax for Auth with Passport"
+title: 'Authentication Codex'
+description: 'Reference guide and syntax for Auth with Passport'
 sidebar:
   order: 18
   label: Authentication Codex
 ---
 
-import { LinkButton } from "@astrojs/starlight/components";
-import NoteBox from "../../../components/NoteBox.astro";
-import CautionBox from "../../../components/CautionBox.astro";
+import { LinkButton } from '@astrojs/starlight/components';
+import NoteBox from '../../../components/NoteBox.astro';
+import CautionBox from '../../../components/CautionBox.astro';
 
 ## The Keycard Scanner (Syntax HUD)
 
@@ -38,8 +38,8 @@ import CautionBox from "../../../components/CautionBox.astro";
 2. **Core `app.js` Architecture Order (CRITICAL):**
 
    ```javascript
-   const session = require("express-session");
-   const passport = require("passport");
+   const session = require('express-session');
+   const passport = require('passport');
 
    // 1. Session Storage Must Precede Passport
    app.use(
@@ -48,7 +48,7 @@ import CautionBox from "../../../components/CautionBox.astro";
        resave: false,
        saveUninitialized: false,
        // store: MongoStore.create(...) in production
-     }),
+     })
    );
 
    // 2. Passport Context Initialization
@@ -72,9 +72,8 @@ import CautionBox from "../../../components/CautionBox.astro";
 
 ## Solo's Security Pro-Notes
 
-- **Never Log the Payload:** Never intentionally permanently log raw incoming POST payloads containing plaintext passwords globally console tracing application requests dynamically.
-- **Ambiguous Failures Are Good Failures:** Returning explicitly distinct errors denoting "User not found" dynamically allows active attackers mechanically identifying explicitly exact registered emails. Always universally return "Invalid credentials."
-- **Data Model Minimization:** `password` fields emphatically inherently explicitly logically exist exclusively inside the temporary memory block processing the active request payload inherently terminating before explicit database insertion saving only `passwordHash`.
+- **Never Log the Payload:** Never intentionally permanently log raw incoming POST payloads containing plaintext passwords.
+- **Ambiguous Failures Are Good Failures:** Returning explicitly distinct errors denoting "User not found" dynamically allows active attackers to identify registered emails. Always return "Invalid credentials."
 
 ---
 
